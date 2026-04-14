@@ -96,3 +96,21 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 ---
 
 ## 📚 Entradas
+
+### 2026-04-14 — [BUILD] `tsc` varre `docs/templates/**/*.ts` no bootstrap e quebra o build
+
+**Contexto:** Sprint 01 (bootstrap). Primeiro `npm run build` depois de criar `tsconfig.json` com `include: ["**/*.ts", "**/*.tsx"]`.
+
+**Problema:** Next/tsc typechecou `docs/templates/reference_module/actions.ts`, que importa `@/types/action-response` — path que só existirá quando um módulo real for criado. Build abortou.
+
+```
+./docs/templates/reference_module/actions.ts:5:37
+Type error: Cannot find module '@/types/action-response'
+```
+
+**Causa raiz:** Arquivos `.ts` em `docs/templates/` são **skeletons** destinados a ser copiados por agentes, não código ativo. O `include` wildcard do tsconfig padrão não distingue — `**/*.ts` pega tudo que estiver fora de `exclude`.
+
+**Solução:** adicionar ao `exclude` do `tsconfig.json` todas as pastas que contêm `.ts` "inerte": `docs`, `agents`, `sprints`, `scripts`, `supabase`, `design_system/build`. Templates ficam fora do compile graph; código real em `src/` continua coberto.
+
+**Regra geral:** Em qualquer bootstrap novo sobre este framework, o `tsconfig.json` deve excluir `docs`, `agents`, `sprints`, `scripts`, `supabase` além dos defaults. Considerar mover este ajuste para um `tsconfig.base.json` versionado no framework.
+

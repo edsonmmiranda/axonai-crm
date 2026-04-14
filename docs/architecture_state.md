@@ -1,7 +1,7 @@
 # Architecture State
 
-**Last Updated:** 2026-04-11 (Framework reorganization — reduced to dynamic sections only)
-**Project Status:** 🟡 **EMPTY FRAMEWORK** — no application code yet. The first sprint of any project built on this framework is a **bootstrap sprint** that initializes `package.json`, `src/`, and the Supabase client.
+**Last Updated:** 2026-04-14 (Sprint 01 — Bootstrap)
+**Project Status:** 🟢 **BOOTSTRAPPED** — Next.js 15 + React 19 + Tailwind v4 + Supabase (`@supabase/ssr`) em pé. Nenhum módulo CRUD ainda; próximo sprint inicia o primeiro domínio.
 
 ---
 
@@ -36,6 +36,33 @@ This file is the **narrative memory of what has been built** — why modules exi
 **Application tables:** none yet.
 
 ---
+
+## 🧱 Bootstrap (Sprint 01)
+
+**Propósito:** transformar o framework vazio em um projeto Next.js funcional consumindo os tokens do design system e pronto para receber o primeiro CRUD de domínio.
+
+**Decisões arquiteturais:**
+- **Package manager:** npm (declarado em [`docs/stack.md`](./stack.md); lockfile único `package-lock.json`).
+- **Next.js 15 + React 19** com App Router, Server Components e Server Actions como superfície de API primária.
+- **TypeScript strict**, `no-explicit-any` = error no ESLint. Path alias `@/*` → `src/*`.
+- **Tailwind v4** via `@tailwindcss/postcss`. Wiring de tokens semânticos feito em duas pontas: (a) `src/app/globals.css` importa `design_system/generated/variables.css` para injetar as CSS vars e usa `@config` apontando para `tailwind.config.ts`; (b) `tailwind.config.ts` importa `themeExtend` de `design_system/generated/tailwind.tokens.ts` para expor as classes `bg-surface-*`, `text-text-*`, `bg-action-*`, etc.
+- **Dark mode:** seletor `[data-theme="dark"]` aplicado no `<html>` por script inline clássico no `<head>` do root layout. Lê `localStorage('theme')` com fallback para `prefers-color-scheme`. Evita FOUC e permite toggle manual futuro sem depender de provider React.
+- **Supabase:** três clients em `src/lib/supabase/` seguindo o padrão oficial `@supabase/ssr` para Next 15:
+  - `client.ts` → browser (`createBrowserClient`)
+  - `server.ts` → RSC/Server Action (`createServerClient` async com `cookies()` de `next/headers`)
+  - `middleware.ts` → helper `updateSession` para refresh de sessão em edge runtime
+  Todos validam `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` com `getEnv()` — lançam `Error` explícito em vez de silenciar.
+- **Middleware raiz:** `middleware.ts` na raiz chama `updateSession`. O matcher exclui `_next/static`, `_next/image`, `favicon.ico` e assets de imagem/fonte comuns via regex negativa.
+- **`src/lib/utils.ts`:** helper `cn()` (clsx + tailwind-merge), padrão Shadcn, usado por componentes futuros.
+- **Landing `/`:** placeholder estático ("Axon AI CRM" + status), Server Component, só tokens semânticos.
+
+**Arquivos criados:**
+- Configs: `package.json`, `tsconfig.json`, `next.config.mjs`, `postcss.config.mjs`, `tailwind.config.ts`, `eslint.config.mjs`, `.gitignore` atualizado
+- Infra: `src/lib/supabase/{client,server,middleware}.ts`, `src/lib/utils.ts`, `middleware.ts`
+- UI: `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`
+
+**O que NÃO foi tocado nesta sprint:**
+- Banco de dados. Não houve migration nem qualquer comando `supabase db *`. O baseline `00000000000000_framework_bootstrap.sql` continua intacto. ⚠️ **Lembrete de memória do projeto:** o Supabase remoto já possui estrutura/dados preexistentes fora das migrations versionadas — qualquer ação destrutiva futura exige confirmação explícita e introspecção via `@db-admin` antes de `db push`.
 
 ## 🧩 Modules
 
@@ -74,5 +101,6 @@ As sprints execute, append entries here using this shape:
 
 | Date | Sprint | Change |
 |---|---|---|
+| 2026-04-14 | sprint_01_bootstrap | Bootstrap do projeto: Next.js 15 + React 19 + Tailwind v4 + Supabase (`@supabase/ssr`) + design system wiring. Nenhuma mudança de banco. |
 | 2026-04-11 | (none) | Framework reorganization: shrunk this file to dynamic sections only. Static content moved to `docs/stack.md`, `agents/workflows/memory-layers.md`, and `docs/conventions/crud.md`. |
 | 2026-04-10 | (none) | Framework reset to empty-reusable state. |

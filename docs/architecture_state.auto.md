@@ -4,7 +4,7 @@
 > Regenerated at sprint closing via `node scripts/generate-architecture-inventory.mjs`.
 > Narrative context (why modules exist, architectural decisions) lives in [`architecture_state.md`](./architecture_state.md).
 
-**Generated:** 2026-04-14T13:14:25.104Z
+**Generated:** 2026-04-14T20:43:27.762Z
 
 ---
 
@@ -18,7 +18,9 @@ _None detected._
 
 ## 🌐 Routes
 
-_None._
+| Route | File |
+|---|---|
+| `/` | `src/app/page.tsx` |
 
 ## ⚙️ Server Actions
 
