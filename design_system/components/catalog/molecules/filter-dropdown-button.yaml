@@ -1,0 +1,20 @@
+name: Filter Dropdown Button
+level: molecule
+description: Botão de filtro com ícone + label + chevron. Usado na pipeline toolbar.
+used_in:
+  - kanban
+
+tokens_used:
+  - text-text-secondary
+  - hover:bg-surface-sunken
+  - text-text-muted
+
+variants:
+  - name: default
+    description: Botão com ícone contextual, label e chevron down.
+    code: |
+      <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-sunken text-sm font-medium transition-colors">
+        <User className="size-4" />
+        <span>Responsável</span>
+        <ChevronDown className="size-3 text-text-muted" />
+      </button>

@@ -1,0 +1,25 @@
+name: Notification Button
+level: molecule
+description: Icon button + notification dot. Usado no header para sino de notificações.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+children:
+  - notification-dot
+
+tokens_used:
+  - text-text-secondary
+  - hover:text-action-ghost-fg
+  - hover:bg-surface-sunken
+
+variants:
+  - name: default
+    description: Botão com sino e dot de notificação.
+    code: |
+      <button className="relative p-2 text-text-secondary hover:text-action-ghost-fg transition-colors rounded-lg hover:bg-surface-sunken">
+        <Bell className="size-5" />
+        <NotificationDot /> {/* absolute positioned */}
+      </button>

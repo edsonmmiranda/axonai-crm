@@ -1,0 +1,55 @@
+name: Task List
+level: organism
+description: Painel de tarefas próximas com header, lista de task items e botão de "ver todas".
+used_in:
+  - dashboard
+
+children:
+  - task-item
+  - icon-button
+
+tokens_used:
+  - bg-surface-raised
+  - border-border
+  - border-border-subtle
+  - bg-surface-sunken/50
+  - text-text-primary
+  - text-text-secondary
+  - text-action-ghost-fg
+  - hover:bg-action-primary/10
+  - hover:bg-surface-sunken
+  - divide-border-subtle
+
+variants:
+  - name: default
+    description: Lista de tarefas com header, items e footer.
+    code: |
+      <div className="bg-surface-raised rounded-xl border border-border flex flex-col flex-1 shadow-sm">
+        {/* Header */}
+        <div className="p-5 border-b border-border-subtle flex justify-between items-center bg-surface-sunken/50">
+          <h3 className="text-lg font-bold text-text-primary">{title}</h3>
+          <button className="text-action-ghost-fg hover:bg-action-primary/10 rounded p-1 transition-colors">
+            <Plus className="size-5" />
+          </button>
+        </div>
+
+        {/* Task items */}
+        <div className="flex flex-col divide-y divide-border-subtle">
+          {tasks.map(task => (
+            <TaskItem key={task.id} {...task} />
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 mt-auto border-t border-border-subtle">
+          <button className="w-full py-2 rounded-lg border border-border text-text-secondary text-sm font-medium hover:bg-surface-sunken hover:text-text-primary transition-colors">
+            Ver Todas as Tarefas
+          </button>
+        </div>
+      </div>
+
+notes: |
+  O painel usa flex-1 para preencher o espaço disponível na coluna do dashboard.
+  O header tem bg-surface-sunken/50 para diferenciar visualmente.
+  O botão "+" no header abre form de criação rápida de tarefa.
+  O footer com "Ver Todas" redireciona para uma página de tarefas completa.

@@ -1,0 +1,74 @@
+# Recipe: Dashboard
+# Guia passo a passo para criar a página de dashboard do sistema.
+
+name: Dashboard
+description: |
+  Receita para criar a página inicial de dashboard com resumo de KPIs,
+  leads recentes, pipeline e tarefas.
+
+pages:
+  - dashboard
+
+steps:
+  - step: 1
+    title: Montar o layout base
+    template: templates/dashboard.yaml
+    actions:
+      - Copiar a estrutura Sidebar + Main + App Header (compartilhada)
+      - Setar o nav item "Dashboard" como ativo
+      - Container de conteúdo com max-w-[1400px] mr-auto
+
+  - step: 2
+    title: Criar a seção de Greeting
+    actions:
+      - Montar o Dashboard Greeting com nome do usuário e data
+      - Definir os Quick Action Buttons relevantes (Lead, Proposta, Tarefa, etc.)
+      - O greeting muda conforme horário (Bom dia / Boa tarde / Boa noite)
+
+  - step: 3
+    title: Configurar os Stat Cards (KPIs)
+    actions:
+      - Definir os 4 KPIs principais para o contexto do módulo
+      - Para cada KPI, escolher o ícone decorativo (Lucide) e a cor
+      - Configurar os Trend Badges (up/down/neutro)
+      - Usar a grid responsiva: 1 col mobile → 2 cols sm → 4 cols lg
+
+  - step: 4
+    title: Montar o grid principal (2/3 + 1/3)
+    actions:
+      - Usar grid grid-cols-1 lg:grid-cols-3 gap-6
+      - Coluna esquerda (lg:col-span-2): tabela + cards bottom
+      - Coluna direita: pipeline summary + task list
+
+  - step: 5
+    title: Configurar a tabela de Leads Recentes
+    actions:
+      - Tabela compacta com 4-5 rows (dados mais recentes)
+      - Header com título e link "Ver todos" que leva à listing
+      - Colunas mínimas (nome, interesse, origem, status, ação)
+      - Usar Badge para status e Origin Tag para origem
+
+  - step: 6
+    title: Configurar os cards bottom (CTA + Metas)
+    actions:
+      - Grid de 2 colunas (md:grid-cols-2 gap-4)
+      - Gradient CTA Card para meta/campanha principal
+      - Goal Progress Card para meta do mês com barra de progresso
+      - Definir textos, percentuais e ícones
+
+  - step: 7
+    title: Configurar o Pipeline Summary
+    actions:
+      - Definir os estágios do pipeline (3-5 estágios)
+      - Cada estágio com label, contagem e barra colorida
+      - Cores seguem a convenção de feedback tokens (info → success)
+      - Card deve linkar para a página de pipeline completa
+
+  - step: 8
+    title: Configurar a Task List
+    actions:
+      - Definir as tarefas próximas (3-5 items)
+      - Cada tarefa com dot de prioridade, título e horário
+      - Cores do dot indicam urgência (danger > warning > info > success)
+      - Header com botão "+" para criação rápida
+      - Footer com "Ver Todas as Tarefas"

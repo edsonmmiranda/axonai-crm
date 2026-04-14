@@ -1,0 +1,30 @@
+name: Avatar Group
+level: molecule
+description: Grupo de avatares sobrepostos com overflow counter.
+used_in:
+  - kanban
+
+children:
+  - avatar-initials
+
+tokens_used:
+  - border-surface-raised
+  - bg-surface-sunken
+  - text-text-muted
+
+variants:
+  - name: default
+    description: Avatares sobrepostos com -space-x-2 e counter de overflow.
+    code: |
+      <div className="flex -space-x-2">
+        {avatars.map(a => <AvatarInitials key={a.id} className="border-2 border-surface-raised" />)}
+        {overflow > 0 && (
+          <div className="size-8 rounded-full border-2 border-surface-raised bg-surface-sunken flex items-center justify-center text-xs font-bold text-text-muted">
+            +{overflow}
+          </div>
+        )}
+      </div>
+
+notes: |
+  O protótipo HTML usava text-[10px] no overflow counter — na implementação React,
+  usar text-xs como menor tamanho da escala de tokens.

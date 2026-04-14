@@ -1,0 +1,24 @@
+name: Page Header — Listing
+level: organism
+description: Título da página + descrição + botões de ação para telas de listagem.
+used_in:
+  - listing
+
+tokens_used:
+  - text-text-primary
+  - text-text-secondary
+
+variants:
+  - name: default
+    description: Título + descrição à esquerda, botões à direita.
+    code: |
+      <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary">{title}</h2>
+          <p className="text-text-secondary max-w-2xl">{description}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="secondary" icon={Printer}>Imprimir</Button>
+          <Button variant="primary" icon={UserPlus}>Novo Lead</Button>
+        </div>
+      </div>

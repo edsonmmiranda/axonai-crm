@@ -1,0 +1,53 @@
+name: Data Table
+level: organism
+description: Tabela de dados com headers clicáveis para ordenação, rows dinâmicas e ícones de sort state.
+used_in:
+  - listing
+  - print
+
+children:
+  - avatar-initials
+  - origin-tag
+  - icon-button
+
+tokens_used:
+  - bg-surface-raised
+  - border-border
+  - text-text-secondary
+  - bg-surface-sunken
+  - border-border-subtle
+  - text-text-primary
+  - text-text-muted
+  - hover:text-text-primary
+  - hover:bg-surface-sunken/80
+
+variants:
+  - name: default
+    description: Tabela com headers sortable e rows com ações.
+    code: |
+      <div className="bg-surface-raised rounded-xl border border-border shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm text-left">
+            <thead className="text-xs text-text-secondary uppercase bg-surface-sunken border-b border-border-subtle">
+              <tr>
+                <th className="py-3.5 pl-6 pr-3 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" onClick={() => toggleSort('lead')}>
+                  <span className="inline-flex items-center gap-1.5">
+                    Lead <span className="sort-icon text-text-muted opacity-0 group-hover:opacity-100"><ArrowUpDown className="size-3.5" /></span>
+                  </span>
+                </th>
+                {/* ... more columns */}
+                <th className="text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border-subtle">
+              {/* TableRow: avatar + nome/email, empresa, valor, badge status, origin tag, data, action buttons */}
+              {/* Row hover: hover:bg-surface-sunken/80 */}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+notes: |
+  Cada Table Row contém: avatar com iniciais (cor por status), nome+email, empresa,
+  valor, badge de status, origin tag, data, e action buttons (ver, editar, whatsapp).
+  Row hover: hover:bg-surface-sunken/80.

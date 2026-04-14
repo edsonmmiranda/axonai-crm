@@ -1,0 +1,24 @@
+name: Print Summary Footer
+level: organism
+description: Rodapé do relatório com grid de 4 blocos de resumo estatístico.
+used_in:
+  - print
+
+children:
+  - print-summary-stat
+
+tokens_used:
+  - border-border-strong
+
+variants:
+  - name: default
+    description: Grid 2→4 colunas com stats de resumo.
+    code: |
+      <div className="mt-6 pt-4 border-t-2 border-border-strong">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+          <PrintSummaryStat label="Total de Leads" value="15" />
+          <PrintSummaryStat label="Valor Total Estimado" value="R$ 672.100,00" />
+          <PrintSummaryStat label="Valor Médio" value="R$ 44.806,67" />
+          <PrintSummaryStat label="Leads Qualificados" value="8 (53%)" />
+        </div>
+      </div>

@@ -1,0 +1,62 @@
+name: Alert
+level: molecule
+description: Mensagem de feedback com ícone, título opcional e corpo. Variantes por intent.
+used_in:
+  - form-create
+  - form-edit
+  - listing
+
+tokens_used:
+  - bg-feedback-success-bg
+  - border-feedback-success-border
+  - text-feedback-success-fg
+  - bg-feedback-warning-bg
+  - border-feedback-warning-border
+  - text-feedback-warning-fg
+  - bg-feedback-danger-bg
+  - border-feedback-danger-border
+  - text-feedback-danger-fg
+  - bg-feedback-info-bg
+  - border-feedback-info-border
+  - text-feedback-info-fg
+
+variants:
+  - name: success
+    description: Feedback positivo.
+    code: |
+      <div
+        role="alert"
+        className={cn(
+          "flex gap-3 p-4 rounded-md border",
+          intent === "success" && "bg-feedback-success-bg border-feedback-success-border text-feedback-success-fg",
+          intent === "warning" && "bg-feedback-warning-bg border-feedback-warning-border text-feedback-warning-fg",
+          intent === "danger"  && "bg-feedback-danger-bg border-feedback-danger-border text-feedback-danger-fg",
+          intent === "info"    && "bg-feedback-info-bg border-feedback-info-border text-feedback-info-fg",
+        )}
+      >
+        <Icon className="size-5 shrink-0" />
+        <div className="flex-1">
+          {title && <p className="font-semibold">{title}</p>}
+          <p className="text-sm">{children}</p>
+        </div>
+      </div>
+
+  - name: warning
+    description: Feedback de alerta.
+    code: |
+      <Alert intent="warning" title="Atenção">Campos obrigatórios não preenchidos.</Alert>
+
+  - name: danger
+    description: Feedback de erro.
+    code: |
+      <Alert intent="danger" title="Erro">Não foi possível salvar.</Alert>
+
+  - name: info
+    description: Feedback informativo.
+    code: |
+      <Alert intent="info">Lead importado com sucesso.</Alert>
+
+notes: |
+  Sempre usar role="alert" para acessibilidade.
+  O ícone varia por intent: CheckCircle (success), AlertTriangle (warning),
+  XCircle (danger), Info (info) — todos do Lucide.

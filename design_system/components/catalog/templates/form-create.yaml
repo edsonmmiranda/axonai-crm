@@ -1,0 +1,37 @@
+name: Form Page (Create)
+level: template
+description: Template de página de formulário de criação com sidebar, header, breadcrumb, form sections e action bar.
+used_in:
+  - form-create
+
+organisms:
+  - name: Sidebar
+    file: catalog/organisms/sidebar.yaml
+  - name: App Header
+    file: catalog/organisms/app-header.yaml
+  - name: Page Header — Form
+    file: catalog/organisms/page-header-form.yaml
+  - name: Form Card Section
+    file: catalog/organisms/form-card-section.yaml
+  - name: Form Action Bar
+    file: catalog/organisms/form-action-bar.yaml
+
+molecules:
+  - name: Breadcrumb
+    file: catalog/molecules/breadcrumb.yaml
+
+layout: |
+  ┌────────┬──────────────────────────────────────────┐
+  │        │  App Header (organism)                   │
+  │Sidebar ├──────────────────────────────────────────┤
+  │(organ.)│  Breadcrumb (molecule)                   │
+  │        │  Page Header — Form (organism)           │
+  │        │  Form Card Section × N (organism)        │
+  │        │  Form Action Bar [right-aligned]         │
+  └────────┴──────────────────────────────────────────┘
+
+container: |
+  Wrapper: flex h-screen bg-surface-base
+  Main content: flex-1 overflow-y-auto p-6 → max-w-4xl mr-auto flex flex-col gap-6 pb-10
+
+prototype: telas_prontas/leads_criar.html

@@ -1,0 +1,67 @@
+name: Badge
+level: atom
+description: Badge com variantes de intent via cva. Usado para status, tags e contadores.
+used_in:
+  - listing
+  - form-edit
+  - kanban
+
+tokens_used:
+  - bg-surface-sunken
+  - text-text-secondary
+  - bg-feedback-success-bg
+  - text-feedback-success-fg
+  - bg-feedback-warning-bg
+  - text-feedback-warning-fg
+  - bg-feedback-danger-bg
+  - text-feedback-danger-fg
+  - bg-feedback-info-bg
+  - text-feedback-info-fg
+
+variants:
+  - name: neutral
+    description: Badge padrão — fundo sunken, texto secondary.
+    code: |
+      import { cva, type VariantProps } from "class-variance-authority";
+
+      const badgeVariants = cva(
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+        {
+          variants: {
+            intent: {
+              neutral: "bg-surface-sunken text-text-secondary",
+              success: "bg-feedback-success-bg text-feedback-success-fg",
+              warning: "bg-feedback-warning-bg text-feedback-warning-fg",
+              danger:  "bg-feedback-danger-bg text-feedback-danger-fg",
+              info:    "bg-feedback-info-bg text-feedback-info-fg",
+            },
+          },
+          defaultVariants: { intent: "neutral" },
+        }
+      );
+
+      type BadgeProps = HTMLAttributes<HTMLSpanElement> & VariantProps<typeof badgeVariants>;
+
+      export const Badge = ({ className, intent, ...props }: BadgeProps) => (
+        <span className={cn(badgeVariants({ intent }), className)} {...props} />
+      );
+
+  - name: success
+    description: Badge de sucesso — fundo verde, texto verde escuro.
+    code: |
+      <Badge intent="success">Ativo</Badge>
+
+  - name: warning
+    description: Badge de alerta — fundo amber, texto amber escuro.
+    code: |
+      <Badge intent="warning">Pendente</Badge>
+
+  - name: danger
+    description: Badge de perigo — fundo vermelho, texto vermelho escuro.
+    code: |
+      <Badge intent="danger">Inativo</Badge>
+
+  - name: info
+    description: Badge informativo — fundo azul, texto azul escuro.
+    code: |
+      <Badge intent="info">Novo</Badge>

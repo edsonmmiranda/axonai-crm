@@ -1,0 +1,49 @@
+name: Form Card Header
+level: molecule
+description: Header de seção dentro de um formulário — ícone colorido + título + descrição, separado por borda inferior.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - border-border-subtle
+  - text-text-primary
+  - text-text-secondary
+  - bg-feedback-info-bg
+  - text-feedback-info-fg
+  - bg-feedback-success-bg
+  - text-feedback-success-fg
+  - bg-feedback-accent-bg
+  - text-feedback-accent-fg
+  - bg-feedback-warning-bg
+  - text-feedback-warning-fg
+
+variants:
+  - name: info
+    description: Seção de dados básicos (azul).
+    code: |
+      <div className="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+        <div className="flex size-10 items-center justify-center rounded-lg bg-feedback-info-bg text-feedback-info-fg">
+          <User className="size-5" />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-text-primary">{title}</h3>
+          <p className="text-sm text-text-secondary">{description}</p>
+        </div>
+      </div>
+
+  - name: success
+    description: Seção de deal/financeiro (verde).
+
+  - name: accent
+    description: Seção de observações/categórico (roxo).
+
+  - name: warning
+    description: Seção de histórico/atividades (amarelo).
+
+notes: |
+  A cor muda apenas no container do ícone:
+  - info:    bg-feedback-info-bg    text-feedback-info-fg
+  - success: bg-feedback-success-bg text-feedback-success-fg
+  - accent:  bg-feedback-accent-bg  text-feedback-accent-fg
+  - warning: bg-feedback-warning-bg text-feedback-warning-fg

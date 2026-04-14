@@ -1,0 +1,133 @@
+-- ============================================================================
+-- SAAS FACTORY FRAMEWORK — BOOTSTRAP MIGRATION
+-- ============================================================================
+-- Purpose: Install the RPC helper functions that @db-admin uses for real-schema
+--          introspection. Must be the FIRST migration applied to any project
+--          that uses this framework.
+--
+-- Idempotent: Uses CREATE OR REPLACE so it can be re-run safely.
+-- Security:   All helpers are SECURITY DEFINER and read-only (information_schema
+--             and pg_catalog). They return metadata only, never user data.
+--
+-- Usage (from @db-admin):
+--   const { data: tables }   = await supabase.rpc('get_schema_tables');
+--   const { data: columns }  = await supabase.rpc('get_table_columns',  { p_table_name: 'leads' });
+--   const { data: indexes }  = await supabase.rpc('get_table_indexes',  { p_table_name: 'leads' });
+--   const { data: policies } = await supabase.rpc('get_table_policies', { p_table_name: 'leads' });
+-- ============================================================================
+
+-- ---------------------------------------------------------------------------
+-- 1. get_schema_tables()
+--    Returns every BASE TABLE in the public schema.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_schema_tables()
+RETURNS TABLE (
+  table_name text,
+  table_type text
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT
+    t.table_name::text,
+    t.table_type::text
+  FROM information_schema.tables t
+  WHERE t.table_schema = 'public'
+    AND t.table_type = 'BASE TABLE'
+  ORDER BY t.table_name;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- 2. get_table_columns(p_table_name text)
+--    Returns the column metadata for a given public-schema table.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_table_columns(p_table_name text)
+RETURNS TABLE (
+  column_name text,
+  data_type text,
+  is_nullable text,
+  column_default text,
+  character_maximum_length integer
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT
+    c.column_name::text,
+    c.data_type::text,
+    c.is_nullable::text,
+    c.column_default::text,
+    c.character_maximum_length
+  FROM information_schema.columns c
+  WHERE c.table_schema = 'public'
+    AND c.table_name = p_table_name
+  ORDER BY c.ordinal_position;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- 3. get_table_indexes(p_table_name text)
+--    Returns indexes defined on a given public-schema table.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_table_indexes(p_table_name text)
+RETURNS TABLE (
+  index_name text,
+  index_definition text
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT
+    i.indexname::text,
+    i.indexdef::text
+  FROM pg_indexes i
+  WHERE i.schemaname = 'public'
+    AND i.tablename = p_table_name
+  ORDER BY i.indexname;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- 4. get_table_policies(p_table_name text)
+--    Returns the RLS policies defined on a given public-schema table.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_table_policies(p_table_name text)
+RETURNS TABLE (
+  policy_name text,
+  policy_definition text,
+  policy_command "char"
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT
+    p.polname::text                          AS policy_name,
+    pg_get_expr(p.polqual, p.polrelid)::text AS policy_definition,
+    p.polcmd                                 AS policy_command
+  FROM pg_policy p
+  JOIN pg_class c ON p.polrelid = c.oid
+  JOIN pg_namespace n ON c.relnamespace = n.oid
+  WHERE n.nspname = 'public'
+    AND c.relname = p_table_name
+  ORDER BY p.polname;
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Grants — allow authenticated + service_role to call these helpers.
+-- Anonymous callers should NOT be able to introspect the schema.
+-- ---------------------------------------------------------------------------
+GRANT EXECUTE ON FUNCTION public.get_schema_tables()              TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_table_columns(text)          TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_table_indexes(text)          TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_table_policies(text)         TO authenticated, service_role;
+
+REVOKE EXECUTE ON FUNCTION public.get_schema_tables()              FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_table_columns(text)          FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_table_indexes(text)          FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_table_policies(text)         FROM anon, PUBLIC;
+
+-- ============================================================================
+-- END OF BOOTSTRAP — @db-admin can now introspect the schema.
+-- ============================================================================

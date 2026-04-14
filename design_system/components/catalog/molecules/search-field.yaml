@@ -1,0 +1,32 @@
+name: Search Field
+level: molecule
+description: Campo de busca com ícone à esquerda. Reutilizado em header, filter bars e pipeline.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+tokens_used:
+  - text-text-secondary
+  - text-action-primary
+  - border-field-border
+  - bg-field
+  - text-field-fg
+  - text-field-placeholder
+  - ring-field-border-focus
+  - border-field-border-focus
+
+variants:
+  - name: default
+    description: Input com ícone Search à esquerda.
+    code: |
+      <div className="relative w-full group">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="size-5 text-text-secondary group-focus-within:text-action-primary transition-colors" />
+        </div>
+        <input
+          className="block w-full pl-10 pr-3 py-2 border border-field-border rounded-lg leading-5 bg-field text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+          placeholder="Buscar..." type="text"
+        />
+      </div>

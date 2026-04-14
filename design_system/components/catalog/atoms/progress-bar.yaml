@@ -1,0 +1,63 @@
+name: Progress Bar
+level: atom
+description: Barra de progresso horizontal com track e fill. Suporta cores via feedback tokens e action-primary.
+used_in:
+  - dashboard
+
+tokens_used:
+  - bg-surface-sunken
+  - bg-action-primary
+  - bg-feedback-info-solid-bg
+  - bg-feedback-warning-solid-bg
+  - bg-feedback-accent-solid-bg
+  - bg-feedback-success-solid-bg
+
+variants:
+  - name: default
+    description: Barra de progresso padrão com cor primary.
+    code: |
+      <div className="w-full bg-surface-sunken rounded-full h-2.5">
+        <div
+          className="bg-action-primary h-2.5 rounded-full transition-all duration-normal ease-standard"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+
+  - name: slim
+    description: Versão mais fina (h-2), usada no pipeline mini chart.
+    code: |
+      <div className="w-full bg-surface-sunken rounded-full h-2">
+        <div
+          className={cn("h-2 rounded-full", colorClass)}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+
+  - name: with-label
+    description: Com label e valor acima da barra.
+    code: |
+      <div className="group">
+        <div className="flex justify-between text-sm mb-1">
+          <span className="text-text-secondary group-hover:text-action-ghost-fg transition-colors">
+            {label}
+          </span>
+          <span className="text-text-primary font-medium">{value}</span>
+        </div>
+        <div className="w-full bg-surface-sunken rounded-full h-2">
+          <div
+            className={cn("h-2 rounded-full", colorClass)}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+
+notes: |
+  Cores disponíveis para o fill (via prop colorClass):
+  - bg-action-primary          (default, metas gerais)
+  - bg-feedback-info-solid-bg  (prospecção)
+  - bg-feedback-warning-solid-bg (demonstração, pendente)
+  - bg-feedback-accent-solid-bg  (proposta)
+  - bg-feedback-success-solid-bg (fechamento, concluído)
+
+  A largura é controlada via style inline (percentual dinâmico).
+  A track é sempre bg-surface-sunken com rounded-full.

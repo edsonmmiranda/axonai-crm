@@ -1,0 +1,67 @@
+name: Gradient CTA Card
+level: molecule
+description: Card promocional com fundo gradient primary, texto inverse, ícone, avatar group e botão de ação. Usado para destacar metas ou campanhas.
+used_in:
+  - dashboard
+
+children:
+  - avatar-group
+
+tokens_used:
+  - from-action-primary-hover
+  - to-action-primary-active
+  - text-text-inverse
+  - bg-surface-raised/10
+  - bg-surface-raised/20
+  - border-surface-raised/30
+  - bg-surface-raised
+  - text-action-primary
+
+layout_exceptions:
+  - value: "min-h-[160px]"
+    justification: Altura mínima para garantir proporção visual do card. Layout contextual.
+    action: Aceitável como exceção.
+
+variants:
+  - name: default
+    description: Card CTA com gradient, avatar group e botão.
+    code: |
+      <div className={cn(
+        "bg-gradient-to-br from-action-primary-hover to-action-primary-active",
+        "rounded-xl p-6 relative overflow-hidden",
+        "text-text-inverse flex flex-col justify-between min-h-[160px] shadow-lg"
+      )}>
+        {/* Decorative blur */}
+        <div className="absolute right-0 top-0 size-32 bg-surface-raised/10 rounded-full blur-3xl -mr-10 -mt-10" />
+
+        {/* Content */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Rocket className="size-5" />
+            <span className="text-sm font-bold uppercase tracking-wide opacity-90">{tagline}</span>
+          </div>
+          <h4 className="text-xl font-bold max-w-[90%]">{title}</h4>
+        </div>
+
+        {/* Footer: avatars + action */}
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex -space-x-2">
+            {avatars.map((_, i) => (
+              <div key={i} className="size-8 rounded-full bg-surface-raised/20 border border-surface-raised/30 backdrop-blur-sm" />
+            ))}
+            <div className="size-8 rounded-full bg-surface-raised/20 border border-surface-raised/30 flex items-center justify-center text-[10px] font-bold backdrop-blur-sm">
+              +{overflowCount}
+            </div>
+          </div>
+          <button className="bg-surface-raised text-action-primary px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-surface-sunken transition-colors">
+            {actionLabel}
+          </button>
+        </div>
+      </div>
+
+notes: |
+  O gradient usa tokens de action primary (hover → active) para manter consistência com o DS.
+  O blur decorativo cria profundidade visual sem literais de cor.
+  Os avatares dentro do card usam opacidade (bg-surface-raised/20) em vez de cores sólidas,
+  pois estão sobre fundo colorido.
+  O botão de ação inverte: bg-surface-raised com text-action-primary.

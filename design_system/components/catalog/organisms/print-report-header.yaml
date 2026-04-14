@@ -1,0 +1,25 @@
+name: Print Report Header
+level: organism
+description: Header do relatório de impressão com logo à esquerda e título+data à direita.
+used_in:
+  - print
+
+children:
+  - logo-block
+
+tokens_used:
+  - border-border-strong
+  - text-text-primary
+  - text-text-secondary
+
+variants:
+  - name: default
+    description: Logo + título do relatório + data de emissão.
+    code: |
+      <div className="flex items-start justify-between gap-4 mb-6 pb-4 border-b-2 border-border-strong">
+        <LogoBlock />
+        <div className="text-right">
+          <h2 className="text-lg font-bold text-text-primary">Relatório de Leads</h2>
+          <p className="text-xs text-text-secondary mt-0.5">Emitido em {date}</p>
+        </div>
+      </div>

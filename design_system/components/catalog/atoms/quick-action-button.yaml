@@ -1,0 +1,57 @@
+name: Quick Action Button
+level: atom
+description: Botão quadrado com ícone centralizado e label abaixo. Usado para ações rápidas no dashboard.
+used_in:
+  - dashboard
+
+children: []
+
+tokens_used:
+  - bg-surface-raised
+  - hover:bg-action-primary/5
+  - border-border
+  - hover:border-action-primary/50
+  - text-action-primary
+  - text-text-secondary
+  - hover:text-action-ghost-fg
+
+layout_exceptions:
+  - value: "size-[72px]"
+    justification: Tamanho fixo do botão quadrado — é layout contextual, não semântico.
+    action: Criar extensão size-quick-action no tailwind.config.ts ou aceitar como exceção.
+
+variants:
+  - name: default
+    description: Botão quadrado com ícone + label de uma linha.
+    code: |
+      <button className={cn(
+        "flex flex-col items-center justify-center size-[72px] rounded-xl gap-1",
+        "bg-surface-raised hover:bg-action-primary/5",
+        "border border-border hover:border-action-primary/50",
+        "transition-all group shadow-sm hover:shadow-md"
+      )}>
+        <UserPlus className="size-5 text-action-primary group-hover:scale-110 transition-transform" />
+        <span className="text-[10px] font-medium text-text-secondary group-hover:text-action-ghost-fg">
+          {label}
+        </span>
+      </button>
+
+  - name: multiline-label
+    description: Label em duas linhas (ex: "Nova Tarefa").
+    code: |
+      <button className={cn(
+        "flex flex-col items-center justify-center size-[72px] rounded-xl gap-1",
+        "bg-surface-raised hover:bg-action-primary/5",
+        "border border-border hover:border-action-primary/50",
+        "transition-all group shadow-sm hover:shadow-md"
+      )}>
+        <CircleCheck className="size-5 text-action-primary group-hover:scale-110 transition-transform" />
+        <span className="text-[10px] font-medium text-text-secondary group-hover:text-action-ghost-fg text-center leading-none">
+          Nova<br />Tarefa
+        </span>
+      </button>
+
+notes: |
+  Geralmente renderizado em grupo de 2-4 botões dentro de um flex gap-2.
+  O ícone vem do Lucide e tem animação de scale no hover do grupo.
+  O text-[10px] é uma exceção documentada (menor que text-xs).

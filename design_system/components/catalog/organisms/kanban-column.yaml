@@ -1,0 +1,59 @@
+name: Kanban Column
+level: organism
+description: Coluna de estágio do pipeline. Contém header, lista scrollável de cards e botão adicionar.
+used_in:
+  - kanban
+
+children:
+  - kanban-card
+
+tokens_used:
+  - bg-surface-sunken/50
+  - text-text-primary
+  - text-text-secondary
+  - bg-surface-sunken
+  - text-text-muted
+  - border-border
+  - hover:bg-surface-raised
+  - hover:text-action-primary
+  - hover:border-action-primary/30
+  - bg-feedback-success-bg/30
+  - border-feedback-success-border/30
+  - text-feedback-success-fg
+
+variants:
+  - name: default
+    description: Coluna padrão com header, card list e botão adicionar.
+    code: |
+      <div className="flex flex-col w-kanban-col h-full rounded-xl bg-surface-sunken/50 flex-shrink-0">
+        {/* Stage Header */}
+        <div className="px-4 py-3 flex justify-between items-center rounded-t-xl">
+          <div className="flex items-center gap-2">
+            <h2 className="text-text-primary font-bold text-sm uppercase tracking-wide">{stageName}</h2>
+            <span className="bg-surface-sunken text-text-secondary text-xs px-2 py-0.5 rounded-full font-bold">{count}</span>
+          </div>
+          <span className="text-text-muted text-xs font-semibold">{totalValue}</span>
+        </div>
+        {/* Card list */}
+        <div className="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-3 kanban-scroll">
+          {cards}
+        </div>
+        {/* Add button */}
+        <button className="mx-3 mb-3 py-2 rounded-lg border border-dashed border-border text-text-muted text-xs font-bold hover:bg-surface-raised hover:text-action-primary hover:border-action-primary/30 transition-colors flex items-center justify-center gap-1 bg-transparent">
+          <Plus className="size-4" />
+          Adicionar
+        </button>
+      </div>
+
+  - name: success
+    description: Coluna de fechamento com tom success.
+    code: |
+      {/* Substituir classes do container: */}
+      "bg-feedback-success-bg/30 border border-feedback-success-border/30"
+      {/* Header text usa: */}
+      "text-feedback-success-fg"
+
+notes: |
+  Largura fixa: usar token w-kanban-col em vez de w-[300px].
+  Ver seção de exceções de layout no CONTRACT.md para justificativa.
+  Scrollbar customizada via classe .kanban-scroll.

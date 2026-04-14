@@ -1,0 +1,41 @@
+name: Card
+level: molecule
+description: Container de conteúdo elevado com header opcional. Base para stat-card, form-card-section e data-table.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+tokens_used:
+  - bg-surface-raised
+  - text-text-primary
+  - border-border
+  - border-border-subtle
+  - text-text-secondary
+  - shadow-sm
+
+variants:
+  - name: default
+    description: Card com header (título + descrição) e body.
+    code: |
+      <div className="bg-surface-raised text-text-primary border border-border rounded-lg shadow-sm">
+        <div className="px-6 pt-6 pb-4 border-b border-border-subtle">
+          <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+          {description && <p className="text-sm text-text-secondary mt-1">{description}</p>}
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+
+  - name: no-header
+    description: Card sem header — apenas body.
+    code: |
+      <div className="bg-surface-raised text-text-primary border border-border rounded-lg shadow-sm p-6">
+        {children}
+      </div>
+
+notes: |
+  Card é um container genérico. Para variantes especializadas, use:
+  - stat-card (molecule) para KPIs
+  - form-card-section (organism) para seções de formulário
+  - kanban-card (organism) para cards do pipeline

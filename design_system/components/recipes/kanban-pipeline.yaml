@@ -1,0 +1,82 @@
+# Recipe: Kanban Pipeline
+# Guia para criar uma página de pipeline kanban com drag & drop.
+
+name: Kanban Pipeline
+description: |
+  Receita para criar uma página de pipeline/board kanban.
+  Layout horizontal com colunas de estágio e cards arrastáveis.
+
+pages:
+  - kanban
+
+steps:
+  - step: 1
+    title: Criar estrutura base
+    template: templates/kanban-board.yaml
+    actions:
+      - Wrapper flex h-screen com Sidebar à esquerda
+      - Main area flex-1 flex flex-col overflow-hidden
+      - Pipeline Header no topo
+      - Board area flex-1 overflow-x-auto
+
+  - step: 2
+    title: Configurar Pipeline Header
+    organism: pipeline-header
+    actions:
+      - Título + ícone da entidade
+      - Seletor de pipeline (dropdown)
+      - Botões "Configurar Colunas" + "Novo Item"
+      - Search Field + Filter Dropdown Buttons
+      - Avatar Group (membros da equipe)
+
+  - step: 3
+    title: Definir colunas do pipeline
+    organism: kanban-column
+    actions:
+      - Definir estágios (ex. Prospecção, Qualificação, Proposta, Negociação, Fechamento)
+      - Cada coluna com header (nome + contagem + valor total)
+      - Lista scrollável de cards com kanban-scroll
+      - Botão "Adicionar" no rodapé de cada coluna
+      - Última coluna pode usar variante success
+
+  - step: 4
+    title: Configurar Kanban Cards
+    organism: kanban-card
+    actions:
+      - Definir dados exibidos (badge, título, empresa, avatar, valor)
+      - Escolher variantes de estado (default, warning, highlight, closed)
+      - Card Info Bar para status contextuais (opcional)
+      - Botão reveal-on-hover para ação rápida
+
+  - step: 5
+    title: Implementar Drag & Drop
+    utility: drag-drop
+    actions:
+      - Adicionar atributo draggable aos cards
+      - Implementar handlers (dragstart, dragend, dragover, dragleave, drop)
+      - Adicionar classes CSS de estado (is-dragging, is-drag-over)
+      - Implementar drop-indicator para feedback visual
+      - Atualizar contagem e valor total das colunas após move
+      - Na implementação React, considerar @dnd-kit
+
+  - step: 6
+    title: Configurar scrollbar
+    utility: custom-scrollbar
+    actions:
+      - Aplicar kanban-scroll nas listas de cards
+      - Aplicar scrollbar padrão no board horizontal
+
+examples:
+  description: Exemplo completo de página montada (TSX). Use como referência antes de construir.
+  files:
+    - name: Kanban Page
+      file: recipes/examples/kanban-page.tsx.example
+      note: Pipeline kanban completo com sidebar, header, colunas e cards.
+
+customization_points:
+  - Estágios do pipeline (nomes, ordem, cores)
+  - Dados exibidos no card
+  - Filtros disponíveis no header
+  - Variantes de estado dos cards
+  - Ações contextuais (Card Info Bar)
+  - Regras de negócio para movimentação entre colunas

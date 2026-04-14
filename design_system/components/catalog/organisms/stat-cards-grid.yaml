@@ -1,0 +1,22 @@
+name: Stat Cards Grid
+level: organism
+description: Grid responsiva de 4 Stat Cards.
+used_in:
+  - listing
+  - dashboard
+
+children:
+  - stat-card
+
+tokens_used: []
+
+variants:
+  - name: default
+    description: Grid 1→2→4 colunas responsivo.
+    code: |
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Total de Leads" value="1.284" trend="+15%" />
+        <StatCard label="Leads Qualificados" value="847" trend="+8%" />
+        <StatCard label="Taxa de Conversão" value="32,4%" trend="-1,2%" />
+        <StatCard label="Valor do Pipeline" value="R$ 2.4M" trend="+23%" />
+      </div>

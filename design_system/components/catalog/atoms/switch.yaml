@@ -1,0 +1,47 @@
+name: Switch
+level: atom
+description: Toggle switch construído sobre Radix Switch para acessibilidade completa.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - bg-surface-sunken
+  - bg-action-primary
+  - bg-surface-raised
+  - focus-visible:shadow-focus
+
+variants:
+  - name: default
+    description: Switch com label à direita.
+    code: |
+      import * as SwitchPrimitive from "@radix-ui/react-switch";
+
+      export const Switch = forwardRef<
+        React.ElementRef<typeof SwitchPrimitive.Root>,
+        React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root> & { label?: string }
+      >(({ className, label, ...props }, ref) => (
+        <label className="inline-flex items-center gap-2 cursor-pointer">
+          <SwitchPrimitive.Root
+            ref={ref}
+            className={cn(
+              "peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent",
+              "bg-surface-sunken data-[state=checked]:bg-action-primary",
+              "focus-visible:outline-none focus-visible:shadow-focus",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              "transition-colors duration-fast ease-standard",
+              className
+            )}
+            {...props}
+          >
+            <SwitchPrimitive.Thumb
+              className="pointer-events-none block size-4 rounded-full bg-surface-raised shadow-sm transition-transform duration-fast ease-standard data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            />
+          </SwitchPrimitive.Root>
+          {label && <span className="text-sm text-text-primary">{label}</span>}
+        </label>
+      ));
+
+notes: |
+  SEMPRE usar Radix Switch — não reimplementar com checkbox + CSS.
+  O thumb usa translate-x para animação, não left/right.

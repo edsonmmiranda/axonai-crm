@@ -1,0 +1,91 @@
+name: Button
+level: atom
+description: Botão com variantes via cva. Base de todas as ações primárias, secundárias, ghost e danger.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+  - print
+
+tokens_used:
+  - bg-action-primary
+  - text-action-primary-fg
+  - hover:bg-action-primary-hover
+  - active:bg-action-primary-active
+  - bg-action-secondary
+  - text-action-secondary-fg
+  - border-action-secondary-border
+  - hover:bg-action-secondary-hover
+  - bg-action-ghost-hover
+  - text-action-ghost-fg
+  - bg-action-danger
+  - text-action-danger-fg
+  - bg-action-disabled
+  - text-action-disabled-fg
+  - shadow-focus
+
+variants:
+  - name: primary
+    description: Ação principal — fundo primary, texto branco.
+    code: |
+      import { cva, type VariantProps } from "class-variance-authority";
+
+      const buttonVariants = cva(
+        "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors duration-fast ease-standard focus-visible:outline-none focus-visible:shadow-focus disabled:pointer-events-none",
+        {
+          variants: {
+            variant: {
+              primary:   "bg-action-primary text-action-primary-fg hover:bg-action-primary-hover active:bg-action-primary-active",
+              secondary: "bg-action-secondary text-action-secondary-fg border border-action-secondary-border hover:bg-action-secondary-hover active:bg-action-secondary-active",
+              ghost:     "bg-transparent text-action-ghost-fg hover:bg-action-ghost-hover active:bg-action-ghost-active",
+              danger:    "bg-action-danger text-action-danger-fg hover:bg-action-danger-hover active:bg-action-danger-active",
+            },
+            size: {
+              sm: "h-8 px-3 text-sm",
+              md: "h-10 px-4 text-sm",
+              lg: "h-12 px-6 text-base",
+            },
+          },
+          defaultVariants: { variant: "primary", size: "md" },
+          compoundVariants: [
+            { variant: "primary", className: "disabled:bg-action-disabled disabled:text-action-disabled-fg" },
+          ],
+        }
+      );
+
+      type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants>;
+
+      export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+        ({ className, variant, size, ...props }, ref) => (
+          <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
+        )
+      );
+
+  - name: secondary
+    description: Ação secundária — borda, fundo neutro.
+    code: |
+      <Button variant="secondary">Cancelar</Button>
+
+  - name: ghost
+    description: Ação terciária — sem fundo, hover sutil.
+    code: |
+      <Button variant="ghost">Opções</Button>
+
+  - name: danger
+    description: Ação destrutiva — fundo vermelho.
+    code: |
+      <Button variant="danger">Excluir</Button>
+
+  - name: with-icon
+    description: Botão com ícone Lucide como filho.
+    code: |
+      <Button variant="primary" size="md">
+        <Plus className="size-4" />
+        Novo Lead
+      </Button>
+
+notes: |
+  Sempre usar cva para declarar variantes. Não usar condicionais ad-hoc.
+  Ícones devem ser do Lucide. O gap-2 na base cuida do espaçamento.
+  Todo botão precisa de estado focus-visible com shadow-focus.

@@ -1,0 +1,36 @@
+name: Print Page
+level: template
+description: Template de página otimizada para impressão. Sem sidebar, com toolbar screen-only.
+used_in:
+  - print
+
+organisms:
+  - name: Print Report Header
+    file: catalog/organisms/print-report-header.yaml
+  - name: Data Table
+    file: catalog/organisms/data-table.yaml
+  - name: Print Summary Footer
+    file: catalog/organisms/print-summary-footer.yaml
+
+layout: |
+  ┌──────────────────────────────────────────────────┐
+  │  Screen Toolbar (.no-print) — Voltar + Imprimir  │
+  ├──────────────────────────────────────────────────┤
+  │  Print Report Header (organism)                  │
+  │  Filter Summary (text line)                      │
+  │  Leads Table (full width, compact)               │
+  │  Print Summary Footer (organism)                 │
+  │  Page Footer (text line)                         │
+  └──────────────────────────────────────────────────┘
+
+container: |
+  Sem sidebar, sem header fixo.
+  Body: bg-surface-base text-text-primary font-sans
+  Container: max-w-print mr-auto (ver exceções de layout no CONTRACT.md)
+  Screen toolbar: padding 24px via @media screen
+
+prototype: telas_prontas/leads_imprimir.html
+
+notes: |
+  A toolbar com botões Voltar e Imprimir usa classe .no-print para ser ocultada na impressão.
+  Ver utility print-styles para regras @media print.

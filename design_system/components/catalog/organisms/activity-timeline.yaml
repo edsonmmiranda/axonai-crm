@@ -1,0 +1,30 @@
+name: Activity Timeline
+level: organism
+description: Timeline vertical de atividades, exclusiva da tela de edição.
+used_in:
+  - form-edit
+
+children:
+  - form-card-header
+  - activity-item
+
+tokens_used:
+  - border-border
+  - bg-surface-raised
+  - bg-border
+
+variants:
+  - name: default
+    description: Card com header warning + linha vertical + activity items.
+    code: |
+      <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+        <FormCardHeader icon={History} color="warning" title="Histórico de Atividades" />
+        <div className="relative">
+          <div className="absolute left-[15px] top-2 bottom-2 w-px bg-border" />
+          <div className="flex flex-col gap-6">
+            <ActivityItem icon={Mail} color="info" title="Email enviado" date="11/04/2026" />
+            <ActivityItem icon={Phone} color="success" title="Ligação realizada" date="05/04/2026" />
+            <ActivityItem icon={UserPlus} color="accent" title="Lead cadastrado" date="28/03/2026" />
+          </div>
+        </div>
+      </div>

@@ -1,0 +1,104 @@
+# Recipe: CRUD Completo
+# Guia passo a passo para criar um módulo CRUD completo (Listing + Create + Edit + Print).
+
+name: CRUD Completo
+description: |
+  Receita para criar um módulo CRUD completo de qualquer entidade do sistema.
+  Exemplo: Leads, Clientes, Produtos, etc.
+
+pages:
+  - listing
+  - form-create
+  - form-edit
+  - print
+
+steps:
+  - step: 1
+    title: Criar a página de Listagem
+    template: templates/listing-page.yaml
+    actions:
+      - Copiar o template Listing Page
+      - Definir os campos da Data Table (colunas, tipos, ordenação)
+      - Configurar os filtros do Filter Bar (selects específicos da entidade)
+      - Ajustar os Stat Cards com KPIs relevantes
+      - Definir as ações por row (ver, editar, whatsapp, etc.)
+      - Configurar as opções de ordenação no Sort Control
+      - Ajustar textos (título, descrição, placeholders)
+
+  - step: 2
+    title: Criar a página de Criação
+    template: templates/form-create.yaml
+    actions:
+      - Copiar o template Form Create
+      - Definir os Form Card Sections (agrupar campos por categoria)
+      - Para cada seção, escolher a cor do header (info, success, accent, warning)
+      - Definir os campos de cada seção (label, tipo, required, placeholder)
+      - Se houver campo monetário, usar variante with-currency-prefix
+      - Configurar validações com Zod schema
+      - Ajustar breadcrumb com a entidade correta
+      - Action Bar: Cancelar (volta para listing) + Salvar
+
+  - step: 3
+    title: Criar a página de Edição
+    template: templates/form-edit.yaml
+    actions:
+      - Copiar o Form Create como base
+      - Adicionar badge de status no Page Header (variante edit)
+      - Adicionar Edit Page Metadata (datas de criação/atualização)
+      - Pré-preencher todos os campos com dados existentes
+      - Adicionar Activity Timeline se a entidade tiver histórico
+      - Action Bar split: Delete à esquerda, Cancel/Save à direita
+      - Configurar confirmação de exclusão (dialog)
+
+  - step: 4
+    title: Criar a página de Impressão
+    template: templates/print-page.yaml
+    actions:
+      - Copiar o template Print Page
+      - Configurar Print Report Header com título do relatório
+      - Definir colunas da tabela (pode ser subset da listing)
+      - Configurar Print Summary Footer com stats relevantes
+      - Adicionar toolbar screen-only com botões Voltar e Imprimir
+      - Testar em @media print (A4 landscape)
+
+  - step: 5
+    title: Conectar navegação
+    actions:
+      - Atualizar Sidebar com link para a nova entidade (Nav Item)
+      - Botão "Novo" na listing leva para form-create
+      - Botão "Editar" na table row leva para form-edit
+      - Botão "Imprimir" no Page Header leva para print
+      - Breadcrumb aponta para as rotas corretas
+      - Botão "Cancelar" nos forms volta para listing
+
+shared_organisms:
+  description: Organismos reutilizados entre todas as páginas do CRUD
+  list:
+    - name: Sidebar
+      note: Mesmo em todas as páginas (exceto print). Ajustar item ativo.
+    - name: App Header
+      note: Mesmo em listing, create e edit.
+
+examples:
+  description: Exemplos completos de páginas montadas (TSX). Use como referência antes de construir.
+  files:
+    - name: Listing Page
+      file: recipes/examples/listing-page.tsx.example
+      note: Página de listagem completa com todos os organismos montados.
+    - name: Form Create Page
+      file: recipes/examples/form-create-page.tsx.example
+      note: Formulário de criação com breadcrumb, form sections e action bar.
+    - name: Form Edit Page
+      file: recipes/examples/form-edit-page.tsx.example
+      note: Formulário de edição com badge de status, metadados, activity timeline, dialog de exclusão e action bar split.
+    - name: Print Page
+      file: recipes/examples/print-page.tsx.example
+      note: Relatório de impressão com toolbar screen-only, tabela compacta e summary footer.
+
+customization_points:
+  - Data Table columns e row actions
+  - Filter Bar selects
+  - Stat Cards labels e valores
+  - Form Card Sections e campos
+  - Activity Timeline tipos de atividade
+  - Print Summary Footer stats

@@ -1,0 +1,28 @@
+name: Form Action Bar
+level: organism
+description: Barra de ações no rodapé do formulário. Varia entre create (só direita) e edit (split layout com delete).
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used: []
+
+variants:
+  - name: create
+    description: Botões alinhados à direita — Cancelar + Salvar.
+    code: |
+      <div className="flex items-center justify-end gap-3 pt-2">
+        <Button variant="secondary" href="leads.html">Cancelar</Button>
+        <Button variant="primary" icon={Check} type="submit">Salvar Lead</Button>
+      </div>
+
+  - name: edit
+    description: Layout split — Delete à esquerda, Cancel/Save à direita.
+    code: |
+      <div className="flex items-center justify-between pt-2">
+        <Button variant="danger" icon={Trash2}>Excluir Lead</Button>
+        <div className="flex items-center gap-3">
+          <Button variant="secondary" href="leads.html">Cancelar</Button>
+          <Button variant="primary" icon={Check} type="submit">Salvar Alterações</Button>
+        </div>
+      </div>

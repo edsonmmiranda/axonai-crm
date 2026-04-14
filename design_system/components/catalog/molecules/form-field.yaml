@@ -1,0 +1,45 @@
+name: Form Field
+level: molecule
+description: Composição de label + input + mensagem de erro. Wrapper padrão para campos de formulário.
+used_in:
+  - form-create
+  - form-edit
+
+children:
+  - input
+  - select
+  - textarea
+
+tokens_used:
+  - text-text-primary
+  - text-action-danger
+  - text-feedback-danger-fg
+
+variants:
+  - name: default
+    description: Label + input + erro opcional.
+    code: |
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={id} className="text-sm font-medium text-text-primary">
+          {label}
+          {required && <span className="text-action-danger ml-0.5">*</span>}
+        </label>
+        <Input id={id} aria-invalid={!!error} aria-describedby={error ? `${id}-error` : undefined} {...props} />
+        {error && (
+          <p id={`${id}-error`} className="text-xs text-feedback-danger-fg">
+            {error}
+          </p>
+        )}
+      </div>
+
+  - name: full-width
+    description: Campo que ocupa toda a largura do grid (span 2 colunas).
+    code: |
+      <div className="flex flex-col gap-1.5 md:col-span-2">
+        {/* Mesmo conteúdo que default */}
+      </div>
+
+notes: |
+  Sempre usar aria-invalid e aria-describedby para acessibilidade de erros.
+  O required marker usa text-action-danger (mesma cor do botão danger).
+  O campo interno pode ser Input, Select, Textarea ou qualquer atom de form.

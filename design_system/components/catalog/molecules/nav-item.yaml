@@ -1,0 +1,45 @@
+name: Nav Item
+level: molecule
+description: Item de navegação da sidebar. Dois estados (inactive/active) com variante de counter badge.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+tokens_used:
+  - text-text-secondary
+  - hover:bg-surface-sunken
+  - hover:text-action-ghost-fg
+  - bg-action-primary/10
+  - border-action-primary/20
+  - text-action-primary
+  - bg-feedback-success-solid-bg
+  - text-feedback-success-solid-fg
+
+variants:
+  - name: inactive
+    description: Estado padrão — texto secondary, hover com bg sunken.
+    code: |
+      <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors" href="...">
+        <LayoutDashboard className="size-5" />
+        <p className="text-sm font-medium">Dashboard</p>
+      </a>
+
+  - name: active
+    description: Página atual — fundo primary tint com borda.
+    code: |
+      <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-action-primary/10 border border-action-primary/20 group transition-all hover:bg-action-primary/20" href="...">
+        <Users className="size-5 text-action-primary" />
+        <p className="text-action-primary text-sm font-medium">Leads</p>
+      </a>
+
+  - name: with-counter-badge
+    description: Badge de contagem alinhado à direita (ex. WhatsApp).
+    code: |
+      <!-- Adicionar ao final do <a>, com ml-auto -->
+      <span className="bg-feedback-success-solid-bg text-feedback-success-solid-fg text-xs font-bold px-1.5 py-0.5 rounded-full ml-auto">3</span>
+
+notes: |
+  O protótipo HTML usava text-[10px] no counter badge — na implementação React,
+  usar text-xs como menor tamanho da escala de tokens.

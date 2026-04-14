@@ -1,0 +1,420 @@
+// =============================================================================
+// EXEMPLO COMPLETO: Form Edit Page (Editar Lead)
+// =============================================================================
+// Referência de montagem — mostra como sidebar, header, breadcrumb, badge de
+// status, metadados de datas, form sections, activity timeline e action bar
+// split se encaixam em um formulário de edição.
+//
+// DIFERENÇAS em relação ao Form Create:
+//   - Badge de status ao lado do título (Page Header — Form variante edit)
+//   - Edit Page Metadata com datas de criação/atualização
+//   - Campos pré-preenchidos com dados existentes (defaultValues)
+//   - Activity Timeline (seção read-only com histórico)
+//   - Form Action Bar split: Delete à esquerda, Cancel/Save à direita
+//   - Dialog de confirmação de exclusão (Radix Dialog)
+//
+// Para criar um novo form de edição, substitua:
+//   - Entidade (Leads → Clientes, Produtos, etc.)
+//   - Seções do formulário e seus campos
+//   - Schema Zod de validação
+//   - Cores dos headers de seção
+//   - Tipos de atividade na timeline
+//   - defaultValues com dados reais da entidade
+//
+// NOTA SOBRE COMPONENTES COMPARTILHADOS:
+//   Sidebar e App Header aparecem inline neste exemplo para que ele seja
+//   self-contained. Quando esses componentes já existirem implementados em
+//   src/components/, importe-os em vez de duplicar o código.
+//   Ex: import { Sidebar } from "@/components/layout/sidebar";
+//       import { AppHeader } from "@/components/layout/app-header";
+// =============================================================================
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import {
+  User, Building2, DollarSign, FileText, Check, ChevronRight,
+  LayoutDashboard, Users, Kanban, LogOut, Settings, Bell, Menu, Search,
+  Calendar, Clock, History, Mail, Phone, UserPlus, Trash2, X,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { IconButton } from "@/components/ui/icon-button";
+
+// ---------------------------------------------------------------------------
+// ZOD SCHEMA
+// ---------------------------------------------------------------------------
+const leadSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+  telefone: z.string().optional(),
+  empresa: z.string().optional(),
+  valor: z.number().optional(),
+  origem: z.string().min(1, "Origem é obrigatória"),
+  observacoes: z.string().optional(),
+});
+
+type LeadFormData = z.infer<typeof leadSchema>;
+
+// ---------------------------------------------------------------------------
+// PAGE COMPONENT
+// ---------------------------------------------------------------------------
+export default function LeadEditPage() {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Dados existentes — viriam de uma API/loader
+  const existingData: LeadFormData = {
+    nome: "Maria Silva",
+    email: "maria@techcorp.com",
+    telefone: "(11) 99999-0000",
+    empresa: "TechCorp Ltda",
+    valor: 45000,
+    origem: "Site",
+    observacoes: "Lead qualificado via campanha Q1. Interesse em plano Enterprise.",
+  };
+
+  const form = useForm<LeadFormData>({
+    resolver: zodResolver(leadSchema),
+    defaultValues: existingData,
+  });
+
+  return (
+    <div className="flex h-screen bg-surface-base">
+
+      {/* ================================================================= */}
+      {/* SIDEBAR (organism) — catalog/organisms/sidebar.yaml               */}
+      {/* Quando implementado em src/, importe: <Sidebar activeItem="leads" /> */}
+      {/* ================================================================= */}
+      <aside className="hidden md:flex flex-col w-64 h-full border-r border-border bg-surface-raised flex-shrink-0 z-30 shadow-sm">
+        <div className="p-6 pb-2">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-action-primary flex items-center justify-center">
+              <Kanban className="size-5 text-action-primary-fg" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-text-primary tracking-tight">CRM</h1>
+              <p className="text-xs text-text-secondary">Gestão de Leads</p>
+            </div>
+          </div>
+        </div>
+        <nav className="flex-1 flex flex-col gap-2 px-4 py-6 overflow-y-auto">
+          <a href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-text-secondary hover:bg-surface-sunken transition-colors">
+            <LayoutDashboard className="size-5" /> Dashboard
+          </a>
+          {/* Item ativo */}
+          <a href="/leads" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-action-primary text-action-primary-fg shadow-sm">
+            <Users className="size-5" /> Leads
+          </a>
+          <a href="/pipeline" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-text-secondary hover:bg-surface-sunken transition-colors">
+            <Kanban className="size-5" /> Pipeline
+          </a>
+        </nav>
+        <div className="p-4 border-t border-border">
+          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-surface-sunken transition-colors text-left group">
+            <LogOut className="size-5 text-text-secondary group-hover:text-action-ghost-fg" />
+            <span className="text-text-secondary text-sm font-medium group-hover:text-action-ghost-fg">Sair</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* ================================================================= */}
+      {/* MAIN AREA                                                         */}
+      {/* ================================================================= */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+
+        {/* APP HEADER (organism) — catalog/organisms/app-header.yaml */}
+        {/* Quando implementado em src/, importe: <AppHeader /> */}
+        <header className="h-16 flex items-center justify-between px-6 border-b border-border bg-surface-raised/80 backdrop-blur-md sticky top-0 z-20">
+          <button className="md:hidden text-text-primary mr-4"><Menu className="size-6" /></button>
+          <div className="flex-1 max-w-md hidden sm:flex">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-muted" />
+              <Input placeholder="Buscar..." className="pl-9" />
+            </div>
+          </div>
+          <div className="flex items-center gap-4 ml-4">
+            <IconButton icon={Bell} />
+            <IconButton icon={Settings} />
+          </div>
+        </header>
+
+        {/* =============================================================== */}
+        {/* CONTENT AREA (scrollable)                                       */}
+        {/* =============================================================== */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-4xl mr-auto flex flex-col gap-6 pb-10">
+
+            {/* =========================================================== */}
+            {/* BREADCRUMB (molecule) — catalog/molecules/breadcrumb.yaml    */}
+            {/* =========================================================== */}
+            <nav className="flex items-center gap-2 text-sm text-text-secondary">
+              <a href="/dashboard" className="hover:text-action-ghost-fg transition-colors">Home</a>
+              <ChevronRight className="size-4 text-text-muted" />
+              <a href="/leads" className="hover:text-action-ghost-fg transition-colors">Leads</a>
+              <ChevronRight className="size-4 text-text-muted" />
+              <span className="text-text-primary font-semibold">Editar Lead</span>
+            </nav>
+
+            {/* =========================================================== */}
+            {/* PAGE HEADER — FORM (organism, variante edit)                 */}
+            {/* catalog/organisms/page-header-form.yaml                     */}
+            {/* =========================================================== */}
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+              <div className="flex flex-col gap-2">
+                {/* Título + Badge de status (DIFERENÇA vs Create) */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h2 className="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">Editar Lead</h2>
+                  <Badge intent="warning">Em Negociação</Badge>
+                </div>
+
+                {/* EDIT PAGE METADATA (molecule) — catalog/molecules/edit-page-metadata.yaml */}
+                {/* (DIFERENÇA vs Create — só aparece na edição) */}
+                <div className="flex items-center gap-4 text-sm text-text-secondary">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="size-3.5" />
+                    Criado em 28/03/2026
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5" />
+                    Última atualização 11/04/2026
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button variant="secondary" type="button" href="/leads">Cancelar</Button>
+                <Button variant="primary" type="submit"><Check className="size-4" /> Salvar Alterações</Button>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM CARD SECTION 1 — Informações Básicas                   */}
+            {/* catalog/organisms/form-card-section.yaml                     */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              {/* Form Card Header (molecule) — catalog/molecules/form-card-header.yaml */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-info-bg">
+                  <User className="size-5 text-feedback-info-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Informações Básicas</h3>
+                  <p className="text-sm text-text-secondary">Dados de contato do lead</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Form Field (molecule) — catalog/molecules/form-field.yaml */}
+                <div className="flex flex-col gap-1.5 md:col-span-2">
+                  <label className="text-sm font-medium text-text-primary">
+                    Nome Completo <span className="text-action-danger ml-0.5">*</span>
+                  </label>
+                  <Input placeholder="Nome do lead" {...form.register("nome")} aria-invalid={!!form.formState.errors.nome} />
+                  {form.formState.errors.nome && (
+                    <p className="text-xs text-feedback-danger-fg">{form.formState.errors.nome.message}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">
+                    Email Corporativo <span className="text-action-danger ml-0.5">*</span>
+                  </label>
+                  <Input type="email" placeholder="email@empresa.com" {...form.register("email")} />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">Telefone / WhatsApp</label>
+                  <Input placeholder="(00) 00000-0000" {...form.register("telefone")} />
+                </div>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM CARD SECTION 2 — Dados Comerciais                      */}
+            {/* catalog/organisms/form-card-section.yaml                     */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-success-bg">
+                  <Building2 className="size-5 text-feedback-success-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Dados Comerciais</h3>
+                  <p className="text-sm text-text-secondary">Informações de empresa e negócio</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">Empresa</label>
+                  <Input placeholder="Nome da empresa" {...form.register("empresa")} />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">Valor Estimado</label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <span className="text-text-secondary text-sm">R$</span>
+                    </div>
+                    <Input className="pl-10" placeholder="0,00" {...form.register("valor")} />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">
+                    Origem <span className="text-action-danger ml-0.5">*</span>
+                  </label>
+                  <Select options={["Selecione...", "Site", "Indicação", "WhatsApp", "Evento"]} {...form.register("origem")} />
+                </div>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM CARD SECTION 3 — Observações                           */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-accent-bg">
+                  <FileText className="size-5 text-feedback-accent-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Observações</h3>
+                  <p className="text-sm text-text-secondary">Notas e detalhes adicionais</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-text-primary">Notas</label>
+                <Textarea placeholder="Observações sobre o lead..." rows={4} {...form.register("observacoes")} />
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* ACTIVITY TIMELINE (organism) — EXCLUSIVO DA EDIÇÃO          */}
+            {/* catalog/organisms/activity-timeline.yaml                     */}
+            {/* (DIFERENÇA vs Create — seção read-only com histórico)        */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              {/* Form Card Header (molecule, variante warning) */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-warning-bg">
+                  <History className="size-5 text-feedback-warning-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Histórico de Atividades</h3>
+                  <p className="text-sm text-text-secondary">Registro de interações com este lead</p>
+                </div>
+              </div>
+
+              {/* Timeline vertical */}
+              <div className="relative">
+                {/* Linha vertical conectora */}
+                <div className="absolute left-[15px] top-2 bottom-2 w-px bg-border" />
+
+                <div className="flex flex-col gap-6">
+                  {/* Activity Item (molecule, variante info) — catalog/molecules/activity-item.yaml */}
+                  <div className="flex gap-4 relative">
+                    <div className="flex-shrink-0 size-8 rounded-full bg-feedback-info-bg border-2 border-surface-raised flex items-center justify-center z-10">
+                      <Mail className="size-3.5 text-feedback-info-fg" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-medium text-text-primary">Email de proposta enviado</p>
+                        <span className="text-xs text-text-muted whitespace-nowrap">11/04/2026</span>
+                      </div>
+                      <p className="text-sm text-text-secondary mt-0.5">Proposta comercial plano Enterprise enviada para aprovação.</p>
+                      <p className="text-xs text-text-muted mt-1">por João Silva</p>
+                    </div>
+                  </div>
+
+                  {/* Activity Item (molecule, variante success) */}
+                  <div className="flex gap-4 relative">
+                    <div className="flex-shrink-0 size-8 rounded-full bg-feedback-success-bg border-2 border-surface-raised flex items-center justify-center z-10">
+                      <Phone className="size-3.5 text-feedback-success-fg" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-medium text-text-primary">Ligação realizada</p>
+                        <span className="text-xs text-text-muted whitespace-nowrap">05/04/2026</span>
+                      </div>
+                      <p className="text-sm text-text-secondary mt-0.5">Apresentação do produto. Cliente demonstrou interesse no módulo de relatórios.</p>
+                      <p className="text-xs text-text-muted mt-1">por João Silva</p>
+                    </div>
+                  </div>
+
+                  {/* Activity Item (molecule, variante accent) */}
+                  <div className="flex gap-4 relative">
+                    <div className="flex-shrink-0 size-8 rounded-full bg-feedback-accent-bg border-2 border-surface-raised flex items-center justify-center z-10">
+                      <UserPlus className="size-3.5 text-feedback-accent-fg" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-medium text-text-primary">Lead cadastrado</p>
+                        <span className="text-xs text-text-muted whitespace-nowrap">28/03/2026</span>
+                      </div>
+                      <p className="text-sm text-text-secondary mt-0.5">Captado via formulário do site — campanha Q1.</p>
+                      <p className="text-xs text-text-muted mt-1">por Sistema</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM ACTION BAR (organism, variante edit)                    */}
+            {/* catalog/organisms/form-action-bar.yaml                       */}
+            {/* (DIFERENÇA vs Create — layout split com Delete à esquerda)   */}
+            {/* =========================================================== */}
+            <div className="flex items-center justify-between pt-2">
+              {/* Delete à esquerda — abre Dialog de confirmação */}
+              <DialogPrimitive.Root open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <DialogPrimitive.Trigger asChild>
+                  <Button variant="danger" type="button"><Trash2 className="size-4" /> Excluir Lead</Button>
+                </DialogPrimitive.Trigger>
+
+                {/* ======================================================= */}
+                {/* DIALOG (organism, variante confirm-delete)               */}
+                {/* catalog/organisms/dialog.yaml                            */}
+                {/* ======================================================= */}
+                <DialogPrimitive.Portal>
+                  <DialogPrimitive.Overlay className="fixed inset-0 z-modal bg-surface-inverse/60 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
+                  <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-modal -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-xl border border-border bg-surface-overlay p-6 shadow-xl text-text-primary data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 duration-normal ease-standard">
+                    <div className="flex flex-col gap-1.5 mb-4">
+                      <DialogPrimitive.Title className="text-lg font-semibold text-text-primary">
+                        Confirmar exclusão
+                      </DialogPrimitive.Title>
+                      <DialogPrimitive.Description className="text-sm text-text-secondary">
+                        Esta ação não pode ser desfeita. O lead &quot;Maria Silva&quot; será removido permanentemente do sistema.
+                      </DialogPrimitive.Description>
+                    </div>
+                    <div className="flex justify-end gap-3 mt-6">
+                      <DialogPrimitive.Close asChild>
+                        <Button variant="secondary">Cancelar</Button>
+                      </DialogPrimitive.Close>
+                      <Button variant="danger" onClick={onDelete}>Excluir</Button>
+                    </div>
+                    <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm p-1 text-text-muted hover:text-text-primary transition-colors duration-fast">
+                      <X className="size-4" />
+                    </DialogPrimitive.Close>
+                  </DialogPrimitive.Content>
+                </DialogPrimitive.Portal>
+              </DialogPrimitive.Root>
+
+              {/* Cancel/Save à direita */}
+              <div className="flex items-center gap-3">
+                <Button variant="secondary" type="button" href="/leads">Cancelar</Button>
+                <Button variant="primary" type="submit"><Check className="size-4" /> Salvar Alterações</Button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </main>
+    </div>
+  );
+}

@@ -1,0 +1,43 @@
+name: Dashboard Greeting
+level: organism
+description: Seção de saudação do dashboard com título personalizado, data e grupo de quick action buttons.
+used_in:
+  - dashboard
+
+children:
+  - quick-action-button
+
+tokens_used:
+  - text-text-primary
+  - text-text-secondary
+  - text-action-ghost-fg
+
+variants:
+  - name: default
+    description: Greeting com título, subtítulo e quick actions.
+    code: |
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <h2 className="text-3xl font-bold text-text-primary tracking-tight">
+            {greeting}, {userName}!
+          </h2>
+          <p className="text-text-secondary mt-1">
+            Aqui está o resumo das suas atividades de hoje,{" "}
+            <span className="text-action-ghost-fg font-medium">{formattedDate}</span>.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {quickActions.map(action => (
+            <QuickActionButton key={action.label} icon={action.icon} label={action.label} />
+          ))}
+        </div>
+      </div>
+
+notes: |
+  O greeting muda conforme o horário:
+  - "Bom dia" (6h-12h)
+  - "Boa tarde" (12h-18h)
+  - "Boa noite" (18h-6h)
+
+  Os quick action buttons são renderizados em uma row flex com gap-2.
+  Em mobile, o layout empilha (flex-col) e os botões ficam abaixo do texto.

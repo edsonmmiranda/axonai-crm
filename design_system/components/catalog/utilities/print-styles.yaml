@@ -1,0 +1,30 @@
+name: Print Styles
+level: utility
+description: Estilos @media print para layout otimizado de impressão (A4 landscape).
+used_in:
+  - print
+
+tokens_used: []
+
+variants:
+  - name: default
+    description: Regras de impressão A4 landscape.
+    code: |
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 10mm;
+        }
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .no-print { display: none !important; }
+        thead { display: table-header-group; }
+        tr { break-inside: avoid; }
+      }
+
+notes: |
+  Elementos com classe .no-print são ocultos na impressão (ex. toolbar com botão Voltar/Imprimir).
+  thead com table-header-group repete o header em cada página.
+  tr com break-inside: avoid impede quebra no meio de uma row.

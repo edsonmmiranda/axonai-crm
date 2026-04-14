@@ -1,0 +1,108 @@
+{
+  "$description": "Semantic tokens — dark theme. MUST have the exact same key shape as semantic.light.json. If you add a key here, add it there; if you add a key there, add it here. Missing pairs are a build error.",
+
+  "surface": {
+    "base":    { "$value": "{color.neutral.950}",  "$type": "color" },
+    "raised":  { "$value": "{color.neutral.900}",  "$type": "color" },
+    "sunken":  { "$value": "{color.neutral.1000}", "$type": "color" },
+    "overlay": { "$value": "{color.neutral.800}",  "$type": "color" },
+    "inverse": { "$value": "{color.neutral.50}",   "$type": "color" }
+  },
+
+  "text": {
+    "primary":   { "$value": "{color.neutral.50}",  "$type": "color" },
+    "secondary": { "$value": "{color.neutral.400}", "$type": "color" },
+    "muted":     { "$value": "{color.neutral.500}", "$type": "color" },
+    "inverse":   { "$value": "{color.neutral.900}", "$type": "color" },
+    "link":      { "$value": "{color.blue.400}",    "$type": "color" },
+    "disabled":  { "$value": "{color.neutral.700}", "$type": "color" }
+  },
+
+  "border": {
+    "default": { "$value": "{color.neutral.800}", "$type": "color" },
+    "strong":  { "$value": "{color.neutral.700}", "$type": "color" },
+    "subtle":  { "$value": "{color.neutral.900}", "$type": "color" },
+    "focus":   { "$value": "{color.blue.400}",    "$type": "color" }
+  },
+
+  "action": {
+    "primary": {
+      "bg":        { "$value": "{color.blue.500}",  "$type": "color" },
+      "bg-hover":  { "$value": "{color.blue.400}",  "$type": "color" },
+      "bg-active": { "$value": "{color.blue.600}",  "$type": "color" },
+      "fg":        { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "secondary": {
+      "bg":        { "$value": "{color.neutral.800}", "$type": "color" },
+      "bg-hover":  { "$value": "{color.neutral.700}", "$type": "color" },
+      "bg-active": { "$value": "{color.neutral.600}", "$type": "color" },
+      "fg":        { "$value": "{color.neutral.50}",  "$type": "color" },
+      "border":    { "$value": "{color.neutral.700}", "$type": "color" }
+    },
+    "ghost": {
+      "bg":        { "$value": "transparent",         "$type": "color", "$description": "Intentionally transparent — see light theme for rationale." },
+      "bg-hover":  { "$value": "{color.neutral.800}", "$type": "color" },
+      "bg-active": { "$value": "{color.neutral.700}", "$type": "color" },
+      "fg":        { "$value": "{color.blue.400}",    "$type": "color" }
+    },
+    "danger": {
+      "bg":        { "$value": "{color.red.500}",   "$type": "color" },
+      "bg-hover":  { "$value": "{color.red.600}",   "$type": "color" },
+      "bg-active": { "$value": "{color.red.700}",   "$type": "color" },
+      "fg":        { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "disabled": {
+      "bg": { "$value": "{color.neutral.800}", "$type": "color" },
+      "fg": { "$value": "{color.neutral.600}", "$type": "color" }
+    }
+  },
+
+  "field": {
+    "bg":          { "$value": "{color.neutral.900}",  "$type": "color" },
+    "bg-disabled": { "$value": "{color.neutral.800}",  "$type": "color" },
+    "fg":          { "$value": "{color.neutral.50}",   "$type": "color" },
+    "placeholder": { "$value": "{color.neutral.500}",  "$type": "color" },
+    "border":      { "$value": "{color.neutral.700}",  "$type": "color" },
+    "border-hover":{ "$value": "{color.neutral.600}",  "$type": "color" },
+    "border-focus":{ "$value": "{color.blue.400}",     "$type": "color" },
+    "border-error":{ "$value": "{color.red.500}",      "$type": "color" }
+  },
+
+  "feedback": {
+    "success": {
+      "bg":       { "$value": "{color.green.900}", "$type": "color" },
+      "border":   { "$value": "{color.green.700}", "$type": "color" },
+      "fg":       { "$value": "{color.green.100}", "$type": "color" },
+      "solid-bg": { "$value": "{color.green.500}", "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "warning": {
+      "bg":       { "$value": "{color.amber.900}",   "$type": "color" },
+      "border":   { "$value": "{color.amber.700}",   "$type": "color" },
+      "fg":       { "$value": "{color.amber.100}",   "$type": "color" },
+      "solid-bg": { "$value": "{color.amber.500}",   "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.900}", "$type": "color" }
+    },
+    "danger": {
+      "bg":       { "$value": "{color.red.900}",   "$type": "color" },
+      "border":   { "$value": "{color.red.700}",   "$type": "color" },
+      "fg":       { "$value": "{color.red.100}",   "$type": "color" },
+      "solid-bg": { "$value": "{color.red.500}",   "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "info": {
+      "bg":       { "$value": "{color.blue.900}",  "$type": "color" },
+      "border":   { "$value": "{color.blue.700}",  "$type": "color" },
+      "fg":       { "$value": "{color.blue.100}",  "$type": "color" },
+      "solid-bg": { "$value": "{color.blue.500}",  "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "accent": {
+      "bg":       { "$value": "{color.purple.900}",  "$type": "color" },
+      "border":   { "$value": "{color.purple.700}",  "$type": "color" },
+      "fg":       { "$value": "{color.purple.100}",  "$type": "color" },
+      "solid-bg": { "$value": "{color.purple.500}",  "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}",   "$type": "color" }
+    }
+  }
+}

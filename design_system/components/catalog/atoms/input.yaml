@@ -1,0 +1,42 @@
+name: Input
+level: atom
+description: Campo de texto base. Usa tokens de field para bg, border e estados.
+used_in:
+  - form-create
+  - form-edit
+  - listing
+
+tokens_used:
+  - bg-field
+  - text-field-fg
+  - placeholder:text-field-placeholder
+  - border-field-border
+  - hover:border-field-border-hover
+  - focus-visible:border-field-border-focus
+  - focus-visible:shadow-focus
+  - bg-field-disabled
+  - text-text-disabled
+  - aria-[invalid=true]:border-field-border-error
+
+variants:
+  - name: default
+    description: Input padrão com todos os estados.
+    code: |
+      <input
+        className={cn(
+          "h-10 w-full rounded-md px-3 text-sm",
+          "bg-field text-field-fg placeholder:text-field-placeholder",
+          "border border-field-border hover:border-field-border-hover",
+          "focus-visible:outline-none focus-visible:border-field-border-focus focus-visible:shadow-focus",
+          "disabled:bg-field-disabled disabled:text-text-disabled disabled:cursor-not-allowed",
+          "aria-[invalid=true]:border-field-border-error",
+          "transition-colors duration-fast ease-standard",
+          className
+        )}
+        {...props}
+      />
+
+notes: |
+  Sempre usar aria-invalid para estados de erro (não classes manuais).
+  O focus state usa shadow-focus + border-field-border-focus.
+  Suporta composição com FormField (molecule) para label + erro.

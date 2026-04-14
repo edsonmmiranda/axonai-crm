@@ -1,0 +1,23 @@
+name: Divider
+level: atom
+description: Separador visual entre grupos de conteúdo. Vertical (header) ou horizontal (sidebar/sections).
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+tokens_used:
+  - bg-border
+  - border-border
+
+variants:
+  - name: vertical
+    description: Usado no header entre ações e avatar.
+    code: |
+      <div className="h-8 w-px bg-border mx-2" />
+
+  - name: horizontal
+    description: Section divider na sidebar ou entre blocos.
+    code: |
+      <div className="border-t border-border" />

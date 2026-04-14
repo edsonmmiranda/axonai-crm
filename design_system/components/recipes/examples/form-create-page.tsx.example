@@ -1,0 +1,241 @@
+// =============================================================================
+// EXEMPLO COMPLETO: Form Create Page (Novo Lead)
+// =============================================================================
+// Referência de montagem — mostra como sidebar, header, breadcrumb, form sections
+// e action bar se encaixam em um formulário de criação.
+//
+// Para criar um novo form, substitua:
+//   - Entidade (Leads → Clientes, Produtos, etc.)
+//   - Seções do formulário e seus campos
+//   - Schema Zod de validação
+//   - Cores dos headers de seção
+//
+// NOTA SOBRE COMPONENTES COMPARTILHADOS:
+//   Sidebar e App Header aparecem inline neste exemplo para que ele seja
+//   self-contained. Quando esses componentes já existirem implementados em
+//   src/components/, importe-os em vez de duplicar o código.
+//   Ex: import { Sidebar } from "@/components/layout/sidebar";
+//       import { AppHeader } from "@/components/layout/app-header";
+// =============================================================================
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  User, Building2, DollarSign, FileText, Check, ChevronRight,
+  LayoutDashboard, Users, Kanban, LogOut, Settings, Bell, Menu, Search,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { IconButton } from "@/components/ui/icon-button";
+
+// ---------------------------------------------------------------------------
+// ZOD SCHEMA
+// ---------------------------------------------------------------------------
+const leadSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+  telefone: z.string().optional(),
+  empresa: z.string().optional(),
+  valor: z.number().optional(),
+  origem: z.string().min(1, "Origem é obrigatória"),
+  observacoes: z.string().optional(),
+});
+
+type LeadFormData = z.infer<typeof leadSchema>;
+
+// ---------------------------------------------------------------------------
+// PAGE COMPONENT
+// ---------------------------------------------------------------------------
+export default function LeadCreatePage() {
+  const form = useForm<LeadFormData>({
+    resolver: zodResolver(leadSchema),
+  });
+
+  return (
+    <div className="flex h-screen bg-surface-base">
+
+      {/* ================================================================= */}
+      {/* SIDEBAR (organism) — catalog/organisms/sidebar.yaml               */}
+      {/* Mesmo da listing — copiar e ajustar item ativo                    */}
+      {/* ================================================================= */}
+      <aside className="hidden md:flex flex-col w-64 h-full border-r border-border bg-surface-raised flex-shrink-0 z-30 shadow-sm">
+        {/* ... mesmo conteúdo da listing, com "Leads" ativo */}
+        <div className="p-6 pb-2">{/* Logo Block */}</div>
+        <nav className="flex-1 flex flex-col gap-2 px-4 py-6 overflow-y-auto">
+          {/* Nav Items */}
+        </nav>
+        <div className="p-4 border-t border-border">{/* Logout */}</div>
+      </aside>
+
+      {/* ================================================================= */}
+      {/* MAIN AREA                                                         */}
+      {/* ================================================================= */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+
+        {/* APP HEADER (organism) — catalog/organisms/app-header.yaml */}
+        <header className="h-16 flex items-center justify-between px-6 border-b border-border bg-surface-raised/80 backdrop-blur-md sticky top-0 z-20">
+          <button className="md:hidden text-text-primary mr-4"><Menu className="size-6" /></button>
+          <div className="flex-1 max-w-md hidden sm:flex">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-muted" />
+              <Input placeholder="Buscar..." className="pl-9" />
+            </div>
+          </div>
+          <div className="flex items-center gap-4 ml-4">
+            <IconButton icon={Bell} />
+            <IconButton icon={Settings} />
+          </div>
+        </header>
+
+        {/* =============================================================== */}
+        {/* CONTENT AREA (scrollable)                                       */}
+        {/* =============================================================== */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-4xl mr-auto flex flex-col gap-6 pb-10">
+
+            {/* =========================================================== */}
+            {/* BREADCRUMB (molecule) — catalog/molecules/breadcrumb.yaml    */}
+            {/* =========================================================== */}
+            <nav className="flex items-center gap-2 text-sm text-text-secondary">
+              <a href="/dashboard" className="hover:text-action-ghost-fg transition-colors">Home</a>
+              <ChevronRight className="size-4 text-text-muted" />
+              <a href="/leads" className="hover:text-action-ghost-fg transition-colors">Leads</a>
+              <ChevronRight className="size-4 text-text-muted" />
+              <span className="text-text-primary font-semibold">Novo Lead</span>
+            </nav>
+
+            {/* =========================================================== */}
+            {/* PAGE HEADER — FORM (organism, variante create)               */}
+            {/* catalog/organisms/page-header-form.yaml                      */}
+            {/* =========================================================== */}
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">Novo Lead</h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button variant="secondary" type="button" href="/leads">Cancelar</Button>
+                <Button variant="primary" type="submit"><Check className="size-4" /> Salvar Lead</Button>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM CARD SECTION 1 — Informações Básicas                   */}
+            {/* catalog/organisms/form-card-section.yaml                     */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              {/* Form Card Header (molecule) — catalog/molecules/form-card-header.yaml */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-info-bg">
+                  <User className="size-5 text-feedback-info-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Informações Básicas</h3>
+                  <p className="text-sm text-text-secondary">Dados de contato do lead</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Form Field (molecule) — catalog/molecules/form-field.yaml */}
+                <div className="flex flex-col gap-1.5 md:col-span-2">
+                  <label className="text-sm font-medium text-text-primary">
+                    Nome Completo <span className="text-action-danger ml-0.5">*</span>
+                  </label>
+                  <Input placeholder="Nome do lead" {...form.register("nome")} aria-invalid={!!form.formState.errors.nome} />
+                  {form.formState.errors.nome && (
+                    <p className="text-xs text-feedback-danger-fg">{form.formState.errors.nome.message}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">
+                    Email Corporativo <span className="text-action-danger ml-0.5">*</span>
+                  </label>
+                  <Input type="email" placeholder="email@empresa.com" {...form.register("email")} />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">Telefone / WhatsApp</label>
+                  <Input placeholder="(00) 00000-0000" {...form.register("telefone")} />
+                </div>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM CARD SECTION 2 — Dados Comerciais                      */}
+            {/* catalog/organisms/form-card-section.yaml                     */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-success-bg">
+                  <Building2 className="size-5 text-feedback-success-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Dados Comerciais</h3>
+                  <p className="text-sm text-text-secondary">Informações de empresa e negócio</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">Empresa</label>
+                  <Input placeholder="Nome da empresa" {...form.register("empresa")} />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">Valor Estimado</label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <span className="text-text-secondary text-sm">R$</span>
+                    </div>
+                    <Input className="pl-10" placeholder="0,00" {...form.register("valor")} />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-text-primary">
+                    Origem <span className="text-action-danger ml-0.5">*</span>
+                  </label>
+                  <Select options={["Selecione...", "Site", "Indicação", "WhatsApp", "Evento"]} {...form.register("origem")} />
+                </div>
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM CARD SECTION 3 — Observações                           */}
+            {/* =========================================================== */}
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-feedback-accent-bg">
+                  <FileText className="size-5 text-feedback-accent-fg" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary">Observações</h3>
+                  <p className="text-sm text-text-secondary">Notas e detalhes adicionais</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-text-primary">Notas</label>
+                <Textarea placeholder="Observações sobre o lead..." rows={4} {...form.register("observacoes")} />
+              </div>
+            </div>
+
+            {/* =========================================================== */}
+            {/* FORM ACTION BAR (organism, variante create)                  */}
+            {/* catalog/organisms/form-action-bar.yaml                       */}
+            {/* =========================================================== */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button variant="secondary" type="button" href="/leads">Cancelar</Button>
+              <Button variant="primary" type="submit"><Check className="size-4" /> Salvar Lead</Button>
+            </div>
+
+          </form>
+        </div>
+      </main>
+    </div>
+  );
+}

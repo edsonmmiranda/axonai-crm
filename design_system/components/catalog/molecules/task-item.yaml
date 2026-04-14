@@ -1,0 +1,41 @@
+name: Task Item
+level: molecule
+description: Item de tarefa com dot de prioridade colorido, título truncado e timestamp com ícone de relógio.
+used_in:
+  - dashboard
+
+children: []
+
+tokens_used:
+  - bg-feedback-warning-solid-bg
+  - bg-feedback-danger-solid-bg
+  - bg-feedback-info-solid-bg
+  - bg-feedback-success-solid-bg
+  - text-text-primary
+  - text-text-secondary
+  - hover:bg-surface-sunken
+
+variants:
+  - name: default
+    description: Item com dot de prioridade, título e horário.
+    code: |
+      <div className="p-4 hover:bg-surface-sunken transition-colors cursor-pointer flex gap-3 items-start">
+        <div className={cn("mt-1 size-2 rounded-full shadow-sm", priorityColorClass)} />
+        <div className="flex-1">
+          <p className="text-sm font-medium text-text-primary line-clamp-1">{title}</p>
+          <p className="text-xs text-text-secondary mt-0.5 flex items-center gap-1">
+            <Clock className="size-3" />
+            {time}
+          </p>
+        </div>
+      </div>
+
+notes: |
+  Cores do dot de prioridade:
+  - bg-feedback-danger-solid-bg   (urgente)
+  - bg-feedback-warning-solid-bg  (atenção)
+  - bg-feedback-info-solid-bg     (normal)
+  - bg-feedback-success-solid-bg  (concluída)
+
+  O título usa line-clamp-1 para truncar se for longo demais.
+  Items são separados por divide-y divide-border-subtle no container pai (Task List).

@@ -1,0 +1,22 @@
+name: Sort Pill
+level: molecule
+description: Pill interativa que mostra uma regra de ordenação ativa. Clicável para alternar direção, com botão X para remover.
+used_in:
+  - listing
+
+tokens_used:
+  - bg-action-primary/10
+  - text-action-primary
+  - border-action-primary/20
+  - hover:text-feedback-danger-fg
+
+variants:
+  - name: default
+    description: Pill com ícone, label, direção e botão remover.
+    code: |
+      <span className="inline-flex items-center gap-1.5 bg-action-primary/10 text-action-primary px-2.5 py-1 rounded-full text-xs font-semibold border border-action-primary/20">
+        {icon} {label} {directionIcon}
+        <button className="hover:text-feedback-danger-fg">
+          <X className="size-3" />
+        </button>
+      </span>

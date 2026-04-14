@@ -1,0 +1,18 @@
+name: Print Summary Stat
+level: molecule
+description: Bloco de resumo usado no rodapé do relatório de impressão.
+used_in:
+  - print
+
+tokens_used:
+  - text-text-secondary
+  - text-text-primary
+
+variants:
+  - name: default
+    description: Label uppercase + valor bold.
+    code: |
+      <div>
+        <p className="text-text-secondary text-xs font-medium uppercase tracking-wide">{label}</p>
+        <p className="text-text-primary text-lg font-bold">{value}</p>
+      </div>

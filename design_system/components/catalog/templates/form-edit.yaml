@@ -1,0 +1,38 @@
+name: Form Page (Edit)
+level: template
+description: Template de formulário de edição. Mesmo layout do Create, com status badge, metadados, activity timeline e botão delete.
+used_in:
+  - form-edit
+
+organisms:
+  - name: Sidebar
+    file: catalog/organisms/sidebar.yaml
+  - name: App Header
+    file: catalog/organisms/app-header.yaml
+  - name: Page Header — Form
+    file: catalog/organisms/page-header-form.yaml
+  - name: Form Card Section
+    file: catalog/organisms/form-card-section.yaml
+  - name: Activity Timeline
+    file: catalog/organisms/activity-timeline.yaml
+  - name: Form Action Bar
+    file: catalog/organisms/form-action-bar.yaml
+
+molecules:
+  - name: Breadcrumb
+    file: catalog/molecules/breadcrumb.yaml
+  - name: Edit Page Metadata
+    file: catalog/molecules/edit-page-metadata.yaml
+
+layout: |
+  Mesmo do Form Create, com adições:
+  - Status badge no título (Page Header — Form variante edit)
+  - Metadados de datas (criação + última atualização)
+  - Form Card Section adicional: Activity Timeline (read-only)
+  - Form Action Bar com layout split: Delete à esquerda, Cancel/Save à direita
+  - Campos pré-preenchidos com dados existentes
+
+container: |
+  Mesmo do Form Create: max-w-4xl mr-auto flex flex-col gap-6 pb-10
+
+prototype: telas_prontas/leads_editar.html

@@ -1,0 +1,50 @@
+name: Radio
+level: atom
+description: Radio button estilizado com tokens semânticos. Usa input nativo com estilização via peer.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - border-field-border
+  - bg-action-primary
+  - bg-field
+  - focus-visible:shadow-focus
+
+variants:
+  - name: default
+    description: Radio com label.
+    code: |
+      <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+        <div className="relative flex items-center justify-center">
+          <input
+            type="radio"
+            className={cn(
+              "peer size-4 shrink-0 appearance-none rounded-full border border-field-border bg-field",
+              "checked:border-action-primary",
+              "focus-visible:outline-none focus-visible:shadow-focus",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              "transition-colors duration-fast ease-standard"
+            )}
+            name={name}
+            value={value}
+            {...props}
+          />
+          <div className="pointer-events-none absolute size-2 rounded-full bg-action-primary opacity-0 peer-checked:opacity-100" />
+        </div>
+        <span className="text-sm text-text-primary">{label}</span>
+      </label>
+
+  - name: group
+    description: Grupo de radio buttons vertical.
+    code: |
+      <fieldset className="flex flex-col gap-3">
+        <legend className="text-sm font-medium text-text-primary mb-1">{legend}</legend>
+        <Radio name="plan" value="basic" label="Básico" />
+        <Radio name="plan" value="pro" label="Profissional" />
+        <Radio name="plan" value="enterprise" label="Enterprise" />
+      </fieldset>
+
+notes: |
+  Para radio groups complexos (cards selecionáveis, layouts customizados),
+  considerar Radix Radio Group (@radix-ui/react-radio-group).

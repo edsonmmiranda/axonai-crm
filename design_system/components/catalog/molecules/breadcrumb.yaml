@@ -1,0 +1,24 @@
+name: Breadcrumb
+level: molecule
+description: Navegação hierárquica. Último item é primário e bold, anteriores são links com hover.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - text-text-secondary
+  - text-text-primary
+  - text-text-muted
+  - hover:text-action-ghost-fg
+
+variants:
+  - name: default
+    description: Cadeia de links com separadores chevron.
+    code: |
+      <nav className="flex items-center gap-2 text-sm text-text-secondary">
+        <a href="dashboard.html" className="hover:text-action-ghost-fg transition-colors">Home</a>
+        <ChevronRight className="size-4 text-text-muted" />
+        <a href="leads.html" className="hover:text-action-ghost-fg transition-colors">Leads</a>
+        <ChevronRight className="size-4 text-text-muted" />
+        <span className="text-text-primary font-semibold">Novo Lead</span>
+      </nav>

@@ -1,0 +1,38 @@
+name: Kanban Board
+level: template
+description: Template de página de pipeline kanban com colunas horizontais e drag & drop.
+used_in:
+  - kanban
+
+organisms:
+  - name: Sidebar
+    file: catalog/organisms/sidebar.yaml
+  - name: Pipeline Header
+    file: catalog/organisms/pipeline-header.yaml
+  - name: Kanban Column
+    file: catalog/organisms/kanban-column.yaml
+  - name: Kanban Card
+    file: catalog/organisms/kanban-card.yaml
+
+utilities:
+  - name: Custom Scrollbar
+    file: catalog/utilities/custom-scrollbar.yaml
+  - name: Drag & Drop
+    file: catalog/utilities/drag-drop.yaml
+
+layout: |
+  ┌────────┬──────────────────────────────────────────┐
+  │        │  Pipeline Header (organism)              │
+  │Sidebar ├──────────────────────────────────────────┤
+  │(organ.)│  Kanban Board                            │
+  │        │  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ [+]   │
+  │        │  │Col 1│ │Col 2│ │Col 3│ │Col 4│        │
+  │        │  └─────┘ └─────┘ └─────┘ └─────┘        │
+  └────────┴──────────────────────────────────────────┘
+
+container: |
+  Board area: flex-1 overflow-x-auto overflow-y-hidden kanban-scroll bg-surface-base p-6
+  Inner flex: flex h-full gap-5 min-w-max
+  Cada coluna: largura fixa w-kanban-col (ver exceções de layout)
+
+prototype: telas_prontas/pipeline.html

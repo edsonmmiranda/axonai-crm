@@ -1,0 +1,60 @@
+name: Dashboard
+level: template
+description: Página de dashboard com greeting, KPIs, tabela de leads recentes, cards CTA/metas, pipeline summary e task list.
+
+layout: |
+  Sidebar + Main(App Header + Scrollable Content(
+    Dashboard Greeting
+    + Stat Cards Grid (4 KPIs)
+    + Grid 2/3 + 1/3(
+        Left: Data Table (leads recentes) + Grid 1/2 + 1/2(Gradient CTA Card + Goal Progress Card)
+        Right: Pipeline Summary Card + Task List
+      )
+  ))
+  Container: flex h-screen bg-surface-base → content max-w-[1400px] mr-auto flex flex-col gap-6 pb-10
+
+organisms:
+  - path: organisms/sidebar.yaml
+    notes: Reusado de outros templates, item "Dashboard" ativo
+
+  - path: organisms/app-header.yaml
+    notes: Mesma estrutura das outras páginas
+
+  - path: organisms/dashboard-greeting.yaml
+    notes: Greeting personalizado + quick action buttons
+
+  - path: organisms/stat-cards-grid.yaml
+    notes: Grid de 4 stat cards com KPIs do dia
+
+  - path: organisms/data-table.yaml
+    notes: Tabela compacta de "Leads Recentes" com header link "Ver todos"
+
+  - path: organisms/pipeline-summary-card.yaml
+    notes: Resumo visual do pipeline com barras por estágio
+
+  - path: organisms/task-list.yaml
+    notes: Lista de próximas tarefas com prioridade por cor
+
+molecules:
+  - path: molecules/gradient-cta-card.yaml
+    notes: Card CTA com gradient para campanha/meta destaque
+
+  - path: molecules/goal-progress-card.yaml
+    notes: Card de meta do mês com barra de progresso
+
+  - path: molecules/stat-card.yaml
+    notes: Usado dentro do stat-cards-grid
+
+  - path: molecules/pipeline-stage-bar.yaml
+    notes: Usado dentro do pipeline-summary-card
+
+  - path: molecules/task-item.yaml
+    notes: Usado dentro do task-list
+
+layout_exceptions:
+  - value: "max-w-[1400px]"
+    justification: Container máximo para dashboard wide. Mesmo do listing.
+  - value: "size-[72px]"
+    justification: Quick action buttons — tamanho fixo contextual.
+  - value: "min-h-[160px]"
+    justification: Gradient CTA card — altura mínima para proporção.

@@ -1,0 +1,60 @@
+name: Toast
+level: molecule
+description: Notificação temporária. Usa Radix Toast para acessibilidade e auto-dismiss.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+
+tokens_used:
+  - bg-surface-raised
+  - border-border
+  - text-text-primary
+  - text-text-secondary
+  - shadow-lg
+  - bg-feedback-success-fg
+  - bg-feedback-danger-fg
+
+variants:
+  - name: default
+    description: Toast com título e descrição.
+    code: |
+      import * as ToastPrimitive from "@radix-ui/react-toast";
+
+      export const Toast = forwardRef<
+        React.ElementRef<typeof ToastPrimitive.Root>,
+        React.ComponentPropsWithoutRef<typeof ToastPrimitive.Root> & {
+          title?: string;
+          description?: string;
+          intent?: "success" | "danger" | "info";
+        }
+      >(({ className, title, description, intent = "info", ...props }, ref) => (
+        <ToastPrimitive.Root
+          ref={ref}
+          className={cn(
+            "z-toast pointer-events-auto relative flex w-full items-center gap-3 overflow-hidden rounded-lg border border-border bg-surface-raised p-4 shadow-lg",
+            "data-[state=open]:animate-in data-[state=open]:slide-in-from-top-full",
+            "data-[state=closed]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full",
+            "transition-all duration-normal ease-standard",
+            className
+          )}
+          {...props}
+        >
+          <div className="flex-1">
+            {title && <ToastPrimitive.Title className="text-sm font-semibold text-text-primary">{title}</ToastPrimitive.Title>}
+            {description && <ToastPrimitive.Description className="text-sm text-text-secondary mt-1">{description}</ToastPrimitive.Description>}
+          </div>
+          <ToastPrimitive.Close className="rounded-md p-1 text-text-muted hover:text-text-primary transition-colors duration-fast">
+            <X className="size-4" />
+          </ToastPrimitive.Close>
+        </ToastPrimitive.Root>
+      ));
+
+      export const ToastViewport = () => (
+        <ToastPrimitive.Viewport className="fixed top-0 right-0 z-toast flex max-h-screen w-full flex-col-reverse p-4 sm:flex-col sm:max-w-[420px]" />
+      );
+
+notes: |
+  SEMPRE usar Radix Toast — não reimplementar com setTimeout + portal manual.
+  O ToastViewport deve ser montado uma vez no layout root.
+  Usar z-toast para ficar acima de tudo.

@@ -1,0 +1,43 @@
+name: Listing Page
+level: template
+description: Template de página de listagem com sidebar, header, stat cards, filtros, tabela e paginação.
+used_in:
+  - listing
+
+organisms:
+  - name: Sidebar
+    file: catalog/organisms/sidebar.yaml
+  - name: App Header
+    file: catalog/organisms/app-header.yaml
+  - name: Page Header — Listing
+    file: catalog/organisms/page-header-listing.yaml
+  - name: Stat Cards Grid
+    file: catalog/organisms/stat-cards-grid.yaml
+  - name: Filter Bar
+    file: catalog/organisms/filter-bar.yaml
+  - name: Sort Control
+    file: catalog/organisms/sort-control.yaml
+  - name: Data Table
+    file: catalog/organisms/data-table.yaml
+  - name: Pagination
+    file: catalog/organisms/pagination.yaml
+
+layout: |
+  ┌────────┬──────────────────────────────────────────┐
+  │        │  App Header (organism)                   │
+  │Sidebar ├──────────────────────────────────────────┤
+  │(organ.)│  Page Header — Listing (organism)        │
+  │        │  Stat Cards Grid (organism)              │
+  │        │  Filter Bar (organism)                   │
+  │        │  Sort Control (organism)                 │
+  │        │  Data Table (organism)                   │
+  │        │  Pagination (organism)                   │
+  └────────┴──────────────────────────────────────────┘
+
+container: |
+  Wrapper: flex h-screen bg-surface-base
+  Sidebar: w-64 fixed left
+  Main: flex-1 flex flex-col overflow-hidden
+  Content area: flex-1 overflow-y-auto p-6 → max-w-7xl mr-auto flex flex-col gap-6
+
+prototype: telas_prontas/leads.html

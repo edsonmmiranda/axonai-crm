@@ -1,0 +1,38 @@
+name: Form Card Section
+level: organism
+description: Card com header iconizado + grid de form fields. Usado em telas de criar/editar.
+used_in:
+  - form-create
+  - form-edit
+
+children:
+  - form-card-header
+
+tokens_used:
+  - border-border
+  - bg-surface-raised
+
+variants:
+  - name: default
+    description: Card com header colorido e grid de campos.
+    code: |
+      <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+        <FormCardHeader icon={User} color="info" title="Informações Básicas" description="Dados de contato..." />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <FormField label="Nome Completo" required fullWidth />
+          <FormField label="Email Corporativo" required />
+          <FormField label="Telefone / WhatsApp" />
+          {/* ... */}
+        </div>
+      </div>
+
+  - name: with-currency-prefix
+    description: Campo com prefixo monetário (R$).
+    code: |
+      {/* Dentro do grid de campos */}
+      <div className="relative">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <span className="text-text-secondary text-sm">R$</span>
+        </div>
+        <input className="... pl-10" />
+      </div>

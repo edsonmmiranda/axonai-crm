@@ -1,0 +1,48 @@
+name: Tooltip
+level: molecule
+description: Tooltip construído sobre Radix Tooltip. Fundo inverse para contraste máximo.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+tokens_used:
+  - bg-surface-inverse
+  - text-text-inverse
+  - shadow-md
+
+variants:
+  - name: default
+    description: Tooltip com texto simples.
+    code: |
+      import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+
+      export const TooltipProvider = TooltipPrimitive.Provider;
+
+      export const Tooltip = ({ children, content, side = "top", ...props }) => (
+        <TooltipPrimitive.Root delayDuration={300}>
+          <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+          <TooltipPrimitive.Portal>
+            <TooltipPrimitive.Content
+              side={side}
+              sideOffset={4}
+              className={cn(
+                "z-popover rounded-md px-3 py-1.5 text-xs font-medium",
+                "bg-surface-inverse text-text-inverse shadow-md",
+                "animate-in fade-in-0 zoom-in-95",
+                "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+              )}
+              {...props}
+            >
+              {content}
+              <TooltipPrimitive.Arrow className="fill-surface-inverse" />
+            </TooltipPrimitive.Content>
+          </TooltipPrimitive.Portal>
+        </TooltipPrimitive.Root>
+      );
+
+notes: |
+  SEMPRE usar Radix Tooltip — não reimplementar com title attr ou CSS-only.
+  O TooltipProvider deve envolver o app (ou a região relevante) para coordenar delays.
+  Usar z-popover para empilhamento correto.

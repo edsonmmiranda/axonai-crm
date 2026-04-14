@@ -1,0 +1,108 @@
+{
+  "$description": "Semantic tokens — light theme. These are the PUBLIC API of the design system; components reference these by name and NEVER reference primitives directly. Every token here also exists in semantic.dark.json — missing a pair is a build error.",
+
+  "surface": {
+    "base":    { "$value": "{color.neutral.50}",  "$type": "color", "$description": "Page background" },
+    "raised":  { "$value": "{color.neutral.0}",   "$type": "color", "$description": "Cards, panels — one elevation step above base" },
+    "sunken":  { "$value": "{color.neutral.100}", "$type": "color", "$description": "Inset areas: input fields, code blocks, sunken groups" },
+    "overlay": { "$value": "{color.neutral.0}",   "$type": "color", "$description": "Dialogs, popovers, floating menus" },
+    "inverse": { "$value": "{color.neutral.900}", "$type": "color", "$description": "Tooltips, dark callouts within a light page" }
+  },
+
+  "text": {
+    "primary":   { "$value": "{color.neutral.900}", "$type": "color", "$description": "Default body text, headings" },
+    "secondary": { "$value": "{color.neutral.500}", "$type": "color", "$description": "Metadata, captions, helper text" },
+    "muted":     { "$value": "{color.neutral.400}", "$type": "color", "$description": "Placeholder text, disabled labels" },
+    "inverse":   { "$value": "{color.neutral.0}",   "$type": "color", "$description": "Text on dark or primary-colored backgrounds" },
+    "link":      { "$value": "{color.blue.600}",    "$type": "color", "$description": "Inline links in body text" },
+    "disabled":  { "$value": "{color.neutral.300}", "$type": "color" }
+  },
+
+  "border": {
+    "default": { "$value": "{color.neutral.200}", "$type": "color", "$description": "Cards, inputs, dividers" },
+    "strong":  { "$value": "{color.neutral.300}", "$type": "color", "$description": "Emphasized borders, hover states" },
+    "subtle":  { "$value": "{color.neutral.100}", "$type": "color", "$description": "Low-contrast separators" },
+    "focus":   { "$value": "{color.blue.500}",    "$type": "color", "$description": "Focus ring on interactive elements" }
+  },
+
+  "action": {
+    "primary": {
+      "bg":        { "$value": "{color.blue.500}",  "$type": "color" },
+      "bg-hover":  { "$value": "{color.blue.600}",  "$type": "color" },
+      "bg-active": { "$value": "{color.blue.700}",  "$type": "color" },
+      "fg":        { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "secondary": {
+      "bg":        { "$value": "{color.neutral.0}",   "$type": "color" },
+      "bg-hover":  { "$value": "{color.neutral.50}",  "$type": "color" },
+      "bg-active": { "$value": "{color.neutral.100}", "$type": "color" },
+      "fg":        { "$value": "{color.neutral.900}", "$type": "color" },
+      "border":    { "$value": "{color.neutral.200}", "$type": "color" }
+    },
+    "ghost": {
+      "bg":        { "$value": "transparent",         "$type": "color", "$description": "Intentionally transparent — ghost buttons have no resting background. Use Tailwind's native bg-transparent; this token exists for parity only and does NOT generate a Tailwind color class (rgb() wrapper is incompatible with the keyword 'transparent')." },
+      "bg-hover":  { "$value": "{color.neutral.100}", "$type": "color" },
+      "bg-active": { "$value": "{color.neutral.200}", "$type": "color" },
+      "fg":        { "$value": "{color.blue.600}",    "$type": "color" }
+    },
+    "danger": {
+      "bg":        { "$value": "{color.red.500}",   "$type": "color" },
+      "bg-hover":  { "$value": "{color.red.600}",   "$type": "color" },
+      "bg-active": { "$value": "{color.red.700}",   "$type": "color" },
+      "fg":        { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "disabled": {
+      "bg": { "$value": "{color.neutral.100}", "$type": "color" },
+      "fg": { "$value": "{color.neutral.400}", "$type": "color" }
+    }
+  },
+
+  "field": {
+    "bg":          { "$value": "{color.neutral.50}",  "$type": "color", "$description": "Input background — slightly sunken for affordance" },
+    "bg-disabled": { "$value": "{color.neutral.100}", "$type": "color" },
+    "fg":          { "$value": "{color.neutral.900}", "$type": "color" },
+    "placeholder": { "$value": "{color.neutral.400}", "$type": "color" },
+    "border":      { "$value": "{color.neutral.200}", "$type": "color" },
+    "border-hover":{ "$value": "{color.neutral.300}", "$type": "color" },
+    "border-focus":{ "$value": "{color.blue.500}",    "$type": "color" },
+    "border-error":{ "$value": "{color.red.500}",     "$type": "color" }
+  },
+
+  "feedback": {
+    "success": {
+      "bg":       { "$value": "{color.green.50}",  "$type": "color" },
+      "border":   { "$value": "{color.green.200}", "$type": "color" },
+      "fg":       { "$value": "{color.green.700}", "$type": "color" },
+      "solid-bg": { "$value": "{color.green.500}", "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "warning": {
+      "bg":       { "$value": "{color.amber.50}",    "$type": "color" },
+      "border":   { "$value": "{color.amber.200}",   "$type": "color" },
+      "fg":       { "$value": "{color.amber.700}",   "$type": "color" },
+      "solid-bg": { "$value": "{color.amber.500}",   "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.900}", "$type": "color" }
+    },
+    "danger": {
+      "bg":       { "$value": "{color.red.50}",    "$type": "color" },
+      "border":   { "$value": "{color.red.200}",   "$type": "color" },
+      "fg":       { "$value": "{color.red.700}",   "$type": "color" },
+      "solid-bg": { "$value": "{color.red.500}",   "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "info": {
+      "bg":       { "$value": "{color.blue.50}",   "$type": "color" },
+      "border":   { "$value": "{color.blue.200}",  "$type": "color" },
+      "fg":       { "$value": "{color.blue.700}",  "$type": "color" },
+      "solid-bg": { "$value": "{color.blue.500}",  "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}", "$type": "color" }
+    },
+    "accent": {
+      "bg":       { "$value": "{color.purple.50}",   "$type": "color", "$description": "Accent feedback — pipeline stages, categorical emphasis" },
+      "border":   { "$value": "{color.purple.200}",  "$type": "color" },
+      "fg":       { "$value": "{color.purple.700}",  "$type": "color" },
+      "solid-bg": { "$value": "{color.purple.500}",  "$type": "color" },
+      "solid-fg": { "$value": "{color.neutral.0}",   "$type": "color" }
+    }
+  }
+}

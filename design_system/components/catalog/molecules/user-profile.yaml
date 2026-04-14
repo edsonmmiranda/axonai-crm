@@ -1,0 +1,33 @@
+name: User Profile
+level: molecule
+description: Avatar com iniciais + nome + cargo. Usado no header direito.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+children:
+  - avatar-initials
+
+tokens_used:
+  - text-text-primary
+  - text-text-secondary
+  - bg-action-primary
+  - text-action-primary-fg
+  - hover:text-action-ghost-fg
+  - hover:border-action-primary
+
+variants:
+  - name: default
+    description: Avatar + nome + cargo com hover group.
+    code: |
+      <div className="flex items-center gap-3 cursor-pointer group">
+        <div className="text-right hidden sm:block">
+          <p className="text-sm font-medium text-text-primary group-hover:text-action-ghost-fg transition-colors">{name}</p>
+          <p className="text-xs text-text-secondary">{role}</p>
+        </div>
+        <div className="size-9 rounded-full bg-action-primary flex items-center justify-center text-action-primary-fg font-bold text-sm border-2 border-transparent group-hover:border-action-primary transition-all shadow-sm">
+          {initials}
+        </div>
+      </div>

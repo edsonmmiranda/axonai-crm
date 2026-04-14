@@ -1,0 +1,308 @@
+# Índice master de componentes do Design System
+# Leia este arquivo para saber o que existe e onde encontrar.
+# Cada entrada aponta para o YAML com code pattern, tokens e variantes.
+
+atoms:
+  - file: atoms/button.yaml
+    name: Button
+    description: Botão com variantes via cva (primary, secondary, ghost, danger)
+
+  - file: atoms/input.yaml
+    name: Input
+    description: Campo de texto base com estados de field
+
+  - file: atoms/select.yaml
+    name: Select
+    description: Campo select nativo estilizado
+
+  - file: atoms/textarea.yaml
+    name: Textarea
+    description: Área de texto multi-linha
+
+  - file: atoms/badge.yaml
+    name: Badge
+    description: Badge com variantes de intent (neutral, success, warning, danger, info)
+
+  - file: atoms/checkbox.yaml
+    name: Checkbox
+    description: Checkbox estilizado com peer CSS
+
+  - file: atoms/radio.yaml
+    name: Radio
+    description: Radio button estilizado com peer CSS
+
+  - file: atoms/switch.yaml
+    name: Switch
+    description: Toggle switch (Radix)
+
+  - file: atoms/icon-button.yaml
+    name: Icon Button
+    description: Botão circular com ícone, sem label
+
+  - file: atoms/notification-dot.yaml
+    name: Notification Dot
+    description: Indicador de notificação pendente
+
+  - file: atoms/required-marker.yaml
+    name: Required Marker
+    description: Asterisco de campo obrigatório
+
+  - file: atoms/divider.yaml
+    name: Divider
+    description: Separador visual (vertical/horizontal)
+
+  - file: atoms/section-label.yaml
+    name: Section Label
+    description: Título de seção em navegação
+
+  - file: atoms/trend-badge.yaml
+    name: Trend Badge
+    description: Indicador de tendência (up/down)
+
+  - file: atoms/timestamp-chip.yaml
+    name: Timestamp Chip
+    description: Label temporal compacto
+
+  - file: atoms/origin-tag.yaml
+    name: Origin Tag
+    description: Tag de origem do lead com ícone
+
+  - file: atoms/avatar-initials.yaml
+    name: Avatar Initials
+    description: Avatar circular com iniciais
+
+  - file: atoms/progress-bar.yaml
+    name: Progress Bar
+    description: Barra de progresso horizontal com track e fill colorido
+
+  - file: atoms/quick-action-button.yaml
+    name: Quick Action Button
+    description: Botão quadrado com ícone + label vertical (dashboard)
+
+molecules:
+  - file: molecules/form-field.yaml
+    name: Form Field
+    description: Label + input + erro (wrapper padrão para campos)
+
+  - file: molecules/card.yaml
+    name: Card
+    description: Container elevado com header opcional
+
+  - file: molecules/alert.yaml
+    name: Alert
+    description: Mensagem de feedback com ícone e intent
+
+  - file: molecules/tooltip.yaml
+    name: Tooltip
+    description: Tooltip (Radix) com fundo inverse
+
+  - file: molecules/toast.yaml
+    name: Toast
+    description: Notificação temporária (Radix Toast)
+
+  - file: molecules/logo-block.yaml
+    name: Logo Block
+    description: Marca do app (ícone + nome + tagline)
+
+  - file: molecules/nav-item.yaml
+    name: Nav Item
+    description: Item de navegação da sidebar
+
+  - file: molecules/breadcrumb.yaml
+    name: Breadcrumb
+    description: Navegação hierárquica
+
+  - file: molecules/search-field.yaml
+    name: Search Field
+    description: Campo de busca com ícone
+
+  - file: molecules/notification-button.yaml
+    name: Notification Button
+    description: Icon button + notification dot
+
+  - file: molecules/user-profile.yaml
+    name: User Profile
+    description: Avatar + nome + cargo
+
+  - file: molecules/stat-card.yaml
+    name: Stat Card
+    description: Card de KPI com trend badge
+
+  - file: molecules/sort-pill.yaml
+    name: Sort Pill
+    description: Pill de regra de ordenação ativa
+
+  - file: molecules/form-card-header.yaml
+    name: Form Card Header
+    description: Header de seção de formulário (ícone + título)
+
+  - file: molecules/activity-item.yaml
+    name: Activity Item
+    description: Item de timeline com ícone e data
+
+  - file: molecules/edit-page-metadata.yaml
+    name: Edit Page Metadata
+    description: Datas de criação/atualização
+
+  - file: molecules/avatar-group.yaml
+    name: Avatar Group
+    description: Avatares sobrepostos com overflow
+
+  - file: molecules/card-info-bar.yaml
+    name: Card Info Bar
+    description: Barra contextual em kanban card
+
+  - file: molecules/filter-dropdown-button.yaml
+    name: Filter Dropdown Button
+    description: Botão de filtro com chevron
+
+  - file: molecules/print-summary-stat.yaml
+    name: Print Summary Stat
+    description: Bloco de resumo em relatório
+
+  - file: molecules/task-item.yaml
+    name: Task Item
+    description: Item de tarefa com dot de prioridade e timestamp
+
+  - file: molecules/gradient-cta-card.yaml
+    name: Gradient CTA Card
+    description: Card promocional com gradient primary e botão de ação
+
+  - file: molecules/goal-progress-card.yaml
+    name: Goal Progress Card
+    description: Card de meta com barra de progresso e texto auxiliar
+
+  - file: molecules/pipeline-stage-bar.yaml
+    name: Pipeline Stage Bar
+    description: Estágio do pipeline com label, contagem e barra colorida
+
+  - file: molecules/filter-summary.yaml
+    name: Filter Summary
+    description: Resumo inline dos filtros ativos (relatório/impressão)
+
+organisms:
+  - file: organisms/dialog.yaml
+    name: Dialog
+    description: Modal (Radix Dialog) com focus trap e portal
+
+  - file: organisms/dropdown-menu.yaml
+    name: Dropdown Menu
+    description: Menu contextual (Radix DropdownMenu)
+
+  - file: organisms/sidebar.yaml
+    name: Sidebar
+    description: Painel lateral com logo, nav e logout
+
+  - file: organisms/app-header.yaml
+    name: App Header
+    description: Barra superior com search e ações
+
+  - file: organisms/pipeline-header.yaml
+    name: Pipeline Header
+    description: Header do pipeline com filtros
+
+  - file: organisms/page-header-listing.yaml
+    name: Page Header — Listing
+    description: Título + ações de listagem
+
+  - file: organisms/page-header-form.yaml
+    name: Page Header — Form
+    description: Título + breadcrumb + status (edit)
+
+  - file: organisms/stat-cards-grid.yaml
+    name: Stat Cards Grid
+    description: Grid responsiva de 4 stat cards
+
+  - file: organisms/filter-bar.yaml
+    name: Filter Bar
+    description: Search + selects de filtro
+
+  - file: organisms/sort-control.yaml
+    name: Sort Control
+    description: Painel colapsável de ordenação
+
+  - file: organisms/data-table.yaml
+    name: Data Table
+    description: Tabela sortable com rows dinâmicas
+
+  - file: organisms/pagination.yaml
+    name: Pagination
+    description: Paginação com page size selector
+
+  - file: organisms/form-card-section.yaml
+    name: Form Card Section
+    description: Card com header + grid de campos
+
+  - file: organisms/activity-timeline.yaml
+    name: Activity Timeline
+    description: Timeline vertical de atividades
+
+  - file: organisms/form-action-bar.yaml
+    name: Form Action Bar
+    description: Barra de ações (create vs edit)
+
+  - file: organisms/print-report-header.yaml
+    name: Print Report Header
+    description: Header de relatório com logo
+
+  - file: organisms/print-summary-footer.yaml
+    name: Print Summary Footer
+    description: Rodapé com stats de resumo
+
+  - file: organisms/kanban-card.yaml
+    name: Kanban Card
+    description: Card arrastável do pipeline
+
+  - file: organisms/kanban-column.yaml
+    name: Kanban Column
+    description: Coluna de estágio do pipeline
+
+  - file: organisms/task-list.yaml
+    name: Task List
+    description: Painel de tarefas com header, items e footer
+
+  - file: organisms/pipeline-summary-card.yaml
+    name: Pipeline Summary Card
+    description: Resumo compacto do pipeline com barras por estágio
+
+  - file: organisms/dashboard-greeting.yaml
+    name: Dashboard Greeting
+    description: Saudação com quick action buttons
+
+utilities:
+  - file: utilities/custom-scrollbar.yaml
+    name: Custom Scrollbar
+    description: Estilização de scrollbar
+
+  - file: utilities/drag-drop.yaml
+    name: Drag & Drop
+    description: Classes para drag-and-drop kanban
+
+  - file: utilities/print-styles.yaml
+    name: Print Styles
+    description: Regras @media print (A4 landscape)
+
+templates:
+  - file: templates/listing-page.yaml
+    name: Listing Page
+    description: Listagem com tabela, filtros e paginação
+
+  - file: templates/form-create.yaml
+    name: Form Page (Create)
+    description: Formulário de criação
+
+  - file: templates/form-edit.yaml
+    name: Form Page (Edit)
+    description: Formulário de edição com timeline
+
+  - file: templates/print-page.yaml
+    name: Print Page
+    description: Relatório otimizado para impressão
+
+  - file: templates/kanban-board.yaml
+    name: Kanban Board
+    description: Pipeline com colunas e drag & drop
+
+  - file: templates/dashboard.yaml
+    name: Dashboard
+    description: Página inicial com KPIs, leads recentes, pipeline e tarefas

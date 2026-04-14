@@ -1,0 +1,76 @@
+name: Kanban Card
+level: organism
+description: Card arrastável de um board Kanban. Composto de badge, título+empresa, avatar+valor, botão de ação.
+used_in:
+  - kanban
+
+children:
+  - avatar-initials
+  - timestamp-chip
+  - icon-button
+
+tokens_used:
+  - bg-surface-raised
+  - border-border
+  - hover:border-action-primary/50
+  - text-text-primary
+  - text-text-secondary
+  - text-text-muted
+  - border-border-subtle
+  - border-l-feedback-warning-fg
+  - border-l-action-primary
+  - border-feedback-success-border
+
+variants:
+  - name: default
+    description: Card padrão com borda default.
+    code: |
+      <div
+        className={cn(
+          "group relative bg-surface-raised p-3.5 rounded-xl border border-border shadow-sm",
+          "hover:shadow-md hover:border-action-primary/50",
+          "cursor-grab active:cursor-grabbing",
+          "transition-all duration-fast ease-standard"
+        )}
+        draggable
+      >
+        {/* Row 1: badge + timestamp */}
+        <div className="flex justify-between items-start mb-2.5">
+          <Badge intent="info">{tag}</Badge>
+          <TimestampChip>{time}</TimestampChip>
+        </div>
+        {/* Row 2: title + company */}
+        <div className="mb-3">
+          <h3 className="text-text-primary font-bold text-sm leading-snug mb-1">{title}</h3>
+          <p className="text-text-secondary text-xs font-medium flex items-center gap-1">
+            <Icon className="size-3.5 text-text-muted" />
+            {company}
+          </p>
+        </div>
+        {/* Row 3: avatar + value + action */}
+        <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
+          <div className="flex items-center gap-2">
+            <AvatarInitials size="sm">{initials}</AvatarInitials>
+            <span className="text-text-primary font-bold text-sm">{value}</span>
+          </div>
+          <IconButton variant="reveal-on-hover" icon={ArrowRight} />
+        </div>
+      </div>
+
+  - name: warning
+    description: Cartão que precisa de ação — borda esquerda amarela.
+    code: |
+      {/* Adicionar ao className: */}
+      "border-l-4 border-l-feedback-warning-fg"
+
+  - name: highlight
+    description: Cartão em destaque/negociação — borda esquerda primary.
+    code: |
+      {/* Adicionar ao className: */}
+      "border-l-4 border-l-action-primary"
+
+  - name: closed
+    description: Cartão assinado/fechado — borda success com opacity reduzida.
+    code: |
+      {/* Substituir border classes: */}
+      "border border-feedback-success-border opacity-90 hover:opacity-100"

@@ -1,0 +1,27 @@
+name: Trend Badge
+level: atom
+description: Indicador de tendência inline (up/down) dentro de stat cards.
+used_in:
+  - listing
+  - dashboard
+
+tokens_used:
+  - text-feedback-success-fg
+  - bg-feedback-success-bg
+  - text-feedback-danger-fg
+  - bg-feedback-danger-bg
+
+variants:
+  - name: positive
+    description: Tendência positiva (verde, seta para cima).
+    code: |
+      <span className="text-feedback-success-fg text-xs font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
+        <TrendingUp className="size-3.5" /> 15%
+      </span>
+
+  - name: negative
+    description: Tendência negativa (vermelho, seta para baixo).
+    code: |
+      <span className="text-feedback-danger-fg text-xs font-bold bg-feedback-danger-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
+        <TrendingDown className="size-3.5" /> 1,2%
+      </span>

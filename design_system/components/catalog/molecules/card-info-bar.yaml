@@ -1,0 +1,19 @@
+name: Card Info Bar
+level: molecule
+description: Barra contextual inline dentro de um kanban card — mostra status como "Contrato enviado".
+used_in:
+  - kanban
+
+tokens_used:
+  - bg-feedback-info-bg/50
+  - border-feedback-info-border
+  - text-action-primary
+
+variants:
+  - name: default
+    description: Barra com ícone + mensagem em tom info.
+    code: |
+      <div className="flex items-center gap-2 bg-feedback-info-bg/50 p-2 rounded-md border border-feedback-info-border">
+        <FileText className="size-4 text-action-primary" />
+        <span className="text-xs text-action-primary font-semibold">{message}</span>
+      </div>

@@ -1,0 +1,48 @@
+name: Pipeline Stage Bar
+level: molecule
+description: Item de estágio do pipeline com label, contagem e barra de progresso colorida. Usado no resumo compacto do dashboard.
+used_in:
+  - dashboard
+
+children:
+  - progress-bar
+
+tokens_used:
+  - text-text-secondary
+  - text-text-primary
+  - hover:text-action-ghost-fg
+  - bg-surface-sunken
+  - bg-feedback-info-solid-bg
+  - bg-feedback-warning-solid-bg
+  - bg-feedback-accent-solid-bg
+  - bg-feedback-success-solid-bg
+
+variants:
+  - name: default
+    description: Estágio com label, valor e barra colorida.
+    code: |
+      <div className="group">
+        <div className="flex justify-between text-sm mb-1">
+          <span className="text-text-secondary group-hover:text-action-ghost-fg transition-colors">
+            {stageName}
+          </span>
+          <span className="text-text-primary font-medium">{count}</span>
+        </div>
+        <div className="w-full bg-surface-sunken rounded-full h-2">
+          <div
+            className={cn("h-2 rounded-full", stageColorClass)}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+
+notes: |
+  Cores por estágio do pipeline:
+  - Prospecção:   bg-feedback-info-solid-bg
+  - Demonstração: bg-feedback-warning-solid-bg
+  - Proposta:     bg-feedback-accent-solid-bg
+  - Fechamento:   bg-feedback-success-solid-bg
+
+  Estes são os mesmos tokens usados nos kanban column headers.
+  A variante with-label do progress-bar atom é equivalente a este molecule —
+  use este molecule quando há semântica de "estágio de pipeline".

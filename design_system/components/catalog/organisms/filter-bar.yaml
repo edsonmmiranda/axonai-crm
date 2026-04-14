@@ -1,0 +1,26 @@
+name: Filter Bar
+level: organism
+description: Barra de filtros com search, selects e botão "Filtros". Envolta em card raised.
+used_in:
+  - listing
+
+children:
+  - search-field
+
+tokens_used:
+  - border-border
+  - bg-surface-raised
+
+variants:
+  - name: default
+    description: Search + selects de filtro em grid responsivo.
+    code: |
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm xl:flex-row xl:items-center">
+        <SearchField />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-row">
+          <Select options={statusOptions} />
+          <Select options={responsavelOptions} />
+          <Select options={origemOptions} />
+          <Button variant="secondary" icon={SlidersHorizontal}>Filtros</Button>
+        </div>
+      </div>

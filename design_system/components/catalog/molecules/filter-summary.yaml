@@ -1,0 +1,27 @@
+name: Filter Summary
+level: molecule
+description: Linha de resumo dos filtros ativos exibida em páginas de relatório/impressão. Mostra os critérios de filtragem aplicados.
+used_in:
+  - print
+
+tokens_used:
+  - text-text-secondary
+  - text-text-primary
+
+variants:
+  - name: default
+    description: Resumo inline com pares label/valor.
+    code: |
+      <div className="flex flex-wrap gap-x-6 gap-y-1 mb-4 text-xs text-text-secondary">
+        <span>
+          <strong className="text-text-primary">{filterLabel}:</strong> {filterValue}
+        </span>
+        {/* Repetir para cada filtro ativo */}
+      </div>
+
+notes: |
+  Aparece entre o Print Report Header e a tabela de dados.
+  Cada filtro é renderizado como um span inline com o label em bold (text-text-primary)
+  e o valor em text-text-secondary.
+  O gap-x-6 separa os filtros horizontalmente.
+  "Total de registros" é tipicamente o último item.

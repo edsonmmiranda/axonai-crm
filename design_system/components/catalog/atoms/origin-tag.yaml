@@ -1,0 +1,19 @@
+name: Origin Tag
+level: atom
+description: Tag de origem do lead com ícone, usada em tabelas.
+used_in:
+  - listing
+  - print
+
+tokens_used:
+  - bg-surface-sunken
+  - text-text-secondary
+  - border-border
+
+variants:
+  - name: default
+    description: Tag com ícone + texto inline.
+    code: |
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-sunken text-text-secondary text-xs font-medium border border-border">
+        <Globe className="size-3.5" /> Site
+      </span>

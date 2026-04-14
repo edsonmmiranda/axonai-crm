@@ -1,0 +1,39 @@
+name: Textarea
+level: atom
+description: Área de texto multi-linha. Mesmos tokens de field que o Input.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - bg-field
+  - text-field-fg
+  - placeholder:text-field-placeholder
+  - border-field-border
+  - hover:border-field-border-hover
+  - focus-visible:border-field-border-focus
+  - focus-visible:shadow-focus
+  - aria-[invalid=true]:border-field-border-error
+
+variants:
+  - name: default
+    description: Textarea com resize vertical.
+    code: |
+      <textarea
+        className={cn(
+          "w-full rounded-md px-3 py-2 text-sm min-h-[80px] resize-y",
+          "bg-field text-field-fg placeholder:text-field-placeholder",
+          "border border-field-border hover:border-field-border-hover",
+          "focus-visible:outline-none focus-visible:border-field-border-focus focus-visible:shadow-focus",
+          "disabled:bg-field-disabled disabled:text-text-disabled disabled:cursor-not-allowed",
+          "aria-[invalid=true]:border-field-border-error",
+          "transition-colors duration-fast ease-standard",
+          className
+        )}
+        rows={rows ?? 3}
+        {...props}
+      />
+
+notes: |
+  min-h-[80px] é uma exceção de layout aceitável (altura mínima funcional).
+  Usar resize-y para permitir redimensionamento vertical apenas.

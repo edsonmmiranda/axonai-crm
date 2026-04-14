@@ -1,0 +1,47 @@
+name: Activity Item
+level: molecule
+description: Item de timeline com ícone circular, título, data, descrição e autor.
+used_in:
+  - form-edit
+
+tokens_used:
+  - bg-feedback-info-bg
+  - text-feedback-info-fg
+  - bg-feedback-success-bg
+  - text-feedback-success-fg
+  - bg-feedback-accent-bg
+  - text-feedback-accent-fg
+  - border-surface-raised
+  - text-text-primary
+  - text-text-secondary
+  - text-text-muted
+
+variants:
+  - name: info
+    description: Atividade tipo email (azul).
+    code: |
+      <div className="flex gap-4 relative">
+        <div className="flex-shrink-0 size-8 rounded-full bg-feedback-info-bg border-2 border-surface-raised flex items-center justify-center z-10">
+          <Mail className="size-3.5 text-feedback-info-fg" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-medium text-text-primary">{title}</p>
+            <span className="text-xs text-text-muted whitespace-nowrap">{date}</span>
+          </div>
+          <p className="text-sm text-text-secondary mt-0.5">{description}</p>
+          <p className="text-xs text-text-muted mt-1">por {author}</p>
+        </div>
+      </div>
+
+  - name: success
+    description: Atividade tipo ligação (verde).
+
+  - name: accent
+    description: Atividade tipo cadastro (roxo).
+
+notes: |
+  A cor muda apenas no container do ícone:
+  - info:    bg-feedback-info-bg    text-feedback-info-fg    (email)
+  - success: bg-feedback-success-bg text-feedback-success-fg (ligação)
+  - accent:  bg-feedback-accent-bg  text-feedback-accent-fg  (cadastro)

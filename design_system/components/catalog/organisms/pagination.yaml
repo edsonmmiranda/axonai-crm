@@ -1,0 +1,34 @@
+name: Pagination
+level: organism
+description: Barra de paginação com info text, page size selector e navegação por páginas.
+used_in:
+  - listing
+
+tokens_used:
+  - border-border-subtle
+  - text-text-secondary
+  - bg-action-primary
+  - text-action-primary-fg
+  - bg-surface-raised
+  - hover:bg-surface-sunken
+
+variants:
+  - name: default
+    description: Info + page size selector + botões de página.
+    code: |
+      <div className="flex items-center justify-between border-t border-border-subtle px-6 py-3">
+        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-text-secondary">Mostrando {start} a {end} de {total}</p>
+            <div className="flex items-center gap-2 border-l border-border-subtle pl-4">
+              <label className="text-sm text-text-secondary whitespace-nowrap">Exibir</label>
+              <Select options={[10, 20, 50, 100, 500, 1000]} size="sm" />
+              <span className="text-sm text-text-secondary">por página</span>
+            </div>
+          </div>
+          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
+            {/* Page buttons: active uses bg-action-primary text-action-primary-fg */}
+            {/* Inactive uses bg-surface-raised text-text-secondary hover:bg-surface-sunken */}
+          </nav>
+        </div>
+      </div>

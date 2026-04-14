@@ -1,0 +1,20 @@
+name: Timestamp Chip
+level: atom
+description: Label temporal compacto usado em kanban cards.
+used_in:
+  - kanban
+
+tokens_used:
+  - text-text-muted
+  - bg-surface-sunken
+
+variants:
+  - name: default
+    description: Chip pequeno com fundo sunken.
+    code: |
+      <span className="text-xs font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded">{time}</span>
+
+notes: |
+  O protótipo HTML usava text-[10px], que é um valor arbitrário proibido pela regra 2.
+  Na implementação React, usar text-xs (12px) — o menor tamanho da escala de tokens.
+  Se 10px for visualmente necessário, criar token font-size-2xs nos primitivos.

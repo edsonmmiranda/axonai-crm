@@ -1,0 +1,40 @@
+name: Checkbox
+level: atom
+description: Checkbox estilizado com tokens semânticos. Usa input nativo com estilização via peer.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - border-field-border
+  - bg-action-primary
+  - text-action-primary-fg
+  - focus-visible:shadow-focus
+  - bg-field
+
+variants:
+  - name: default
+    description: Checkbox com label.
+    code: |
+      <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+        <div className="relative flex items-center justify-center">
+          <input
+            type="checkbox"
+            className={cn(
+              "peer size-4 shrink-0 appearance-none rounded-sm border border-field-border bg-field",
+              "checked:bg-action-primary checked:border-action-primary",
+              "focus-visible:outline-none focus-visible:shadow-focus",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              "transition-colors duration-fast ease-standard"
+            )}
+            {...props}
+          />
+          <Check className="pointer-events-none absolute size-3 text-action-primary-fg opacity-0 peer-checked:opacity-100" />
+        </div>
+        <span className="text-sm text-text-primary">{label}</span>
+      </label>
+
+notes: |
+  Usa pattern CSS peer para mostrar/esconder o ícone Check do Lucide.
+  Para formulários complexos com muitos checkboxes, considerar
+  Radix Checkbox (@radix-ui/react-checkbox) para melhor acessibilidade.

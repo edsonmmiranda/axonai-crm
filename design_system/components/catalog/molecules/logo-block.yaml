@@ -1,0 +1,32 @@
+name: Logo Block
+level: molecule
+description: Marca do app — ícone + nome + tagline. Usada no topo da sidebar e no header de impressão.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+  - print
+
+children:
+  - icon-button
+
+tokens_used:
+  - bg-action-primary
+  - text-action-primary-fg
+  - text-text-primary
+  - text-text-secondary
+
+variants:
+  - name: default
+    description: Logo completa com ícone, nome e tagline.
+    code: |
+      <div className="flex gap-3 items-center">
+        <div className="bg-action-primary rounded-xl size-10 shadow-lg flex items-center justify-center">
+          <Building2 className="size-5 text-action-primary-fg" />
+        </div>
+        <div className="flex flex-col">
+          <h1 className="text-text-primary text-base font-bold leading-tight tracking-tight">SalesPro CRM</h1>
+          <p className="text-text-secondary text-xs font-normal">Gestão de Vendas</p>
+        </div>
+      </div>

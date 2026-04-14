@@ -1,0 +1,39 @@
+name: App Header
+level: organism
+description: Barra superior fixa com search, notificações, settings e user profile. Usada em telas com sidebar.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+
+children:
+  - search-field
+  - notification-button
+  - icon-button
+  - divider
+  - user-profile
+
+tokens_used:
+  - border-border
+  - bg-surface-raised/80
+  - text-text-primary
+
+variants:
+  - name: default
+    description: Header com search à esquerda e ações à direita.
+    code: |
+      <header className="h-16 flex items-center justify-between px-6 border-b border-border bg-surface-raised/80 backdrop-blur-md sticky top-0 z-20">
+        {/* Mobile menu toggle (hidden md+) */}
+        <button className="md:hidden text-text-primary mr-4"><Menu className="size-6" /></button>
+
+        {/* Search Field (molecule) */}
+        <div className="flex-1 max-w-md hidden sm:flex"><SearchField /></div>
+
+        {/* Right actions */}
+        <div className="flex items-center gap-4 ml-4">
+          <NotificationButton />
+          <IconButton icon={Settings} />
+          <Divider vertical />
+          <UserProfile />
+        </div>
+      </header>

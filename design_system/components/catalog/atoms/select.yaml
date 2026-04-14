@@ -1,0 +1,50 @@
+name: Select
+level: atom
+description: Campo select nativo estilizado com tokens de field. Para selects complexos (search, multi), usar Radix Select.
+used_in:
+  - form-create
+  - form-edit
+  - listing
+
+tokens_used:
+  - bg-field
+  - text-field-fg
+  - border-field-border
+  - hover:border-field-border-hover
+  - focus-visible:border-field-border-focus
+  - focus-visible:shadow-focus
+  - text-text-muted
+
+variants:
+  - name: default
+    description: Select nativo com chevron customizado.
+    code: |
+      <div className="relative">
+        <select
+          className={cn(
+            "h-10 w-full appearance-none rounded-md pl-3 pr-10 text-sm",
+            "bg-field text-field-fg",
+            "border border-field-border hover:border-field-border-hover",
+            "focus-visible:outline-none focus-visible:border-field-border-focus focus-visible:shadow-focus",
+            "disabled:bg-field-disabled disabled:text-text-disabled disabled:cursor-not-allowed",
+            "transition-colors duration-fast ease-standard",
+            className
+          )}
+          {...props}
+        >
+          <option value="">{placeholder}</option>
+          {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-text-muted" />
+      </div>
+
+  - name: sm
+    description: Select compacto para uso inline (pagination, sort control).
+    code: |
+      {/* Substituir h-10 por h-8, pl-3 por pl-2, pr-10 por pr-8, e usar text-xs */}
+      <select className="h-8 ... pl-2 pr-8 text-xs ..." />
+
+notes: |
+  Para selects com busca, múltipla seleção ou opções complexas (avatares, badges),
+  usar Radix Select (@radix-ui/react-select) com os mesmos tokens visuais.
+  O chevron customizado via absolute position substitui o arrow nativo.

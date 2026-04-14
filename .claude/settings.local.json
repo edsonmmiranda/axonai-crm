@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -l \"revalidatePath\" d:/AiProjects/crm/src/lib/actions/*.ts)",
+      "Bash(node -e ':*)",
+      "Bash(node scripts/_audit_unused.mjs)"
+    ]
+  }
+}

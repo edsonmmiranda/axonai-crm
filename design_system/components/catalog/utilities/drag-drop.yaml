@@ -1,0 +1,35 @@
+name: Drag & Drop
+level: utility
+description: Classes utilitárias para drag-and-drop no Kanban. Baseado na HTML5 Drag and Drop API.
+used_in:
+  - kanban
+
+tokens_used:
+  - border-focus
+  - bg-action-primary
+
+variants:
+  - name: default
+    description: Conjunto de 4 classes CSS para estados de drag.
+
+classes:
+  - selector: ".kanban-card"
+    when: Sempre, em todo card
+    effect: Transition suave para shadow/opacity/transform
+
+  - selector: ".kanban-card.is-dragging"
+    when: Quando dragstart dispara
+    effect: "opacity: 0.5; transform: rotate(2deg)"
+
+  - selector: ".kanban-column.is-drag-over"
+    when: Quando card está sobre a coluna
+    effect: "outline: 2px solid border-focus"
+
+  - selector: ".drop-indicator"
+    when: Dentro de cada .card-list
+    effect: "Barra horizontal h-1 bg-action-primary rounded-full — visível apenas durante drag-over"
+
+notes: |
+  JS handlers necessários: handleDragStart, handleDragEnd, handleDragOver,
+  handleDragLeave, handleDrop, getClosestCardAfterCursor, updateColumnStats.
+  Na implementação React, considerar @dnd-kit como alternativa ao HTML5 DnD API.

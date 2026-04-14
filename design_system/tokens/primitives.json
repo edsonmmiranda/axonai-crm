@@ -1,0 +1,172 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Primitive tokens — raw values with no semantic meaning. Do NOT consume these directly in components; consume semantic tokens instead. Anchor values (marked with $description) were chosen from the reference mockups at documentos_base/design_system/. Scales around anchors were filled in to give the semantic layer a full range of intensities to map to.",
+
+  "color": {
+    "blue": {
+      "50":  { "$value": "#eff6ff", "$type": "color" },
+      "100": { "$value": "#dbeafe", "$type": "color" },
+      "200": { "$value": "#bfdbfe", "$type": "color" },
+      "300": { "$value": "#93c5fd", "$type": "color" },
+      "400": { "$value": "#60a5fa", "$type": "color" },
+      "500": { "$value": "#137fec", "$type": "color", "$description": "Brand anchor — from reference mockups (primary)" },
+      "600": { "$value": "#0f66bd", "$type": "color", "$description": "From reference mockups (primary-dark)" },
+      "700": { "$value": "#0c4fa3", "$type": "color" },
+      "800": { "$value": "#0a3f82", "$type": "color" },
+      "900": { "$value": "#082f62", "$type": "color" },
+      "950": { "$value": "#061f42", "$type": "color" }
+    },
+
+    "neutral": {
+      "0":    { "$value": "#ffffff", "$type": "color" },
+      "50":   { "$value": "#f6f7f8", "$type": "color", "$description": "From reference mockups (background-light)" },
+      "100":  { "$value": "#edf1f4", "$type": "color" },
+      "200":  { "$value": "#e7edf3", "$type": "color", "$description": "From reference mockups (border-light)" },
+      "300":  { "$value": "#cfd9e3", "$type": "color" },
+      "400":  { "$value": "#9fb2c7", "$type": "color" },
+      "500":  { "$value": "#4c739a", "$type": "color", "$description": "From reference mockups (text-secondary)" },
+      "600":  { "$value": "#3d5a7a", "$type": "color" },
+      "700":  { "$value": "#2d435c", "$type": "color" },
+      "800":  { "$value": "#1a2a3d", "$type": "color" },
+      "900":  { "$value": "#0d141b", "$type": "color", "$description": "From reference mockups (text-main)" },
+      "950":  { "$value": "#08101a", "$type": "color" },
+      "1000": { "$value": "#000000", "$type": "color" }
+    },
+
+    "green": {
+      "50":  { "$value": "#ecfdf5", "$type": "color" },
+      "100": { "$value": "#d1fae5", "$type": "color" },
+      "200": { "$value": "#a7f3d0", "$type": "color" },
+      "500": { "$value": "#10b981", "$type": "color", "$description": "From reference mockups (success)" },
+      "600": { "$value": "#059669", "$type": "color" },
+      "700": { "$value": "#047857", "$type": "color" },
+      "800": { "$value": "#065f46", "$type": "color" },
+      "900": { "$value": "#064e3b", "$type": "color" }
+    },
+
+    "amber": {
+      "50":  { "$value": "#fffbeb", "$type": "color" },
+      "100": { "$value": "#fef3c7", "$type": "color" },
+      "200": { "$value": "#fde68a", "$type": "color" },
+      "500": { "$value": "#f59e0b", "$type": "color", "$description": "From reference mockups (warning)" },
+      "600": { "$value": "#d97706", "$type": "color" },
+      "700": { "$value": "#b45309", "$type": "color" },
+      "800": { "$value": "#92400e", "$type": "color" },
+      "900": { "$value": "#78350f", "$type": "color" }
+    },
+
+    "red": {
+      "50":  { "$value": "#fef2f2", "$type": "color" },
+      "100": { "$value": "#fee2e2", "$type": "color" },
+      "200": { "$value": "#fecaca", "$type": "color" },
+      "500": { "$value": "#ef4444", "$type": "color", "$description": "From reference mockups (error)" },
+      "600": { "$value": "#dc2626", "$type": "color" },
+      "700": { "$value": "#b91c1c", "$type": "color" },
+      "800": { "$value": "#991b1b", "$type": "color" },
+      "900": { "$value": "#7f1d1d", "$type": "color" }
+    },
+
+    "purple": {
+      "50":  { "$value": "#faf5ff", "$type": "color" },
+      "100": { "$value": "#f3e8ff", "$type": "color" },
+      "200": { "$value": "#e9d5ff", "$type": "color" },
+      "400": { "$value": "#c084fc", "$type": "color" },
+      "500": { "$value": "#a855f7", "$type": "color", "$description": "Accent anchor — pipeline stages, categorical indicators" },
+      "600": { "$value": "#9333ea", "$type": "color" },
+      "700": { "$value": "#7e22ce", "$type": "color" },
+      "800": { "$value": "#6b21a8", "$type": "color" },
+      "900": { "$value": "#581c87", "$type": "color" }
+    }
+  },
+
+  "space": {
+    "0":  { "$value": "0",       "$type": "dimension" },
+    "1":  { "$value": "0.25rem", "$type": "dimension", "$description": "4px — smallest meaningful unit" },
+    "2":  { "$value": "0.5rem",  "$type": "dimension" },
+    "3":  { "$value": "0.75rem", "$type": "dimension" },
+    "4":  { "$value": "1rem",    "$type": "dimension" },
+    "5":  { "$value": "1.25rem", "$type": "dimension" },
+    "6":  { "$value": "1.5rem",  "$type": "dimension" },
+    "8":  { "$value": "2rem",    "$type": "dimension" },
+    "10": { "$value": "2.5rem",  "$type": "dimension" },
+    "12": { "$value": "3rem",    "$type": "dimension" },
+    "16": { "$value": "4rem",    "$type": "dimension" },
+    "20": { "$value": "5rem",    "$type": "dimension" },
+    "24": { "$value": "6rem",    "$type": "dimension" }
+  },
+
+  "radius": {
+    "none": { "$value": "0",       "$type": "dimension" },
+    "sm":   { "$value": "0.25rem", "$type": "dimension", "$description": "4px — badges, chips" },
+    "md":   { "$value": "0.5rem",  "$type": "dimension", "$description": "8px — buttons, inputs, small cards" },
+    "lg":   { "$value": "0.75rem", "$type": "dimension", "$description": "12px — large cards, panels" },
+    "xl":   { "$value": "1rem",    "$type": "dimension", "$description": "16px — dialogs, sheets" },
+    "full": { "$value": "9999px",  "$type": "dimension", "$description": "Pills, avatars, switches" }
+  },
+
+  "font": {
+    "family": {
+      "sans": { "$value": "Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", "$type": "fontFamily" },
+      "mono": { "$value": "'JetBrains Mono', Menlo, Consolas, monospace",                    "$type": "fontFamily" }
+    },
+    "weight": {
+      "regular":  { "$value": 400, "$type": "fontWeight" },
+      "medium":   { "$value": 500, "$type": "fontWeight" },
+      "semibold": { "$value": 600, "$type": "fontWeight" },
+      "bold":     { "$value": 700, "$type": "fontWeight" }
+    },
+    "size": {
+      "xs":   { "$value": "0.75rem",  "$type": "dimension", "$description": "12px — captions, labels" },
+      "sm":   { "$value": "0.875rem", "$type": "dimension", "$description": "14px — body small, form labels" },
+      "base": { "$value": "1rem",     "$type": "dimension", "$description": "16px — body default" },
+      "lg":   { "$value": "1.125rem", "$type": "dimension", "$description": "18px — lead paragraphs" },
+      "xl":   { "$value": "1.25rem",  "$type": "dimension", "$description": "20px — section titles" },
+      "2xl":  { "$value": "1.5rem",   "$type": "dimension", "$description": "24px — page h2" },
+      "3xl":  { "$value": "1.875rem", "$type": "dimension", "$description": "30px — page h1" },
+      "4xl":  { "$value": "2.25rem",  "$type": "dimension", "$description": "36px — hero" }
+    },
+    "lineHeight": {
+      "tight":   { "$value": "1.25",  "$type": "number" },
+      "snug":    { "$value": "1.375", "$type": "number", "$description": "Between tight and normal — compact multi-line text (card titles)" },
+      "normal":  { "$value": "1.5",   "$type": "number" },
+      "relaxed": { "$value": "1.75",  "$type": "number" }
+    },
+    "tracking": {
+      "tight":  { "$value": "-0.015em", "$type": "dimension", "$description": "For display / titles, matches reference" },
+      "normal": { "$value": "0",        "$type": "dimension" },
+      "wide":   { "$value": "0.025em",  "$type": "dimension" }
+    }
+  },
+
+  "shadow": {
+    "sm":    { "$value": "0 1px 2px 0 rgb(13 20 27 / 0.05)",                                                "$type": "shadow" },
+    "md":    { "$value": "0 4px 6px -1px rgb(13 20 27 / 0.08), 0 2px 4px -2px rgb(13 20 27 / 0.05)",        "$type": "shadow" },
+    "lg":    { "$value": "0 10px 15px -3px rgb(13 20 27 / 0.10), 0 4px 6px -4px rgb(13 20 27 / 0.08)",      "$type": "shadow" },
+    "xl":    { "$value": "0 20px 25px -5px rgb(13 20 27 / 0.12), 0 8px 10px -6px rgb(13 20 27 / 0.08)",     "$type": "shadow" },
+    "focus": { "$value": "0 0 0 3px rgb(19 127 236 / 0.35)",                                                "$type": "shadow", "$description": "Focus ring — references primary brand RGB channels" }
+  },
+
+  "motion": {
+    "duration": {
+      "instant": { "$value": "0ms",   "$type": "duration" },
+      "fast":    { "$value": "150ms", "$type": "duration" },
+      "normal":  { "$value": "250ms", "$type": "duration" },
+      "slow":    { "$value": "400ms", "$type": "duration" }
+    },
+    "easing": {
+      "standard": { "$value": "cubic-bezier(0.2, 0, 0, 1)", "$type": "cubicBezier", "$description": "Default for most transitions" },
+      "emphasis": { "$value": "cubic-bezier(0.3, 0, 0, 1)", "$type": "cubicBezier", "$description": "For emphasized entrances" },
+      "exit":     { "$value": "cubic-bezier(0.4, 0, 1, 1)", "$type": "cubicBezier", "$description": "For exits and dismissals" }
+    }
+  },
+
+  "z": {
+    "base":    { "$value": "0",    "$type": "number" },
+    "dropdown":{ "$value": "1000", "$type": "number" },
+    "sticky":  { "$value": "1100", "$type": "number" },
+    "overlay": { "$value": "1200", "$type": "number" },
+    "modal":   { "$value": "1300", "$type": "number" },
+    "popover": { "$value": "1400", "$type": "number" },
+    "toast":   { "$value": "1500", "$type": "number" }
+  }
+}

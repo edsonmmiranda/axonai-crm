@@ -1,0 +1,43 @@
+name: Pipeline Header
+level: organism
+description: Header específico do pipeline — duas linhas (título+ações e search+filtros+avatars).
+used_in:
+  - kanban
+
+children:
+  - search-field
+  - filter-dropdown-button
+  - avatar-group
+
+tokens_used:
+  - bg-surface-raised
+  - border-border
+  - text-text-primary
+  - text-action-primary
+  - text-text-secondary
+  - hover:bg-surface-sunken
+
+variants:
+  - name: default
+    description: Header com título, seletor de pipeline, botões e filtros.
+    code: |
+      <header className="flex flex-col gap-4 px-6 py-5 bg-surface-raised border-b border-border z-20 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Kanban className="size-6 text-action-primary" />
+            <h1 className="text-text-primary text-2xl font-bold tracking-tight">Pipeline de Vendas</h1>
+            <button className="flex items-center gap-1 px-2 py-1 rounded-md text-text-secondary hover:bg-surface-sunken transition-colors">
+              <ChevronDown className="size-4" />
+            </button>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button variant="secondary" icon={Settings2}>Configurar Colunas</Button>
+            <Button variant="primary" icon={Plus}>Novo Negócio</Button>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <SearchField />
+          <FilterGroup />
+          <AvatarGroup />
+        </div>
+      </header>

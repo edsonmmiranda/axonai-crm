@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SalesPro CRM - Login</title>
+
+    <!-- Design System: variables.css is the generated output (layer 3) -->
+    <link href="../generated/variables.css" rel="stylesheet" />
+
+    <!-- Font: loaded from the primitive font.family.sans token (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons: Lucide (per CONTRACT.md — Lucide only) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CDN configured with semantic token names -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        surface: {
+                            base:    "rgb(var(--ds-surface-base) / <alpha-value>)",
+                            raised:  "rgb(var(--ds-surface-raised) / <alpha-value>)",
+                            sunken:  "rgb(var(--ds-surface-sunken) / <alpha-value>)",
+                            overlay: "rgb(var(--ds-surface-overlay) / <alpha-value>)",
+                            inverse: "rgb(var(--ds-surface-inverse) / <alpha-value>)",
+                        },
+                        text: {
+                            primary:   "rgb(var(--ds-text-primary) / <alpha-value>)",
+                            secondary: "rgb(var(--ds-text-secondary) / <alpha-value>)",
+                            muted:     "rgb(var(--ds-text-muted) / <alpha-value>)",
+                            inverse:   "rgb(var(--ds-text-inverse) / <alpha-value>)",
+                            link:      "rgb(var(--ds-text-link) / <alpha-value>)",
+                            disabled:  "rgb(var(--ds-text-disabled) / <alpha-value>)",
+                        },
+                        border: {
+                            DEFAULT: "rgb(var(--ds-border-default) / <alpha-value>)",
+                            strong:  "rgb(var(--ds-border-strong) / <alpha-value>)",
+                            subtle:  "rgb(var(--ds-border-subtle) / <alpha-value>)",
+                            focus:   "rgb(var(--ds-border-focus) / <alpha-value>)",
+                        },
+                        action: {
+                            primary: {
+                                DEFAULT: "rgb(var(--ds-action-primary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-primary-bg-hover) / <alpha-value>)",
+                                active:  "rgb(var(--ds-action-primary-bg-active) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-primary-fg) / <alpha-value>)",
+                            },
+                            secondary: {
+                                DEFAULT: "rgb(var(--ds-action-secondary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-secondary-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-secondary-fg) / <alpha-value>)",
+                                border:  "rgb(var(--ds-action-secondary-border) / <alpha-value>)",
+                            },
+                            ghost: {
+                                hover:  "rgb(var(--ds-action-ghost-bg-hover) / <alpha-value>)",
+                                active: "rgb(var(--ds-action-ghost-bg-active) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-action-ghost-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                DEFAULT: "rgb(var(--ds-action-danger-bg) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-danger-fg) / <alpha-value>)",
+                            },
+                        },
+                        field: {
+                            DEFAULT:       "rgb(var(--ds-field-bg) / <alpha-value>)",
+                            fg:            "rgb(var(--ds-field-fg) / <alpha-value>)",
+                            placeholder:   "rgb(var(--ds-field-placeholder) / <alpha-value>)",
+                            border:        "rgb(var(--ds-field-border) / <alpha-value>)",
+                            "border-hover":"rgb(var(--ds-field-border-hover) / <alpha-value>)",
+                            "border-focus":"rgb(var(--ds-field-border-focus) / <alpha-value>)",
+                        },
+                        feedback: {
+                            success: {
+                                bg:         "rgb(var(--ds-feedback-success-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-success-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-success-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-success-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-success-solid-fg) / <alpha-value>)",
+                            },
+                            warning: {
+                                bg:         "rgb(var(--ds-feedback-warning-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-warning-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-warning-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-warning-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-warning-solid-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                bg:         "rgb(var(--ds-feedback-danger-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-danger-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-danger-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-danger-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-danger-solid-fg) / <alpha-value>)",
+                            },
+                            info: {
+                                bg:         "rgb(var(--ds-feedback-info-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-info-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-info-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-info-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-info-solid-fg) / <alpha-value>)",
+                            },
+                            accent: {
+                                bg:         "rgb(var(--ds-feedback-accent-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-accent-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-accent-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-accent-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-accent-solid-fg) / <alpha-value>)",
+                            },
+                        },
+                    },
+                    fontFamily: {
+                        sans: ["var(--ds-font-family-sans)"],
+                        mono: ["var(--ds-font-family-mono)"],
+                    },
+                    borderRadius: {
+                        none: "var(--ds-radius-none)",
+                        sm:   "var(--ds-radius-sm)",
+                        md:   "var(--ds-radius-md)",
+                        lg:   "var(--ds-radius-lg)",
+                        xl:   "var(--ds-radius-xl)",
+                        full: "var(--ds-radius-full)",
+                    },
+                    boxShadow: {
+                        sm:    "var(--ds-shadow-sm)",
+                        md:    "var(--ds-shadow-md)",
+                        lg:    "var(--ds-shadow-lg)",
+                        xl:    "var(--ds-shadow-xl)",
+                        focus: "var(--ds-shadow-focus)",
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--ds-surface-sunken)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--ds-border-strong)); border-radius: var(--ds-radius-sm); }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--ds-text-muted)); }
+
+        /* reCAPTCHA widget — uses neutral tokens */
+        .recaptcha-checkbox {
+            border: 2px solid rgb(var(--ds-border-strong));
+            border-radius: var(--ds-radius-sm);
+            background-color: rgb(var(--ds-surface-raised));
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: border-color 150ms ease;
+        }
+        .recaptcha-checkbox:hover {
+            border-color: rgb(var(--ds-text-muted));
+        }
+    </style>
+</head>
+
+<body class="bg-surface-base text-text-primary font-sans h-screen w-full overflow-hidden selection:bg-action-primary selection:text-action-primary-fg">
+
+    <div class="flex h-full w-full">
+
+        <!-- ================================================================
+             BRANDING PANEL (left side — hidden on mobile)
+             ================================================================ -->
+        <aside class="hidden lg:flex w-1/2 h-full relative bg-surface-inverse overflow-hidden">
+            <!-- Background image -->
+            <div class="absolute inset-0 bg-cover bg-center transition-transform hover:scale-105 duration-[20s]"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDqMVrd5Y3wMMKDO-XDjX2FqK3V8cYN5vn5Nglqns7mdtqXCHQrGJ1PXAqJif3KX9RpueQsz5dJBdEB7NdK92_44USqPp629Ejnj9Fanf5H0nSugswowODqmMJAlx66WTyVTMh7tGhH4ivuv0hqND4i5DBqb1TH-LmGKpnBp4kJkEc-9eASVxQ1L8v4drqOQLG5MQWnhlC8psJYUGs0F1JUMvqHCHoLjIdIDI1OsIgE4V_6SQ0tHw-Ks8onZ3xtOJMJBAQtcsst78");'>
+            </div>
+            <!-- Brand tint overlay -->
+            <div class="absolute inset-0 bg-action-primary/30 mix-blend-multiply"></div>
+            <!-- Gradient fade for legibility -->
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-inverse via-surface-inverse/40 to-transparent opacity-90"></div>
+
+            <!-- Content -->
+            <div class="relative z-10 flex flex-col justify-between h-full w-full p-12 xl:p-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 text-text-inverse/90">
+                    <div class="bg-action-primary rounded-xl size-10 shadow-lg flex items-center justify-center">
+                        <i data-lucide="building-2" class="size-5 text-action-primary-fg"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-text-inverse">SalesPro CRM</span>
+                </div>
+
+                <!-- Hero copy -->
+                <div class="flex flex-col gap-8">
+                    <div class="space-y-4 max-w-lg">
+                        <span class="inline-block px-3 py-1 rounded-full bg-surface-raised/10 backdrop-blur-md border border-surface-raised/20 text-text-inverse text-xs font-bold uppercase tracking-wider">
+                            Para Vendedores
+                        </span>
+                        <h1 class="text-4xl xl:text-5xl font-bold text-text-inverse leading-tight">
+                            Gerencie seus leads e vendas com inteligência.
+                        </h1>
+                        <p class="text-lg text-text-inverse/80 leading-relaxed font-light">
+                            A plataforma #1 do mercado para quem busca alta performance, integração com portais e
+                            automação de atendimento.
+                        </p>
+                    </div>
+
+                    <!-- Social proof -->
+                    <div class="flex items-center gap-4 pt-4 border-t border-surface-raised/10">
+                        <div class="flex -space-x-3">
+                            <div class="size-10 rounded-full border-2 border-surface-inverse bg-surface-sunken bg-cover"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1Y5WHhBPq5P747X8dUITntqPyD_OyxHFXkZWPfFXez-D9lLNRUnBC8JxE8FNfCoJcKBHSfScgJ2wTNCQi_qaInVbQhTaizZsSPRhzFotnGJRlkHPM7t5L3Gc7Lgr-ZfpXR6bGkbS89pIUGaPz826vcYbvkq4PdoKW2cVqmBs6WvgXjzJoW6ZB6w6GqI0tWz2djdlBR4P-N11-_-rhGlIpXLg5V-DG81mt-haKkyRMldPmVN66fArMDzhVVfgOskTgmZfpzY9I758");'></div>
+                            <div class="size-10 rounded-full border-2 border-surface-inverse bg-surface-sunken bg-cover"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1Y5WHhBPq5P747X8dUITntqPyD_OyxHFXkZWPfFXez-D9lLNRUnBC8JxE8FNfCoJcKBHSfScgJ2wTNCQi_qaInVbQhTaizZsSPRhzFotnGJRlkHPM7t5L3Gc7Lgr-ZfpXR6bGkbS89pIUGaPz826vcYbvkq4PdoKW2cVqmBs6WvgXjzJoW6ZB6w6GqI0tWz2djdlBR4P-N11-_-rhGlIpXLg5V-DG81mt-haKkyRMldPmVN66fArMDzhVVfgOskTgmZfpzY9I758");'></div>
+                            <div class="size-10 rounded-full border-2 border-surface-inverse bg-surface-sunken bg-cover"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1Y5WHhBPq5P747X8dUITntqPyD_OyxHFXkZWPfFXez-D9lLNRUnBC8JxE8FNfCoJcKBHSfScgJ2wTNCQi_qaInVbQhTaizZsSPRhzFotnGJRlkHPM7t5L3Gc7Lgr-ZfpXR6bGkbS89pIUGaPz826vcYbvkq4PdoKW2cVqmBs6WvgXjzJoW6ZB6w6GqI0tWz2djdlBR4P-N11-_-rhGlIpXLg5V-DG81mt-haKkyRMldPmVN66fArMDzhVVfgOskTgmZfpzY9I758");'></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1 text-feedback-warning-fg">
+                                <i data-lucide="star" class="size-4 fill-current"></i>
+                                <i data-lucide="star" class="size-4 fill-current"></i>
+                                <i data-lucide="star" class="size-4 fill-current"></i>
+                                <i data-lucide="star" class="size-4 fill-current"></i>
+                                <i data-lucide="star" class="size-4 fill-current"></i>
+                            </div>
+                            <span class="text-sm text-text-inverse/80 font-medium">+2.500 Empresas confiam</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ================================================================
+             FORM PANEL (right side)
+             ================================================================ -->
+        <section class="w-full lg:w-1/2 h-full bg-surface-raised flex flex-col overflow-y-auto">
+
+            <!-- Form container -->
+            <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 sm:px-12 xl:px-24">
+                <div class="w-full max-w-md flex flex-col gap-8">
+
+                    <!-- Mobile logo -->
+                    <div class="flex lg:hidden items-center gap-3 mb-2">
+                        <div class="bg-action-primary rounded-xl size-10 shadow-lg flex items-center justify-center">
+                            <i data-lucide="building-2" class="size-5 text-action-primary-fg"></i>
+                        </div>
+                        <span class="text-xl font-bold tracking-tight text-text-primary">SalesPro CRM</span>
+                    </div>
+
+                    <!-- Heading -->
+                    <div class="text-left space-y-2">
+                        <h2 class="text-3xl font-bold text-text-primary tracking-tight">Bem-vindo de volta</h2>
+                        <p class="text-text-secondary">Digite seus dados para acessar o painel de controle.</p>
+                    </div>
+
+                    <!-- SSO: Google -->
+                    <button
+                        class="w-full flex items-center justify-center gap-3 bg-action-secondary border border-action-secondary-border text-action-secondary-fg font-medium h-12 rounded-lg hover:bg-action-secondary-hover transition-all shadow-sm group"
+                        type="button">
+                        <svg class="size-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+                        </svg>
+                        <span class="group-hover:text-action-ghost-fg transition-colors">Continuar com Google</span>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="relative flex items-center py-2">
+                        <div class="flex-grow border-t border-border"></div>
+                        <span class="flex-shrink-0 mx-4 text-xs font-bold text-text-muted uppercase tracking-wider">
+                            Ou acesse com email
+                        </span>
+                        <div class="flex-grow border-t border-border"></div>
+                    </div>
+
+                    <!-- Form -->
+                    <form class="flex flex-col gap-5">
+
+                        <!-- Email -->
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-text-primary" for="email">
+                                E-mail corporativo
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-secondary">
+                                    <i data-lucide="mail" class="size-5"></i>
+                                </div>
+                                <input
+                                    class="block w-full rounded-lg border border-field-border bg-field h-11 pl-10 pr-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                    id="email" name="email" placeholder="nome@empresa.com.br" required type="email" />
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-text-primary" for="password">Senha</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-secondary">
+                                    <i data-lucide="lock" class="size-5"></i>
+                                </div>
+                                <input
+                                    class="block w-full rounded-lg border border-field-border bg-field h-11 pl-10 pr-10 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                    id="password" name="password" placeholder="••••••••" required type="password" />
+                                <button
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-text-secondary hover:text-text-primary focus:outline-none"
+                                    type="button" aria-label="Mostrar senha">
+                                    <i data-lucide="eye" class="size-5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember & Forgot -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    class="form-checkbox rounded text-action-primary border-field-border focus:ring-field-border-focus size-4 cursor-pointer"
+                                    type="checkbox" />
+                                <span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
+                                    Manter conectado
+                                </span>
+                            </label>
+                            <a class="text-sm font-semibold text-text-link hover:underline transition-colors" href="#">
+                                Esqueceu a senha?
+                            </a>
+                        </div>
+
+                        <!-- reCAPTCHA -->
+                        <div class="bg-surface-sunken border border-border rounded-lg shadow-sm p-2 flex items-center justify-between w-full sm:w-[304px] h-[78px] mt-1 select-none">
+                            <div class="flex items-center gap-3 pl-2">
+                                <div class="recaptcha-checkbox"></div>
+                                <span class="text-sm font-normal text-text-primary">Não sou um robô</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center pr-2">
+                                <img alt="reCAPTCHA logo" class="size-10 opacity-70"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1ncUncY5KRs0eNXbxNdYG6Lf0fzuNfoODwHgjxB5osiIWhs-ZZwsqFFDCOUbazhyGUOjPHt_CCoDZCdfNOCnJibt8LIiKtv886Z2TNmhaigdn-ZDrEO47J2_GFbBXQ6pn48-eGKD_loWAeF8X_sSxwWpGCKroY37VtaZZ0jq-zRXWnNtYRtxKzgFPjcmD9-CGCvfEzeQlbA_yK_egNZbf4ZpFPYOLpLtk70iNcXrAFyzA1V8TmbUfjyTsCSiSVBlytOYSfPAOHlU" />
+                                <span class="text-[10px] text-text-muted leading-none mt-0.5">reCAPTCHA</span>
+                                <div class="flex gap-1 text-[8px] text-text-muted mt-0.5">
+                                    <a class="hover:underline" href="#">Privacidade</a>
+                                    <span>-</span>
+                                    <a class="hover:underline" href="#">Termos</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <button
+                            class="w-full bg-action-primary hover:bg-action-primary-hover active:bg-action-primary-active text-action-primary-fg font-bold h-12 rounded-lg shadow-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
+                            type="submit">
+                            <span>Acessar Painel</span>
+                            <i data-lucide="arrow-right" class="size-5"></i>
+                        </button>
+                    </form>
+
+                    <!-- Sign-up link -->
+                    <div class="text-center">
+                        <p class="text-sm text-text-secondary">
+                            Ainda não possui conta?
+                            <a class="font-bold text-text-link hover:underline transition-colors" href="#">
+                                Solicitar demonstração
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="py-6 border-t border-border flex flex-col items-center gap-2 text-center px-8 bg-surface-sunken/50">
+                <p class="text-xs text-text-secondary">
+                    © 2026 SalesPro CRM. Todos os direitos reservados.
+                </p>
+                <div class="flex gap-4 text-xs text-text-secondary">
+                    <a class="hover:text-text-primary underline" href="#">Termos de Uso</a>
+                    <a class="hover:text-text-primary underline" href="#">Política de Privacidade</a>
+                    <a class="hover:text-text-primary underline" href="#">Suporte</a>
+                </div>
+            </footer>
+        </section>
+    </div>
+
+    <!-- Initialize Lucide icons -->
+    <script>lucide.createIcons();</script>
+
+</body>
+
+</html>

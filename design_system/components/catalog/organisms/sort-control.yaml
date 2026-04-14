@@ -1,0 +1,53 @@
+name: Sort Control
+level: organism
+description: Painel colapsável de ordenação multi-coluna com pills ativas e controle de adição.
+used_in:
+  - listing
+
+children:
+  - sort-pill
+
+tokens_used:
+  - border-border
+  - bg-surface-raised
+  - text-text-primary
+  - text-text-secondary
+  - text-text-muted
+  - bg-action-primary
+  - text-action-primary-fg
+  - border-border-subtle
+  - hover:bg-surface-sunken/50
+
+variants:
+  - name: default
+    description: Header clicável com badge de contagem + corpo expandível.
+    code: |
+      <div className="rounded-xl border border-border bg-surface-raised shadow-sm overflow-hidden">
+        {/* Collapsible header */}
+        <button onClick={toggleSortPanel} className="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-sunken/50 transition-colors">
+          <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
+            <ArrowUpDown className="size-4 text-text-secondary" />
+            Ordenação
+            <span className="hidden items-center justify-center rounded-full bg-action-primary text-action-primary-fg text-xs font-bold size-5">{count}</span>
+          </div>
+          <ChevronDown className="size-4 text-text-muted transition-transform duration-fast ease-standard" />
+        </button>
+
+        {/* Expandable body */}
+        <div className="hidden border-t border-border-subtle px-4 pb-4 pt-3 flex flex-col gap-3">
+          {/* Active sort pills */}
+          <div className="flex flex-wrap items-center gap-2">{sortPills}</div>
+          {/* Add rule controls */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border-subtle">
+            <Select options={columnOptions} />
+            <Select options={dirOptions} />
+            <Button variant="primary" size="sm" icon={Plus}>Adicionar</Button>
+          </div>
+        </div>
+      </div>
+
+notes: |
+  O protótipo HTML usava text-[10px] no badge de contagem — na implementação React,
+  usar text-xs como menor tamanho da escala de tokens.
+  Quando colapsado, exibe pills de preview inline no header.
+  Quando expandido, permite adicionar/remover regras.

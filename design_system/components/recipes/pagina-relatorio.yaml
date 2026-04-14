@@ -1,0 +1,67 @@
+# Recipe: Página de Relatório
+# Guia para criar uma página de relatório/impressão standalone.
+
+name: Página de Relatório
+description: |
+  Receita para criar uma página de relatório otimizada para impressão.
+  Não tem sidebar nem header fixo. Usa @media print para A4 landscape.
+
+pages:
+  - print
+
+steps:
+  - step: 1
+    title: Criar estrutura base
+    template: templates/print-page.yaml
+    actions:
+      - Criar página sem sidebar (body direto)
+      - Adicionar toolbar screen-only (.no-print) com botões Voltar e Imprimir
+      - Container principal com max-w-print mr-auto
+
+  - step: 2
+    title: Configurar header do relatório
+    organism: print-report-header
+    actions:
+      - Logo Block à esquerda
+      - Título do relatório + data de emissão à direita
+      - Borda inferior border-b-2 border-border-strong
+
+  - step: 3
+    title: Adicionar filtros aplicados
+    actions:
+      - Linha de texto mostrando filtros ativos (ex. "Período: 01/01 - 31/03 | Status: Qualificado")
+      - Usar text-text-secondary text-sm
+
+  - step: 4
+    title: Montar tabela de dados
+    organism: data-table
+    actions:
+      - Tabela full width sem card wrapper (direta no container)
+      - Sem ações de sort (headers não clicáveis)
+      - Sem coluna de ações (não faz sentido no print)
+      - thead com table-header-group para repetir em cada página
+
+  - step: 5
+    title: Adicionar rodapé de resumo
+    organism: print-summary-footer
+    actions:
+      - Grid de 4 blocos com stats relevantes
+      - Borda superior border-t-2 border-border-strong
+
+  - step: 6
+    title: Adicionar footer da página
+    actions:
+      - Texto centralizado com nome do sistema + data de geração
+      - Usar text-text-muted text-xs
+
+  - step: 7
+    title: Testar impressão
+    actions:
+      - Abrir @media print no DevTools
+      - Verificar layout A4 landscape
+      - Verificar que .no-print está oculto
+      - Verificar repetição de thead em múltiplas páginas
+      - Verificar que cores estão preservadas (print-color-adjust exact)
+
+utilities_required:
+  - print-styles

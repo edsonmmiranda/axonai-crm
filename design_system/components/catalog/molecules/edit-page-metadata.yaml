@@ -1,0 +1,23 @@
+name: Edit Page Metadata
+level: molecule
+description: Linha de metadados exibida apenas na tela de edição, com data de criação e última atualização.
+used_in:
+  - form-edit
+
+tokens_used:
+  - text-text-secondary
+
+variants:
+  - name: default
+    description: Duas datas com ícones inline.
+    code: |
+      <div className="flex items-center gap-4 text-sm text-text-secondary">
+        <span className="flex items-center gap-1.5">
+          <Calendar className="size-3.5" />
+          Criado em {createdAt}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Clock className="size-3.5" />
+          Última atualização {updatedAt}
+        </span>
+      </div>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SalesPro CRM - Impressão de Leads</title>
+
+    <!-- Design System: variables.css is the generated output (layer 3) -->
+    <link href="../generated/variables.css" rel="stylesheet" />
+
+    <!-- Font: loaded from the primitive font.family.sans token (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons: Lucide (per CONTRACT.md — Lucide only) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CDN configured with semantic token names -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        surface: {
+                            base:    "rgb(var(--ds-surface-base) / <alpha-value>)",
+                            raised:  "rgb(var(--ds-surface-raised) / <alpha-value>)",
+                            sunken:  "rgb(var(--ds-surface-sunken) / <alpha-value>)",
+                        },
+                        text: {
+                            primary:   "rgb(var(--ds-text-primary) / <alpha-value>)",
+                            secondary: "rgb(var(--ds-text-secondary) / <alpha-value>)",
+                            muted:     "rgb(var(--ds-text-muted) / <alpha-value>)",
+                        },
+                        border: {
+                            DEFAULT: "rgb(var(--ds-border-default) / <alpha-value>)",
+                            strong:  "rgb(var(--ds-border-strong) / <alpha-value>)",
+                            subtle:  "rgb(var(--ds-border-subtle) / <alpha-value>)",
+                        },
+                        action: {
+                            primary: {
+                                DEFAULT: "rgb(var(--ds-action-primary-bg) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-primary-fg) / <alpha-value>)",
+                            },
+                            secondary: {
+                                DEFAULT: "rgb(var(--ds-action-secondary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-secondary-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-secondary-fg) / <alpha-value>)",
+                                border:  "rgb(var(--ds-action-secondary-border) / <alpha-value>)",
+                            },
+                            ghost: {
+                                fg: "rgb(var(--ds-action-ghost-fg) / <alpha-value>)",
+                            },
+                        },
+                        feedback: {
+                            success: {
+                                bg:     "rgb(var(--ds-feedback-success-bg) / <alpha-value>)",
+                                border: "rgb(var(--ds-feedback-success-border) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-feedback-success-fg) / <alpha-value>)",
+                            },
+                            warning: {
+                                bg:     "rgb(var(--ds-feedback-warning-bg) / <alpha-value>)",
+                                border: "rgb(var(--ds-feedback-warning-border) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-feedback-warning-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                bg:     "rgb(var(--ds-feedback-danger-bg) / <alpha-value>)",
+                                border: "rgb(var(--ds-feedback-danger-border) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-feedback-danger-fg) / <alpha-value>)",
+                            },
+                            info: {
+                                bg:     "rgb(var(--ds-feedback-info-bg) / <alpha-value>)",
+                                border: "rgb(var(--ds-feedback-info-border) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-feedback-info-fg) / <alpha-value>)",
+                            },
+                            accent: {
+                                bg:     "rgb(var(--ds-feedback-accent-bg) / <alpha-value>)",
+                                border: "rgb(var(--ds-feedback-accent-border) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-feedback-accent-fg) / <alpha-value>)",
+                            },
+                        },
+                    },
+                    fontFamily: {
+                        sans: ["var(--ds-font-family-sans)"],
+                    },
+                    borderRadius: {
+                        none: "var(--ds-radius-none)",
+                        sm:   "var(--ds-radius-sm)",
+                        md:   "var(--ds-radius-md)",
+                        lg:   "var(--ds-radius-lg)",
+                        full: "var(--ds-radius-full)",
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* ── Screen-only: toolbar and interactive elements ── */
+        @media screen {
+            body { padding: 24px; }
+        }
+
+        /* ── Print-specific styles ── */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 12mm 10mm;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                font-size: 10px;
+            }
+
+            /* Hide the screen-only toolbar */
+            .no-print { display: none !important; }
+
+            /* Prevent rows from being split across pages */
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            thead { display: table-header-group; }
+
+            /* Repeat report header on every page */
+            .print-header { display: table-header-group; }
+        }
+    </style>
+</head>
+
+<body class="bg-surface-base text-text-primary font-sans">
+
+    <!-- ================================================================
+         SCREEN-ONLY TOOLBAR (hidden when printing)
+         ================================================================ -->
+    <div class="no-print max-w-[1400px] mr-auto mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-3">
+            <a href="leads.html"
+                class="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors">
+                <i data-lucide="arrow-left" class="size-4"></i>
+                Voltar para Leads
+            </a>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()"
+                class="inline-flex items-center gap-2 rounded-lg bg-action-primary px-5 py-2 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:opacity-90">
+                <i data-lucide="printer" class="size-4"></i>
+                Imprimir
+            </button>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         PRINTABLE CONTENT
+         ================================================================ -->
+    <div class="max-w-[1400px] mr-auto">
+
+        <!-- ============================================================
+             REPORT HEADER
+             ============================================================ -->
+        <div class="flex items-start justify-between gap-4 mb-6 pb-4 border-b-2 border-border-strong">
+            <div class="flex items-center gap-3">
+                <div class="bg-action-primary rounded-lg size-10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="building-2" class="size-5 text-action-primary-fg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary leading-tight">SalesPro CRM</h1>
+                    <p class="text-xs text-text-secondary">Gestão de Vendas</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <h2 class="text-lg font-bold text-text-primary">Relatório de Leads</h2>
+                <p class="text-xs text-text-secondary mt-0.5">
+                    Emitido em <span id="print-date"></span>
+                </p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FILTER SUMMARY
+             ============================================================ -->
+        <div class="flex flex-wrap gap-x-6 gap-y-1 mb-4 text-xs text-text-secondary">
+            <span><strong class="text-text-primary">Status:</strong> Todos</span>
+            <span><strong class="text-text-primary">Responsável:</strong> Todos</span>
+            <span><strong class="text-text-primary">Origem:</strong> Todas</span>
+            <span><strong class="text-text-primary">Total de registros:</strong> 15</span>
+        </div>
+
+        <!-- ============================================================
+             LEADS TABLE
+             ============================================================ -->
+        <table class="w-full text-sm text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-sunken border-b border-border">
+                    <th class="py-2.5 pl-4 pr-2 text-xs font-semibold text-text-secondary uppercase tracking-wide">#</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide">Lead</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide">Empresa</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide">Telefone</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide text-right">Valor Estimado</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide">Status</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide">Origem</th>
+                    <th class="px-2 py-2.5 text-xs font-semibold text-text-secondary uppercase tracking-wide">Responsável</th>
+                    <th class="py-2.5 pl-2 pr-4 text-xs font-semibold text-text-secondary uppercase tracking-wide">Data Entrada</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-border-subtle">
+
+                <!-- Row 1 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">1</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">André Martins</div>
+                        <div class="text-xs text-text-secondary">andre.m@email.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">TechSolutions SA</td>
+                    <td class="px-2 py-2 text-text-secondary">(11) 99123-4567</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 15.000,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-info-bg px-2 py-0.5 text-xs font-medium text-feedback-info-fg border border-feedback-info-border">Novo</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Google Ads</td>
+                    <td class="px-2 py-2 text-text-secondary">Roberto Silva</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">10/06/2024</td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">2</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Carla Oliveira</div>
+                        <div class="text-xs text-text-secondary">carla@construtora.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Construtora Horizonte</td>
+                    <td class="px-2 py-2 text-text-secondary">(21) 98765-1234</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 42.500,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Site</td>
+                    <td class="px-2 py-2 text-text-secondary">Ana Clara</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">09/06/2024</td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">3</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Fernando Prata</div>
+                        <div class="text-xs text-text-secondary">fernando@prata.com.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Prata Consultoria</td>
+                    <td class="px-2 py-2 text-text-secondary">(31) 97654-3210</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 8.900,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-success-bg px-2 py-0.5 text-xs font-medium text-feedback-success-fg border border-feedback-success-border">Qualificado</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Indicação</td>
+                    <td class="px-2 py-2 text-text-secondary">Marcos Paulo</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">08/06/2024</td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">4</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Luiza Menezes</div>
+                        <div class="text-xs text-text-secondary">luiza@luxe.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Luxe Eventos</td>
+                    <td class="px-2 py-2 text-text-secondary">(41) 99876-5432</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 22.000,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-danger-bg px-2 py-0.5 text-xs font-medium text-feedback-danger-fg border border-feedback-danger-border">Perdido</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Site</td>
+                    <td class="px-2 py-2 text-text-secondary">Roberto Silva</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">07/06/2024</td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">5</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Ricardo Nunes</div>
+                        <div class="text-xs text-text-secondary">ricardo@nunes.ind.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Nunes Indústria</td>
+                    <td class="px-2 py-2 text-text-secondary">(51) 98321-6789</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 67.000,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">LinkedIn</td>
+                    <td class="px-2 py-2 text-text-secondary">Ana Clara</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">06/06/2024</td>
+                </tr>
+
+                <!-- Row 6 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">6</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Patrícia Duarte</div>
+                        <div class="text-xs text-text-secondary">patricia@duarte.adv.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Duarte Advocacia</td>
+                    <td class="px-2 py-2 text-text-secondary">(61) 99456-7890</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 31.200,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-info-bg px-2 py-0.5 text-xs font-medium text-feedback-info-fg border border-feedback-info-border">Novo</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">WhatsApp</td>
+                    <td class="px-2 py-2 text-text-secondary">Marcos Paulo</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">05/06/2024</td>
+                </tr>
+
+                <!-- Row 7 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">7</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Marcos Paulo</div>
+                        <div class="text-xs text-text-secondary">marcos@logistica.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Logística Express</td>
+                    <td class="px-2 py-2 text-text-secondary">(11) 97890-1234</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 55.800,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-success-bg px-2 py-0.5 text-xs font-medium text-feedback-success-fg border border-feedback-success-border">Qualificado</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Indicação</td>
+                    <td class="px-2 py-2 text-text-secondary">Roberto Silva</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">04/06/2024</td>
+                </tr>
+
+                <!-- Row 8 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">8</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Juliana Ferreira</div>
+                        <div class="text-xs text-text-secondary">juliana@ferreira.med.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Clínica Ferreira</td>
+                    <td class="px-2 py-2 text-text-secondary">(71) 98234-5678</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 18.500,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-info-bg px-2 py-0.5 text-xs font-medium text-feedback-info-fg border border-feedback-info-border">Novo</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Google Ads</td>
+                    <td class="px-2 py-2 text-text-secondary">Ana Clara</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">03/06/2024</td>
+                </tr>
+
+                <!-- Row 9 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">9</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Eduardo Campos</div>
+                        <div class="text-xs text-text-secondary">eduardo@camposauto.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Campos Automação</td>
+                    <td class="px-2 py-2 text-text-secondary">(19) 99567-8901</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 95.000,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-accent-bg px-2 py-0.5 text-xs font-medium text-feedback-accent-fg border border-feedback-accent-border">Proposta</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">LinkedIn</td>
+                    <td class="px-2 py-2 text-text-secondary">Roberto Silva</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">02/06/2024</td>
+                </tr>
+
+                <!-- Row 10 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">10</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Beatriz Lemos</div>
+                        <div class="text-xs text-text-secondary">beatriz@lemosarq.com.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Lemos Arquitetura</td>
+                    <td class="px-2 py-2 text-text-secondary">(48) 98678-2345</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 27.300,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Site</td>
+                    <td class="px-2 py-2 text-text-secondary">Marcos Paulo</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">01/06/2024</td>
+                </tr>
+
+                <!-- Row 11 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">11</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Gustavo Ramos</div>
+                        <div class="text-xs text-text-secondary">gustavo@ramostech.io</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Ramos Tech</td>
+                    <td class="px-2 py-2 text-text-secondary">(11) 96789-0123</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 120.000,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-success-bg px-2 py-0.5 text-xs font-medium text-feedback-success-fg border border-feedback-success-border">Qualificado</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Indicação</td>
+                    <td class="px-2 py-2 text-text-secondary">Ana Clara</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">31/05/2024</td>
+                </tr>
+
+                <!-- Row 12 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">12</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Tatiana Sousa</div>
+                        <div class="text-xs text-text-secondary">tatiana@sousafarma.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Sousa Farma</td>
+                    <td class="px-2 py-2 text-text-secondary">(85) 99012-3456</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 38.700,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-danger-bg px-2 py-0.5 text-xs font-medium text-feedback-danger-fg border border-feedback-danger-border">Perdido</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Google Ads</td>
+                    <td class="px-2 py-2 text-text-secondary">Roberto Silva</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">30/05/2024</td>
+                </tr>
+
+                <!-- Row 13 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">13</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Diego Almeida</div>
+                        <div class="text-xs text-text-secondary">diego@almeidaeng.com.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Almeida Engenharia</td>
+                    <td class="px-2 py-2 text-text-secondary">(62) 98345-6789</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 73.400,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-accent-bg px-2 py-0.5 text-xs font-medium text-feedback-accent-fg border border-feedback-accent-border">Proposta</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">LinkedIn</td>
+                    <td class="px-2 py-2 text-text-secondary">Marcos Paulo</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">29/05/2024</td>
+                </tr>
+
+                <!-- Row 14 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">14</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Camila Torres</div>
+                        <div class="text-xs text-text-secondary">camila@torresdesign.com</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Torres Design Studio</td>
+                    <td class="px-2 py-2 text-text-secondary">(27) 99678-0123</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 12.800,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-info-bg px-2 py-0.5 text-xs font-medium text-feedback-info-fg border border-feedback-info-border">Novo</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">WhatsApp</td>
+                    <td class="px-2 py-2 text-text-secondary">Ana Clara</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">28/05/2024</td>
+                </tr>
+
+                <!-- Row 15 -->
+                <tr>
+                    <td class="py-2 pl-4 pr-2 text-text-muted">15</td>
+                    <td class="px-2 py-2">
+                        <div class="font-semibold text-text-primary">Fernanda Costa</div>
+                        <div class="text-xs text-text-secondary">fernanda@techsolutions.com.br</div>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">Tech Solutions Ltda</td>
+                    <td class="px-2 py-2 text-text-secondary">(11) 98765-4321</td>
+                    <td class="px-2 py-2 text-right font-semibold text-text-primary">R$ 45.000,00</td>
+                    <td class="px-2 py-2">
+                        <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
+                    </td>
+                    <td class="px-2 py-2 text-text-secondary">LinkedIn</td>
+                    <td class="px-2 py-2 text-text-secondary">Roberto Silva</td>
+                    <td class="py-2 pl-2 pr-4 text-text-secondary">27/05/2024</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <!-- ============================================================
+             SUMMARY FOOTER
+             ============================================================ -->
+        <div class="mt-6 pt-4 border-t-2 border-border-strong">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                <div>
+                    <p class="text-text-secondary text-xs font-medium uppercase tracking-wide">Total de Leads</p>
+                    <p class="text-text-primary text-lg font-bold">15</p>
+                </div>
+                <div>
+                    <p class="text-text-secondary text-xs font-medium uppercase tracking-wide">Valor Total Estimado</p>
+                    <p class="text-text-primary text-lg font-bold">R$ 672.100,00</p>
+                </div>
+                <div>
+                    <p class="text-text-secondary text-xs font-medium uppercase tracking-wide">Valor Médio por Lead</p>
+                    <p class="text-text-primary text-lg font-bold">R$ 44.806,67</p>
+                </div>
+                <div>
+                    <p class="text-text-secondary text-xs font-medium uppercase tracking-wide">Distribuição por Status</p>
+                    <p class="text-xs text-text-secondary mt-1 leading-relaxed">
+                        <span class="text-feedback-info-fg font-semibold">Novo:</span> 4 &nbsp;&middot;&nbsp;
+                        <span class="text-feedback-warning-fg font-semibold">Em Contato:</span> 4 &nbsp;&middot;&nbsp;
+                        <span class="text-feedback-success-fg font-semibold">Qualificado:</span> 3 &nbsp;&middot;&nbsp;
+                        <span class="text-feedback-accent-fg font-semibold">Proposta:</span> 2 &nbsp;&middot;&nbsp;
+                        <span class="text-feedback-danger-fg font-semibold">Perdido:</span> 2
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             PAGE FOOTER
+             ============================================================ -->
+        <div class="mt-8 pt-3 border-t border-border-subtle flex items-center justify-between text-xs text-text-muted">
+            <span>SalesPro CRM &mdash; Relatório gerado automaticamente</span>
+            <span>Página 1 de 1</span>
+        </div>
+
+    </div>
+
+    <!-- Initialize Lucide icons + set print date -->
+    <script>
+        lucide.createIcons();
+        document.getElementById('print-date').textContent =
+            new Date().toLocaleDateString('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+    </script>
+
+</body>
+
+</html>

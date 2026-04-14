@@ -1,0 +1,17 @@
+name: Section Label
+level: atom
+description: Título de seção dentro de navegação ou agrupamentos.
+used_in:
+  - listing
+  - form-create
+  - form-edit
+  - kanban
+
+tokens_used:
+  - text-text-muted
+
+variants:
+  - name: default
+    description: Label uppercase muted.
+    code: |
+      <p className="px-3 text-xs font-semibold text-text-muted uppercase tracking-wide mb-2">Relatórios</p>

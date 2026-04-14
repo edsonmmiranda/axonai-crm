@@ -1,0 +1,15 @@
+name: Required Marker
+level: atom
+description: Indicador de campo obrigatório em labels de formulário.
+used_in:
+  - form-create
+  - form-edit
+
+tokens_used:
+  - text-feedback-danger-fg
+
+variants:
+  - name: default
+    description: Asterisco vermelho ao lado do label.
+    code: |
+      <span className="text-feedback-danger-fg ml-0.5">*</span>

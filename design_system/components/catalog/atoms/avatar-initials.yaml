@@ -1,0 +1,41 @@
+name: Avatar Initials
+level: atom
+description: Avatar circular com iniciais do usuário. Usado em cards, tabelas, headers e groups.
+used_in:
+  - listing
+  - kanban
+  - form-edit
+
+tokens_used:
+  - bg-surface-sunken
+  - ring-surface-raised
+  - text-text-secondary
+  - bg-feedback-info-bg
+  - text-feedback-info-fg
+  - bg-feedback-success-bg
+  - text-feedback-success-fg
+
+variants:
+  - name: default
+    description: Avatar pequeno (size-6), usado em avatar groups e kanban cards.
+    code: |
+      <div className="size-6 rounded-full bg-surface-sunken ring-2 ring-surface-raised text-xs flex items-center justify-center font-bold text-text-secondary shadow-sm">
+        {initials}
+      </div>
+
+  - name: table-row
+    description: Avatar maior (size-10) com cor de status, usado em table rows.
+    code: |
+      <div className="size-10 rounded-full bg-feedback-info-bg border border-feedback-info-border flex items-center justify-center font-bold text-feedback-info-fg text-sm">
+        {initials}
+      </div>
+
+notes: |
+  Variantes de cor: usar tokens de feedback para diferenciação visual.
+  - bg-feedback-info-bg text-feedback-info-fg (padrão)
+  - bg-feedback-success-bg text-feedback-success-fg
+  - bg-feedback-accent-bg text-feedback-accent-fg
+  - bg-feedback-warning-bg text-feedback-warning-fg
+
+  O protótipo HTML usava text-[10px] no avatar de groups — na implementação React,
+  usar text-xs como menor tamanho da escala.

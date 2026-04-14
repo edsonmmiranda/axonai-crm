@@ -1,0 +1,92 @@
+name: Dropdown Menu
+level: organism
+description: Menu dropdown construído sobre Radix DropdownMenu. Usado para ações contextuais em tabelas e headers.
+used_in:
+  - listing
+  - form-edit
+  - kanban
+
+children:
+  - icon-button
+
+tokens_used:
+  - bg-surface-overlay
+  - border-border
+  - shadow-lg
+  - text-text-primary
+  - text-text-secondary
+  - hover:bg-surface-sunken
+  - text-feedback-danger-fg
+  - hover:bg-feedback-danger-bg
+
+variants:
+  - name: default
+    description: Menu com itens simples (label + ícone).
+    code: |
+      import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+
+      export const DropdownMenu = DropdownMenuPrimitive.Root;
+      export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+
+      export const DropdownMenuContent = forwardRef<
+        React.ElementRef<typeof DropdownMenuPrimitive.Content>,
+        React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
+      >(({ className, sideOffset = 4, ...props }, ref) => (
+        <DropdownMenuPrimitive.Portal>
+          <DropdownMenuPrimitive.Content
+            ref={ref}
+            sideOffset={sideOffset}
+            className={cn(
+              "z-dropdown min-w-[180px] overflow-hidden rounded-lg border border-border bg-surface-overlay p-1 shadow-lg",
+              "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+              "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+              className
+            )}
+            {...props}
+          />
+        </DropdownMenuPrimitive.Portal>
+      ));
+
+      export const DropdownMenuItem = forwardRef<
+        React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+        React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & { destructive?: boolean }
+      >(({ className, destructive, ...props }, ref) => (
+        <DropdownMenuPrimitive.Item
+          ref={ref}
+          className={cn(
+            "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none cursor-pointer select-none",
+            "transition-colors duration-fast ease-standard",
+            destructive
+              ? "text-feedback-danger-fg hover:bg-feedback-danger-bg focus:bg-feedback-danger-bg"
+              : "text-text-primary hover:bg-surface-sunken focus:bg-surface-sunken",
+            "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+            className
+          )}
+          {...props}
+        />
+      ));
+
+      export const DropdownMenuSeparator = () => (
+        <DropdownMenuPrimitive.Separator className="my-1 h-px bg-border" />
+      );
+
+  - name: table-row-actions
+    description: Menu de ações por row na tabela.
+    code: |
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <IconButton variant="ghost" icon={MoreHorizontal} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem><Eye className="size-4" /> Ver detalhes</DropdownMenuItem>
+          <DropdownMenuItem><Pencil className="size-4" /> Editar</DropdownMenuItem>
+          <DropdownMenuItem><MessageCircle className="size-4" /> WhatsApp</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem destructive><Trash2 className="size-4" /> Excluir</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+notes: |
+  SEMPRE usar Radix DropdownMenu — não reimplementar com div + click handlers.
+  Usar z-dropdown para empilhamento correto.
+  A variante destructive usa tokens de feedback.danger para cor vermelha.

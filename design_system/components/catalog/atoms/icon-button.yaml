@@ -1,0 +1,46 @@
+name: Icon Button
+level: atom
+description: Botão circular pequeno com ícone Lucide, sem label. Usado em ações de tabela, cards e toolbars.
+used_in:
+  - listing
+  - form-edit
+  - kanban
+  - print
+
+tokens_used:
+  - text-text-muted
+  - hover:bg-action-ghost-hover
+  - hover:text-action-ghost-fg
+  - hover:bg-action-primary/10
+  - hover:text-action-primary
+  - text-feedback-success-fg
+  - hover:bg-feedback-success-bg
+
+variants:
+  - name: ghost
+    description: Default — fundo transparente, ícone muted, hover com bg ghost.
+    code: |
+      <button className="rounded p-1.5 text-text-muted hover:bg-action-ghost-hover hover:text-action-ghost-fg transition-colors">
+        <Eye className="size-4" />
+      </button>
+
+  - name: primary-tint
+    description: Destaque — hover com tint do primary.
+    code: |
+      <button className="rounded p-1.5 text-text-muted hover:bg-action-primary/10 hover:text-action-primary transition-colors">
+        <Eye className="size-4" />
+      </button>
+
+  - name: feedback
+    description: Ação contextual com cor de feedback (ex. WhatsApp).
+    code: |
+      <button className="rounded p-1.5 text-feedback-success-fg hover:bg-feedback-success-bg transition-colors">
+        <MessageCircle className="size-4" />
+      </button>
+
+  - name: reveal-on-hover
+    description: Visível apenas no hover do card pai (kanban).
+    code: |
+      <button className="size-6 flex items-center justify-center rounded-full hover:bg-action-ghost-hover text-text-muted hover:text-action-primary transition-colors opacity-0 group-hover:opacity-100">
+        <ArrowRight className="size-4" />
+      </button>
