@@ -99,8 +99,10 @@ Se encontrar bloqueio (schema real diverge do PRD, ambiguidade em regra de negó
 
 **Inputs:**
 - PRD (Workflow A) ou sprint file LIGHT (Workflow B)
-- Schema real do banco (via introspeção do `@db-admin`)
+- Schema real do banco: [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json) — fonte única da verdade (tabelas, colunas, RLS)
 - Reference module (se especificado)
+
+> ⛔ **NUNCA leia `supabase/migrations/`.** Migrations são histórico write-only e podem mostrar estado já revertido. Se o snapshot parece desatualizado, reporte ao Tech Lead para que `@db-admin` re-rode introspecção.
 
 **Outputs:**
 - Server Actions em `src/lib/actions/[module].ts`

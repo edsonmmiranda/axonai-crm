@@ -262,6 +262,9 @@ Se o PRD tem problemas fundamentais que o Spec Writer não pode resolver sozinho
 - PRD gerado pelo `@spec-writer` em `docs/prds/prd_[name].md`
 - Sprint file correspondente (para detecção de nível)
 - `agents/workflows/validation-checklist.md` (fonte única de critérios)
+- Para conferir claims sobre schema: [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json)
+
+> ⛔ **NUNCA leia `supabase/migrations/`** para validar o PRD. Migrations são histórico write-only — podem refletir estado já revertido. O snapshot é a única fonte confiável.
 
 **Outputs:**
 - Um dos quatro modos: APPROVED / CONDITIONAL APPROVAL / REJECTED WITH CONDITIONS / REJECTED

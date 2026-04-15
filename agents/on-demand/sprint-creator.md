@@ -325,6 +325,9 @@ Siga [`agents/conventions/on-demand.md`](../conventions/on-demand.md):
 - Invocação explícita do usuário
 - Intenção descrita em linguagem natural
 - Opcionalmente: referência a reference module
+- Para contexto de schema (quando a sprint envolve tabelas existentes): [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json)
+
+> ⛔ **NUNCA leia `supabase/migrations/`** para escrever o sprint. Migrations são histórico write-only. Use apenas o snapshot para referenciar estado atual do banco.
 
 **Outputs:**
 - Sprint file em `sprints/active/sprint_[N]_[name].md` usando o template correto

@@ -13,7 +13,10 @@ allowedTools: Read, Write, Grep, Glob
 
 - **Sprint file:** lógica de negócio.
 - **Design refs:** estrutura de UI (se fornecida em `design_refs/`).
-- **Architecture state:** verdade corrente do sistema.
+- **Schema real do banco:** [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json) — fonte única da verdade para tabelas, colunas, índices e policies RLS.
+- **Estrutura atual do código:** descoberta via `Glob`/`Grep` em `src/app/`, `src/components/`, `src/lib/integrations/`.
+
+> ⛔ **NUNCA leia `supabase/migrations/`.** Migrations são histórico write-only — podem mostrar estado já revertido ou inconsistente. O único retrato confiável do banco é `schema_snapshot.json`. Se o snapshot parece desatualizado, reporte ao Tech Lead para que `@db-admin` re-rode introspecção; não tente reconstruir o schema a partir dos arquivos SQL.
 
 ---
 
