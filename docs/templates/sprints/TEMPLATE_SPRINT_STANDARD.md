@@ -2,7 +2,7 @@
 
 > **Nível:** STANDARD
 > **Quando usar:** novo módulo CRUD, nova tabela com RLS, nova integração externa, mudanças que afetam múltiplos módulos, features com regras de negócio ou edge cases relevantes.
-> **Quando NÃO usar:** se é um bugfix ou ajuste de UI em um único arquivo → use `TEMPLATE_SPRINT_LIGHT.md`.
+> **Quando NÃO usar:** se é um bugfix ou ajuste de UI em um único arquivo → use `docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md`.
 
 ---
 

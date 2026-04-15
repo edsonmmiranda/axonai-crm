@@ -32,7 +32,7 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 **Antes de criar qualquer Server Action**, verifique se existe uma especificação de Reference Module:
 
 - **Workflow A (sprint STANDARD com PRD):** abra `docs/prds/prd_*.md` e procure a seção **"Reference Module Compliance"**
-- **Workflow B (sprint LIGHT, sem PRD):** abra `sprints/sprint_XX_*.md` e procure a seção **"Reference Module Compliance"**
+- **Workflow B (sprint LIGHT, sem PRD):** abra `sprints/active/sprint_XX_*.md` e procure a seção **"Reference Module Compliance"**
 
 **Se há Reference Module especificado:**
 - Leia o skill: [`agents/skills/reference-module-copy/SKILL.md`](../skills/reference-module-copy/SKILL.md)

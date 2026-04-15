@@ -17,7 +17,7 @@ Este documento é a **referência completa** usada pelo `@sanity-checker` (e opc
 ## 🧭 Step 0 — Detecção do nível do sprint
 
 ### Como detectar
-Abra o sprint file de origem `sprints/sprint_XX_*.md` e busque no header por:
+Abra o sprint file de origem `sprints/active/sprint_XX_*.md` e busque no header por:
 
 ```markdown
 > **Nível:** LIGHT

@@ -512,7 +512,7 @@ Peça ao agente para completar, depois re-valide.
 # Contrato
 
 **Inputs:**
-- Sprint file (`sprints/sprint_XX_*.md`) — LIGHT ou STANDARD
+- Sprint file (`sprints/active/sprint_XX_*.md`) — LIGHT ou STANDARD
 - Ou pedido direto do usuário (Workflow B)
 - Estado do projeto (`docs/architecture_state.md`, schema real, `.env.local`)
 

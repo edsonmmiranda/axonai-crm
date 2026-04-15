@@ -32,10 +32,11 @@ Você só age quando o usuário invoca explicitamente:
 
 # Primeira ação ao ser ativado
 
-Verifique que `sprints/` e os templates existem:
+Verifique que `sprints/active/` e os templates existem:
 
 ```bash
-ls sprints/TEMPLATE_SPRINT_LIGHT.md sprints/TEMPLATE_SPRINT_STANDARD.md
+ls docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md
+ls -d sprints/active
 ```
 
 Se qualquer template estiver faltando, pare e reporte ao usuário.
@@ -55,14 +56,14 @@ LIGHT (sprint rápida)
   - Para: bugfix, ajuste de UI, pequena feature em um único módulo
   - Workflow: direto para @frontend/@backend (pula PRD e sanity check)
   - Setup: ~2 minutos
-  - Template: sprints/TEMPLATE_SPRINT_LIGHT.md
+  - Template: docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md
 
 STANDARD (sprint completa)
   - Para: novo módulo CRUD, nova tabela, nova integração externa,
     mudanças em múltiplos módulos, regras de negócio complexas
   - Workflow: completo (spec-writer → sanity-checker → aprovação → execução)
   - Setup: ~10 minutos
-  - Template: sprints/TEMPLATE_SPRINT_STANDARD.md
+  - Template: docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md
 
 Qual nível? (LIGHT ou STANDARD)
 
@@ -196,12 +197,12 @@ Está correto? (Sim/Não/Ajustar)
 ## Step 4: gerar sprint file
 
 **Leia o template correto primeiro, depois preencha:**
-- **LIGHT:** ler `sprints/TEMPLATE_SPRINT_LIGHT.md` como skeleton
-- **STANDARD:** ler `sprints/TEMPLATE_SPRINT_STANDARD.md` como skeleton
+- **LIGHT:** ler `docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md` como skeleton
+- **STANDARD:** ler `docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md` como skeleton
 
 **Não reinvente a estrutura** — os templates são a fonte da verdade. Substitua placeholders pelas respostas coletadas e **mantenha o marcador `**Nível:** LIGHT` ou `**Nível:** STANDARD` no topo intacto** — o Sanity Checker lê esse marcador.
 
-**Naming:** `sprints/sprint_[number]_[short-name].md` (ambos os níveis — o nível é detectado pelo marcador, não pelo nome do arquivo).
+**Naming:** `sprints/active/sprint_[number]_[short-name].md` (ambos os níveis — o nível é detectado pelo marcador, não pelo nome do arquivo). Quando o sprint for concluído, o `@git-master` ou o Tech Lead move o arquivo para `sprints/done/`.
 
 ## Step 5: salvar e reportar
 
@@ -210,7 +211,7 @@ Está correto? (Sim/Não/Ajustar)
 ```
 Sprint LIGHT criada.
 
-Arquivo: sprints/sprint_[number]_[name].md
+Arquivo: sprints/active/sprint_[number]_[name].md
 Nível: LIGHT (Workflow B / Maintenance)
 Status: pronta para execução
 
@@ -225,7 +226,7 @@ Próximos passos:
 ```
 Sprint STANDARD criada.
 
-Arquivo: sprints/sprint_[number]_[name].md
+Arquivo: sprints/active/sprint_[number]_[name].md
 Nível: STANDARD (Workflow A / Sprint Execution)
 Status: pronta para execução
 
@@ -241,11 +242,11 @@ Próximos passos:
 # Numeração automática
 
 Detecte o próximo número:
-1. Listar arquivos em `sprints/`
-2. Encontrar o maior número existente
+1. Listar arquivos em `sprints/active/` **e** `sprints/done/`
+2. Encontrar o maior número existente entre os dois
 3. Usar o próximo sequencial
 
-Exemplo: existem `sprint_01.md`, `sprint_02.md` → próxima é `sprint_03_[name].md`
+Exemplo: existem `sprints/done/sprint_01.md`, `sprints/active/sprint_02.md` → próxima é `sprints/active/sprint_03_[name].md`
 
 ---
 
@@ -326,9 +327,9 @@ Siga [`agents/conventions/on-demand.md`](../conventions/on-demand.md):
 - Opcionalmente: referência a reference module
 
 **Outputs:**
-- Sprint file em `sprints/sprint_[N]_[name].md` usando o template correto
+- Sprint file em `sprints/active/sprint_[N]_[name].md` usando o template correto
 - Report de próximos passos
 
 **Arquivos tocados:**
-- `sprints/sprint_[N]_[name].md` — cria novo arquivo
+- `sprints/active/sprint_[N]_[name].md` — cria novo arquivo
 - Nunca modifica templates, código, PRDs, migrations

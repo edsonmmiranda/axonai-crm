@@ -36,14 +36,14 @@ FRAMEWORK_PATHS=(
   "scripts/telemetry-report.mjs"
   "scripts/generate-architecture-inventory.mjs"
   "scripts/update-framework.sh"
-  "sprints/TEMPLATE_SPRINT_LIGHT.md"
-  "sprints/TEMPLATE_SPRINT_STANDARD.md"
+  "docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md"
+  "docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md"
 )
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Pastas protegidas (NUNCA tocadas — apenas referência/documentação)
 # ──────────────────────────────────────────────────────────────────────────────
-# sprints/ (exceto TEMPLATE_*.md)
+# sprints/active/, sprints/done/ — sprints do projeto
 # src/, app/, public/, components/ — código da aplicação
 # docs/architecture_state.md, docs/APRENDIZADOS.md, docs/stack.md
 # supabase/migrations/ (exceto bootstrap inicial)

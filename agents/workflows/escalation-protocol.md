@@ -115,7 +115,7 @@ Progress so far:
 - Tabela notifications_log proposta
 
 Requirement: "Sistema deve enviar notificações aos usuários"
-Location: sprints/sprint_05_notifications.md, linha 12
+Location: sprints/active/sprint_05_notifications.md, linha 12
 
 INTERPRETATION A:
 - What: Apenas email
@@ -143,7 +143,7 @@ State: Design da migração, ainda não salvou arquivo
 Progress so far: Introspecção da tabela [entity_a] concluída (não tem [entity_b]_id)
 
 Requirement: "Adicionar relacionamento entre [entity_a] e [entity_b]"
-Location: sprints/sprint_07_[entity_b].md, linha 8
+Location: sprints/active/sprint_07_[entity_b].md, linha 8
 
 INTERPRETATION A:
 - What: Relacionamento 1:1 (cada [entity_a] tem um [entity_b])
@@ -166,7 +166,7 @@ QUESTION: Um [entity_a] pode pertencer a múltiplos [entity_b]?
 TECHNICAL BLOCKER
 
 Agent: @backend
-Sprint: sprints/sprint_08_export.md
+Sprint: sprints/active/sprint_08_export.md
 Task: Implementar exportação de [entities] para Excel
 State: Aprox. 60% — client XLSX instalado, action get[Entities]ForExportAction criada
 Progress so far:

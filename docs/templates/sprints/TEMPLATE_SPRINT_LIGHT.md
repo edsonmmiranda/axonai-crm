@@ -2,7 +2,7 @@
 
 > **Nível:** LIGHT
 > **Quando usar:** bugfixes, ajustes de UI isolados, pequenas features que afetam um único módulo sem mudanças de schema, sem novo módulo CRUD, sem integração externa nova.
-> **Quando NÃO usar:** se houver criação de novo CRUD, nova tabela, nova integração de API, ou mudança em múltiplos módulos → use `TEMPLATE_SPRINT_STANDARD.md`.
+> **Quando NÃO usar:** se houver criação de novo CRUD, nova tabela, nova integração de API, ou mudança em múltiplos módulos → use `docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md`.
 
 ---
 

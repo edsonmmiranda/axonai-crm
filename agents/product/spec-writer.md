@@ -19,7 +19,7 @@ allowedTools: Read, Write, Grep, Glob
 
 # STEP 0: ler o nível do sprint (obrigatório — rodar primeiro)
 
-**CRÍTICO:** Antes de qualquer outra coisa, abra o sprint file (`sprints/sprint_XX_*.md`) e procure o marcador de nível no cabeçalho:
+**CRÍTICO:** Antes de qualquer outra coisa, abra o sprint file (`sprints/active/sprint_XX_*.md`) e procure o marcador de nível no cabeçalho:
 
 ```markdown
 > **Nível:** LIGHT
@@ -43,7 +43,7 @@ ou
 
 ### Sprint sem marcador de nível
 - Assuma **STANDARD** como default seguro.
-- Adicione nota ao Tech Lead: "Sprint file sem marcador `**Nível:**` — assumido STANDARD. Considere usar `TEMPLATE_SPRINT_LIGHT.md` ou `TEMPLATE_SPRINT_STANDARD.md` em sprints futuros."
+- Adicione nota ao Tech Lead: "Sprint file sem marcador `**Nível:**` — assumido STANDARD. Considere usar `docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md` ou `docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md` em sprints futuros."
 
 ---
 
@@ -188,7 +188,7 @@ Se o sprint tem ambiguidade, informação faltando ou requisitos conflitantes, *
 # Contrato
 
 **Inputs:**
-- Sprint file (`sprints/sprint_XX_*.md`)
+- Sprint file (`sprints/active/sprint_XX_*.md`)
 - Design refs (se disponíveis)
 - Estado atual do sistema (`docs/architecture_state.md`, schema snapshot)
 
