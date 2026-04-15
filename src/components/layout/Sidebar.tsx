@@ -49,7 +49,7 @@ const secondarySections: NavSection[] = [
 ];
 
 const footerItems: NavItem[] = [
-  { href: '#', label: 'Configurações', icon: Settings },
+  { href: '/settings/profile', label: 'Configurações', icon: Settings },
 ];
 
 function isActive(pathname: string, href: string): boolean {

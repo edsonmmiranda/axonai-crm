@@ -97,6 +97,28 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-15 — [DEPLOY] Invites sem provider de email: retornar `inviteUrl` copiável
+
+**Contexto:** Sprint 04 (settings · team). `createInvitationAction` e `resendInvitationAction` precisam entregar o link de aceite, mas o projeto ainda não tem Resend/SMTP configurado.
+
+**Problema:** integrar email transacional no mesmo sprint que monta o CRUD inteiro é escopo dobrado; sem solução, admins não conseguiriam adicionar membros.
+
+**Solução:** actions retornam `{ token, inviteUrl }` e a UI (`InviteMemberDialog` / `PendingInvitationsList`) expõe botão "Copiar link" + fallback para selecionar o input readonly quando `navigator.clipboard` não existe. O link é construído a partir de `NEXT_PUBLIC_SITE_URL` → `headers().origin` → `host`. `resendInvitationAction` usa `crypto.randomUUID()` para regenerar o token (invalida o anterior).
+
+**Regra geral:** enquanto provider de email não estiver integrado, **todo fluxo que dependeria de email transacional** (convites, reset, verificação) deve devolver URL copiável via `ActionResponse.data` e a UI deve ter um fallback de clipboard. Sprint dedicada de email é pré-requisito para remover esse padrão.
+
+### 2026-04-15 — [SUPABASE] RPC bootstrap `get_table_policies` não expõe `polwithcheck`
+
+**Contexto:** Sprint 04 (probe de DB). `@db-admin` precisava confirmar predicados das policies em `profiles`/`organizations`/`invitations` antes de decidir sobre migrations.
+
+**Problema:** `get_table_policies(p_table_name)` (em `00000000000000_framework_bootstrap.sql`) retorna apenas `pg_get_expr(p.polqual, p.polrelid)`. Isso cobre `USING`, mas **omite `WITH CHECK`**. Policies INSERT ficam com `policy_definition = NULL`, e policies UPDATE com `WITH CHECK` só são parcialmente auditáveis. Resultado: o probe devolve `(none)` para todas as linhas e não dá para validar enforcement real.
+
+**Causa raiz:** bootstrap pragmático priorizou colunas mínimas; `polwithcheck` ficou de fora.
+
+**Solução (não aplicada nesta sprint, registrada como follow-up):** adicionar `get_table_policies_full(p_schema, p_table_name)` retornando `policy_using`, `policy_with_check`, `policy_roles`, `policy_permissive`. Idempotente (`CREATE OR REPLACE FUNCTION`), `GRANT EXECUTE ... TO service_role`. O snapshot em `docs/schema_snapshot.json` deve evoluir para incluir os campos extras.
+
+**Regra geral:** qualquer auditoria de RLS que dependa de `get_table_policies` atual é incompleta. Ao escrever migrations de RLS, não confie só no probe — escreva as policies via `DROP POLICY IF EXISTS` + `CREATE POLICY` idempotentes e use o snapshot apenas como heurística de presença.
+
 ### 2026-04-15 — [SHADCN] Progress bar com % dinâmico: use `style={obj}` (variável), não `style={{...}}` literal
 
 **Contexto:** Sprint 02 (dashboard mock). Barras de progresso (`GoalsRow`, `PipelineCard`) precisam de `width: X%` dirigido por prop do mock — e futuramente por Server Action. O `scripts/verify-design.mjs` (GATE 5 estático) bloqueia tanto `w-[82%]` (regex `[wh]-\[`) quanto `style={{...}}` literal (regex `\bstyle=\{\{[^}]+\}\}`).
