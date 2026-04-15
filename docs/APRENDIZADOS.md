@@ -97,6 +97,29 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-15 — [SHADCN] Progress bar com % dinâmico: use `style={obj}` (variável), não `style={{...}}` literal
+
+**Contexto:** Sprint 02 (dashboard mock). Barras de progresso (`GoalsRow`, `PipelineCard`) precisam de `width: X%` dirigido por prop do mock — e futuramente por Server Action. O `scripts/verify-design.mjs` (GATE 5 estático) bloqueia tanto `w-[82%]` (regex `[wh]-\[`) quanto `style={{...}}` literal (regex `\bstyle=\{\{[^}]+\}\}`).
+
+**Problema:** as duas formas óbvias de escrever uma progress bar em Tailwind caem nas duas regras, e não há token Tailwind que varie por prop.
+
+```tsx
+// ❌ ambos bloqueiam no GATE 5
+<div className={`w-[${percent}%]`} />
+<div style={{ width: `${percent}%` }} />
+```
+
+**Causa raiz:** o regex de `inline-style` é literal `style={{`. Referenciar um objeto por variável produz `style={x}` (um só `{`), passa o regex. O Guardian explicitamente permite `style` para "valores genuinamente dinâmicos dirigidos por estado de runtime" em §1a de `agents/quality/guardian.md` — o bloqueio é de `style` com cor/padding/tamanho **literal estático**, não dinâmico.
+
+**Solução:**
+
+```tsx
+const style = { width: `${stage.progressPercent}%` };
+return <div className="h-full rounded-full bg-feedback-info-solid-bg" style={style} />;
+```
+
+**Regra geral:** para qualquer dimensão dirigida por runtime (progress, gráficos, sliders), declare `const style: React.CSSProperties = { ... }` acima do return e passe por referência. `style={{...}}` literal fica reservado para caso nenhum — sempre existe a alternativa da variável ou de um token Tailwind.
+
 ### 2026-04-14 — [BUILD] `tsc` varre `docs/templates/**/*.ts` no bootstrap e quebra o build
 
 **Contexto:** Sprint 01 (bootstrap). Primeiro `npm run build` depois de criar `tsconfig.json` com `include: ["**/*.ts", "**/*.tsx"]`.

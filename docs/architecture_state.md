@@ -1,7 +1,7 @@
 # Architecture State
 
-**Last Updated:** 2026-04-14 (Sprint 01 — Bootstrap)
-**Project Status:** 🟢 **BOOTSTRAPPED** — Next.js 15 + React 19 + Tailwind v4 + Supabase (`@supabase/ssr`) em pé. Nenhum módulo CRUD ainda; próximo sprint inicia o primeiro domínio.
+**Last Updated:** 2026-04-15 (Sprint 02 — Dashboard Mock)
+**Project Status:** 🟢 **DASHBOARD MOCK LIVE** — primeira tela real do CRM renderiza em `/dashboard` com shell `AppLayout` (sidebar + topbar) e dados mockados. Nenhum módulo CRUD de negócio ainda; próximo sprint começa a substituir mocks por dados reais.
 
 ---
 
@@ -64,9 +64,32 @@ This file is the **narrative memory of what has been built** — why modules exi
 **O que NÃO foi tocado nesta sprint:**
 - Banco de dados. Não houve migration nem qualquer comando `supabase db *`. O baseline `00000000000000_framework_bootstrap.sql` continua intacto. ⚠️ **Lembrete de memória do projeto:** o Supabase remoto já possui estrutura/dados preexistentes fora das migrations versionadas — qualquer ação destrutiva futura exige confirmação explícita e introspecção via `@db-admin` antes de `db push`.
 
+## 🖼️ Application shell (Sprint 02)
+
+**Propósito:** estabelecer o esqueleto visual compartilhado (`AppLayout` = sidebar + topbar + main) que servirá de container para todas as telas autenticadas do CRM, e entregar o **Dashboard** como primeira tela real em paridade visual com `design_system/telas_prontas/dashboard.html` — ainda com dados mockados, sem persistência nem auth.
+
+**Decisões arquiteturais:**
+- **Route group `src/app/(app)/`** agrupa telas "dentro" do app. `src/app/(app)/layout.tsx` é um Server Component que envolve `{children}` em `<AppLayout>`, de modo que toda rota sob o grupo herda o shell sem duplicar JSX. Telas públicas futuras (landing, auth) ficarão em outros route groups sem esse shell.
+- **`/` → `redirect('/dashboard')`** via `next/navigation`. Dashboard passa a ser a home real; landing placeholder do bootstrap foi removido.
+- **`AppLayout` é Server Component puro** (`src/components/layout/AppLayout.tsx`). Só os filhos que precisam de `usePathname()` (`Sidebar`) ou de eventos (`Topbar` — busca futura) são marcados `'use client'`. Isso mantém a página estática quando possível.
+- **Sidebar item ativo via `usePathname()`**, nunca hardcoded. Itens futuros (`/leads`, `/pipeline`, etc.) já estão listados com `href="#"` inerte — substituir por rota real é one-liner quando cada módulo chegar.
+- **Responsividade:** sidebar `hidden md:flex` (esconde abaixo de 768px). O hamburger / drawer mobile fica adiado para sprint futura; por enquanto conteúdo principal ocupa 100% no mobile.
+- **`src/lib/mocks/` é a convenção oficial para dados mockados**: um arquivo por domínio (`dashboard.ts` hoje; `leads.ts`, `pipeline.ts` depois). Cada arquivo exporta **tipos + instâncias mockadas juntos**, e os tipos já antecipam o shape esperado das futuras Server Actions. Quando o domínio real for construído, o componente consumidor recebe `Lead[]` vindo do servidor sem mudar prop.
+- **Progress bars e elementos com dimensão dinâmica em runtime** usam `style={variable}` (prop `style` com referência a objeto `React.CSSProperties` constante declarado acima do return) em vez de `style={{ ... }}` inline. Isso é legítimo por §1a do Guardian (valores dinâmicos dirigidos por estado) e passa o regex do `scripts/verify-design.mjs` que bloqueia apenas `style=\{\{...\}\}` literal. É o caminho canônico para width/height percentual dirigido por prop.
+- **Ícones:** toda a tela usa exclusivamente `lucide-react`. Nenhum CDN, nenhum SVG inline. Lista explícita no sprint file.
+
+**Arquivos criados:**
+- Shell: `src/components/layout/{AppLayout,Sidebar,Topbar}.tsx`
+- Route group: `src/app/(app)/layout.tsx`
+- Rota: `src/app/(app)/dashboard/page.tsx` + 6 componentes privados em `src/app/(app)/dashboard/_components/` (`GreetingHeader`, `KpiCards`, `RecentLeadsTable`, `GoalsRow`, `PipelineCard`, `UpcomingTasksCard`)
+- Mocks: `src/lib/mocks/dashboard.ts` (tipos `KPI`, `Lead`, `LeadSource`, `LeadStatus`, `SalesGoal`, `MonthlyGoal`, `PipelineStage`, `Task`, `TaskPriority` + instâncias + helper `formatTodayLong()`)
+- `src/app/page.tsx` reescrito para `redirect('/dashboard')`
+
+**O que NÃO foi tocado nesta sprint:** nenhuma migration, nenhuma Server Action, nenhum arquivo em `src/lib/actions/`, nenhum token do design system. Sprint puramente visual.
+
 ## 🧩 Modules
 
-**None.** No CRUD modules, no pages, no Server Actions have been built yet.
+**None ainda.** Dashboard atual é uma tela de apresentação com mocks — não é um módulo CRUD. Quando `/leads`, `/pipeline`, etc. chegarem como módulos reais, cada um segue o formato abaixo.
 
 As sprints execute, append entries here using this shape:
 
@@ -101,6 +124,7 @@ As sprints execute, append entries here using this shape:
 
 | Date | Sprint | Change |
 |---|---|---|
+| 2026-04-15 | sprint_02_dashboard_mock | Dashboard `/` → `/dashboard` live com `AppLayout` (sidebar + topbar) e dados mockados em `src/lib/mocks/dashboard.ts`. Estabeleceu route group `(app)` como shell para telas autenticadas. Sem banco, sem Server Actions. |
 | 2026-04-14 | sprint_01_bootstrap | Bootstrap do projeto: Next.js 15 + React 19 + Tailwind v4 + Supabase (`@supabase/ssr`) + design system wiring. Nenhuma mudança de banco. |
 | 2026-04-11 | (none) | Framework reorganization: shrunk this file to dynamic sections only. Static content moved to `docs/stack.md`, `agents/workflows/memory-layers.md`, and `docs/conventions/crud.md`. |
 | 2026-04-10 | (none) | Framework reset to empty-reusable state. |
