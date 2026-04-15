@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Building2, User, Users } from 'lucide-react';
+import { Building2, Tag, User, Users } from 'lucide-react';
 
 import type { SessionRole } from '@/lib/supabase/getSessionContext';
 import { cn } from '@/lib/utils';
@@ -28,6 +28,12 @@ const items: SettingsNavItem[] = [
     icon: Users,
     roles: ['owner', 'admin'],
   },
+  {
+    href: '/settings/catalog/categories',
+    label: 'Categorias',
+    icon: Tag,
+    roles: ['owner', 'admin'],
+  },
 ];
 
 export function SettingsSidebar({ role }: { role: SessionRole }) {
@@ -38,7 +44,7 @@ export function SettingsSidebar({ role }: { role: SessionRole }) {
     <nav aria-label="Configurações" className="flex flex-col gap-1">
       {visible.map((item) => {
         const Icon = item.icon;
-        const active = pathname === item.href;
+        const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (
           <Link
             key={item.href}
