@@ -42,7 +42,7 @@ O framework tem **duas camadas de memória persistente**, cada uma com propósit
 
 ```
 Aconteceu algo inesperado ou contra-intuitivo durante a sprint?
-├─ SIM → registrar em `docs/APRENDIZADOS.md` com: problema, causa raiz, solução, regra geral
+├─ SIM → registrar em `docs/APRENDIZADOS.md` no formato enxuto (título + Regra em 1 linha, ≤3 linhas total; história longa fica no git blame/commit)
 └─ NÃO → não escrever nada em Aprendizados. Seguir para o commit.
 
 Mudou o schema do banco?
