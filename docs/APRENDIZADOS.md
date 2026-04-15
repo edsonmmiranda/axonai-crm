@@ -95,3 +95,7 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 ---
 
 ## 📚 Entradas
+
+### 2026-04-15 · [SHADCN] `verify-design` barra CSS vars do Radix em classes
+
+**Regra:** `min-w-[var(--radix-select-trigger-width)]` (padrão shadcn p/ match trigger↔content) dispara `arbitrary-dimension`. Omita a classe — conteúdo dimensiona pelo próprio conteúdo — ou mova o width-matching para fora do className.

@@ -1,6 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import type { TeamMember } from '@/lib/actions/invitations';
+import type { SessionRole } from '@/lib/supabase/getSessionContext';
+import { TeamMemberRowActions } from './TeamMemberRowActions';
 
 const ROLE_LABEL: Record<TeamMember['role'], string> = {
   owner: 'Owner',
@@ -19,7 +21,13 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export function TeamMembersList({ members }: { members: TeamMember[] }) {
+interface TeamMembersListProps {
+  members: TeamMember[];
+  viewerId: string;
+  viewerRole: SessionRole;
+}
+
+export function TeamMembersList({ members, viewerId, viewerRole }: TeamMembersListProps) {
   if (members.length === 0) {
     return (
       <p className="px-4 py-6 text-sm text-text-secondary">
@@ -30,7 +38,7 @@ export function TeamMembersList({ members }: { members: TeamMember[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] border-collapse text-sm">
+      <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
             <th scope="col" className="px-4 py-3 font-semibold">
@@ -47,6 +55,9 @@ export function TeamMembersList({ members }: { members: TeamMember[] }) {
             </th>
             <th scope="col" className="px-4 py-3 font-semibold">
               Desde
+            </th>
+            <th scope="col" className="px-4 py-3 text-right font-semibold">
+              Ações
             </th>
           </tr>
         </thead>
@@ -79,6 +90,15 @@ export function TeamMembersList({ members }: { members: TeamMember[] }) {
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-text-secondary">{formatDate(m.created_at)}</td>
+                <td className="px-4 py-3">
+                  <TeamMemberRowActions
+                    memberId={m.id}
+                    memberName={m.full_name}
+                    memberRole={m.role}
+                    viewerId={viewerId}
+                    viewerRole={viewerRole}
+                  />
+                </td>
               </tr>
             );
           })}

@@ -35,7 +35,11 @@ export default async function TeamPage() {
         </CardHeader>
         <CardContent className="p-0">
           {membersRes.success && membersRes.data ? (
-            <TeamMembersList members={membersRes.data} />
+            <TeamMembersList
+              members={membersRes.data}
+              viewerId={ctx.userId}
+              viewerRole={ctx.role}
+            />
           ) : (
             <p className="px-6 py-6 text-sm text-feedback-danger-fg">
               {membersRes.error ?? 'Erro ao carregar membros.'}
