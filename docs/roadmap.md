@@ -11,8 +11,8 @@ Este documento é o **plano executivo** para levar o app de "dashboard mockado" 
 ## 🔭 Visão geral
 
 ```
-Sprint 03 → Auth & Tenancy          ← bloqueia tudo
-Sprint 04 → Profile & Org Settings  ← fecha auth
+Sprint 03 → Auth & Tenancy          ← bloqueia tudo - Feito
+Sprint 04 → Profile & Org Settings  ← fecha auth - Feito
 Sprint 05 → Categories (catálogo)   ← warm-up CRUD
 Sprint 06 → Products + Storage      ← upload + galeria
 Sprint 07 → Lead Origins · Loss Reasons · Tags (settings)
@@ -23,6 +23,20 @@ Sprint 11 → Dashboard real          ← substitui mocks
 Sprint 12 → WhatsApp Groups (CRUD)
 Sprint 13 → WhatsApp Integração (externo)
 ```
+
+Sprint	Modelo	Por quê
+05 — Categories	Sonnet 4.6	CRUD mínimo (8 colunas), é o warm-up. Padrão vai ser replicado — vale investir um pouco para deixar o template limpo, mas não precisa de Opus.
+06 — Products + Storage	Opus 4.6	20 colunas + 2 tabelas auxiliares + Storage (buckets, is_primary, position, reorder). Primeira vez tocando Storage → decisões que vão virar padrão.
+07 — Lead Origins / Loss / Tags	Sonnet 4.6 (ou Haiku se optar por 3 LIGHT)	3 CRUDs curtos seguindo template do Sprint 05/06. Mecânico.
+08 — Leads Lista	Opus 4.6	27 colunas, tabs, filtros server-side, paginação, lead_tags M2M, UTM, export. Core do produto — erros aqui custam caro.
+09 — Funnels & Stages	Sonnet 4.6	CRUD + reordenação de linhas. Padrão conhecido.
+10 — Pipeline Kanban DnD	Opus 4.6	DnD com @dnd-kit, bulk update atômico de card_order, transação, modal condicional de perda. Performance + correção.
+11 — Dashboard real	Opus 4.6 para a decisão arquitetural (manter/cortar tasks e sales_goals) → Sonnet 4.6 para executar as queries depois de decidido	Decisão de escopo é o valor; queries em si são diretas.
+12 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples + FK pra lead_origins.
+13 — WhatsApp Integração	Opus 4.6 (fase 1 research + fase 2 webhook/migration)	Escolha de provider, webhook seguro, nova tabela com RLS, matching por telefone. Alto impacto e ambíguo.
+Regra geral para este roadmap: Opus nos sprints 06, 08, 10, 13 (e na fase de decisão do 11); Sonnet no resto. Se um sprint Sonnet travar em decisão não-óbvia, escalar para Opus na hora em vez de forçar.
+
+
 
 **Critério de "100% alinhado":** toda tabela do snapshot tem um módulo CRUD acessível no app, com RLS validada, Server Actions tipadas, formulário com Zod, e telas com tokens semânticos aprovadas pelo Guardian.
 
