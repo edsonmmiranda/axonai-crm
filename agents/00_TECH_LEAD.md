@@ -25,7 +25,10 @@ O modelo de delegação, a hierarquia de autoridade entre documentos, a ordem de
 ```
 PASSO 1: view_file(docs/conventions/standards.md)     → Hierarquia de autoridade, regras invioláveis, modelo de delegação, ordem de leitura
 PASSO 2: view_file(docs/schema_snapshot.json)         → Estado real do schema do banco (única fonte canônica de tabelas/RLS)
+PASSO 3: view_file(docs/APRENDIZADOS.md)              → Armadilhas já descobertas em sprints anteriores (leitura integral obrigatória)
 ```
+
+**Uso de `APRENDIZADOS.md`:** ao delegar para qualquer sub-agente (`@backend`, `@frontend`, `@db-admin`, `@api-integrator`, `@guardian`), **passe como contexto as entradas relevantes** para o escopo da tarefa. Use as categorias do arquivo (`BUILD`, `TIPO`, `SUPABASE`, `NEXT`, `ZOD`, `SHADCN`, `PERF`, `SECURITY`, `DEPLOY`, `AGENT-DRIFT`) para filtrar — ex: ao delegar Server Action envolvendo Supabase, inclua entradas `[SUPABASE]` e `[TIPO]`. Se houver entrada `[AGENT-DRIFT]` contra o agente que você está prestes a invocar, cite-a literalmente no prompt. Se o arquivo estiver vazio (projeto novo), siga sem passar contexto.
 
 **Descoberta de estrutura do projeto (módulos, rotas, componentes, integrações):** use `Glob`/`Grep` sob demanda (`src/app/`, `src/components/`, `src/lib/integrations/`). Não existe arquivo de inventário narrativo — o código é a verdade.
 

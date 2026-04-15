@@ -7,7 +7,7 @@ description: Fonte única sobre as 3 camadas de memória persistente do framewor
 
 O framework tem **duas camadas de memória persistente**, cada uma com propósito distinto. Escrever a coisa errada na camada errada polui o contexto dos agentes e causa drift. Esta é a **fonte única** — qualquer outro arquivo que descreva camadas de memória é pointer para aqui.
 
-**Leitores:** todos os agentes na fase de análise/planejamento.
+**Leitores:** Tech Lead carrega `APRENDIZADOS.md` integralmente no boot (PASSO 3) e repassa entradas relevantes como contexto ao delegar para sub-agentes. Sub-agentes recebem apenas o recorte que interessa à tarefa.
 **Writers:** os writers específicos de cada camada abaixo.
 
 "O que foi construído" **não tem arquivo dedicado** — é derivável do código (`src/app/`, `src/components/`, `src/lib/integrations/`, `supabase/migrations/`) e do git log. Manter esse inventário em doc só gera drift.
@@ -52,7 +52,7 @@ Mudou o schema do banco?
 
 ---
 
-## Além dessas três camadas
+## Além dessas duas camadas
 
 Outros artefatos armazenam informação mas **não são memória persistente do framework**:
 
@@ -61,4 +61,4 @@ Outros artefatos armazenam informação mas **não são memória persistente do 
 - `docs/api_research/*_research.md` — relatórios Fase 1 do `@api-integrator` (input para Fase 2)
 - Git history — autoridade sobre "quem mudou o quê e quando"
 
-Se você está tentando decidir onde registrar algo e nenhuma das três camadas acima parece óbvia, provavelmente não é memória de framework — é um artefato de trabalho. Deixe no commit message ou no sprint file.
+Se você está tentando decidir onde registrar algo e nenhuma das duas camadas acima parece óbvia, provavelmente não é memória de framework — é um artefato de trabalho. Deixe no commit message ou no sprint file.
