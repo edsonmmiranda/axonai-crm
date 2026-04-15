@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
+const PROTECTED_PREFIXES = ['/dashboard'];
+
 function getEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -37,7 +39,22 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+  const isProtected = PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+
+  if (isProtected && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    url.search = '';
+    url.searchParams.set('redirectTo', pathname);
+    return NextResponse.redirect(url);
+  }
 
   return response;
 }

@@ -115,6 +115,34 @@ AS $$
 $$;
 
 -- ---------------------------------------------------------------------------
+-- 5. get_table_triggers(p_schema text, p_table_name text)
+--    Returns triggers defined on a given table in any schema (including auth.*).
+--    Read-only. Used by @db-admin to probe pre-existing triggers before writing
+--    migrations that would otherwise silently overwrite them.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_table_triggers(p_schema text, p_table_name text)
+RETURNS TABLE (
+  trigger_name text,
+  event_manipulation text,
+  action_timing text,
+  action_statement text
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT
+    t.trigger_name::text,
+    t.event_manipulation::text,
+    t.action_timing::text,
+    t.action_statement::text
+  FROM information_schema.triggers t
+  WHERE t.event_object_schema = p_schema
+    AND t.event_object_table = p_table_name
+  ORDER BY t.trigger_name, t.event_manipulation;
+$$;
+
+-- ---------------------------------------------------------------------------
 -- Grants — allow authenticated + service_role to call these helpers.
 -- Anonymous callers should NOT be able to introspect the schema.
 -- ---------------------------------------------------------------------------
@@ -122,11 +150,13 @@ GRANT EXECUTE ON FUNCTION public.get_schema_tables()              TO authenticat
 GRANT EXECUTE ON FUNCTION public.get_table_columns(text)          TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.get_table_indexes(text)          TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.get_table_policies(text)         TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_table_triggers(text, text)   TO authenticated, service_role;
 
 REVOKE EXECUTE ON FUNCTION public.get_schema_tables()              FROM anon, PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.get_table_columns(text)          FROM anon, PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.get_table_indexes(text)          FROM anon, PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.get_table_policies(text)         FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_table_triggers(text, text)   FROM anon, PUBLIC;
 
 -- ============================================================================
 -- END OF BOOTSTRAP — @db-admin can now introspect the schema.

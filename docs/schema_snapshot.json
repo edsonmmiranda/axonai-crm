@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-15T12:47:30.749Z",
+  "timestamp": "2026-04-15T13:56:12.142Z",
   "tables": [
     {
       "table_name": "categories",
@@ -333,7 +333,7 @@
           "column_name": "role",
           "data_type": "text",
           "is_nullable": "NO",
-          "column_default": "'user'::text",
+          "column_default": "'member'::text",
           "character_maximum_length": null
         },
         {
@@ -1412,7 +1412,7 @@
           "column_name": "role",
           "data_type": "text",
           "is_nullable": "NO",
-          "column_default": "'user'::text",
+          "column_default": "'member'::text",
           "character_maximum_length": null
         },
         {

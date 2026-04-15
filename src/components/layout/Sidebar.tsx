@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { logoutAction } from '@/lib/actions/auth';
 
 interface NavItem {
   href: string;
@@ -48,7 +50,6 @@ const secondarySections: NavSection[] = [
 
 const footerItems: NavItem[] = [
   { href: '#', label: 'Configurações', icon: Settings },
-  { href: '#', label: 'Sair', icon: LogOut },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -84,8 +85,19 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   );
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  organizationName: string;
+}
+
+export function Sidebar({ organizationName }: SidebarProps) {
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
+
+  const handleLogout = () => {
+    startTransition(() => {
+      void logoutAction();
+    });
+  };
 
   return (
     <aside className="z-30 hidden h-full w-64 shrink-0 flex-col border-r border-border bg-surface-raised shadow-sm md:flex">
@@ -96,7 +108,7 @@ export function Sidebar() {
           </div>
           <div className="flex flex-col">
             <h1 className="text-base font-bold leading-tight tracking-tight text-text-primary">
-              SalesPro CRM
+              {organizationName || 'Axon AI CRM'}
             </h1>
             <p className="text-xs text-text-secondary">Gestão de Vendas</p>
           </div>
@@ -141,6 +153,20 @@ export function Sidebar() {
             </Link>
           );
         })}
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isPending}
+          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-surface-sunken focus-visible:outline-none focus-visible:shadow-focus disabled:opacity-50"
+        >
+          <LogOut
+            className="size-5 text-text-secondary group-hover:text-action-ghost-fg"
+            aria-hidden="true"
+          />
+          <span className="text-sm font-medium text-text-secondary group-hover:text-action-ghost-fg">
+            Sair
+          </span>
+        </button>
       </div>
     </aside>
   );
