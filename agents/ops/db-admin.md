@@ -47,8 +47,7 @@ Os padrões completos — preflight probe, RPCs helper, uso típico, snapshot, f
 5. **Salvar snapshot** em `docs/schema_snapshot.json` com timestamp completo de cada tabela (columns, indexes, policies).
 
 6. **Fallback (se DB offline):**
-   - Prioridade 1: `docs/schema_snapshot.json`
-   - Prioridade 2: `docs/architecture_state.md`
+   - `docs/schema_snapshot.json` é a única fonte cacheada — use-o como referência.
    - Sempre adicione header de warning na migration: `-- WARNING: Generated from cached schema (last updated: ...)`
 
 ---
@@ -126,8 +125,7 @@ CHECK (
 **Antes de criar:**
 1. Documente POR QUÊ não cabe no TypeScript
 2. Aprovação do Tech Lead
-3. Reportar ao Tech Lead para documentar em `architecture_state.md`
-4. Manter simples e focado
+3. Manter simples e focado
 
 ```sql
 -- OK: timestamp automático
@@ -185,7 +183,7 @@ $$ LANGUAGE plpgsql;
 - Habilitar RLS em toda tabela com dados de usuário
 - Políticas explícitas para SELECT, INSERT, UPDATE, DELETE
 - `SECURITY DEFINER` para funções helper
-- Reportar todas as políticas no output ao Tech Lead (ele atualiza `architecture_state.md`)
+- Reportar todas as políticas no output ao Tech Lead
 
 ---
 
@@ -263,7 +261,7 @@ Pare e siga [`escalation-protocol.md`](../workflows/escalation-protocol.md) se:
 
 1. **Setup obrigatório:** bootstrap migration deve existir antes do primeiro uso
 2. **Credenciais:** `SUPABASE_SERVICE_ROLE_KEY` deve estar em `.env.local`
-3. **Fallback disponível:** `docs/schema_snapshot.json` → `docs/architecture_state.md`
+3. **Fallback disponível:** `docs/schema_snapshot.json` (único cache)
 4. **Migrations versionadas:** nunca editar migration antiga — sempre criar nova
 5. **Git history:** todas as migrations são commitadas
 
@@ -285,4 +283,4 @@ Pare e siga [`escalation-protocol.md`](../workflows/escalation-protocol.md) se:
 - `supabase/migrations/**` — apenas novos arquivos
 - `docs/schema_snapshot.json`
 
-**Não toca:** `docs/architecture_state.md` (ownership do Tech Lead — reporte novas tabelas/colunas no output e o Tech Lead atualizará), código de aplicação (`src/`), sprint files, PRDs.
+**Não toca:** código de aplicação (`src/`), sprint files, PRDs.

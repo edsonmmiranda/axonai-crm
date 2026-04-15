@@ -210,12 +210,7 @@ writeFileSync('docs/schema_snapshot.json', JSON.stringify(schemaSnapshot, null, 
 
 ## Fallback (se a conexão falhar)
 
-Prioridade de fallback — use o primeiro disponível:
-
-1. `docs/schema_snapshot.json` (mais recente, completo)
-2. `docs/architecture_state.md` (documentação narrativa)
-
-Sempre adicione aviso na migração gerada a partir de cache:
+Use `docs/schema_snapshot.json` como única fonte cacheada. Sempre adicione aviso na migração gerada a partir de cache:
 
 ```sql
 -- WARNING: Generated from cached schema (last updated: <timestamp>)

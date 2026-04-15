@@ -32,7 +32,6 @@ Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arqui
 |---|---|
 | Workflow completo, gates, rollback | [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) |
 | Stack esperado do projeto | [`docs/stack.md`](docs/stack.md) |
-| Estado atual (o que foi construído) | [`docs/architecture_state.md`](docs/architecture_state.md) |
 | Schema real do banco | [`docs/schema_snapshot.json`](docs/schema_snapshot.json) |
 | Convenções de CRUD framework-level | [`docs/conventions/crud.md`](docs/conventions/crud.md) |
 | Camadas de memória (onde escrever o quê) | [`agents/workflows/memory-layers.md`](agents/workflows/memory-layers.md) |

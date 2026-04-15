@@ -87,7 +87,7 @@ Valide com chamada real antes de marcar completo. Checklist em `docs/templates/a
 **⛔ PARE se o smoke test falhar.** Corrija antes de prosseguir. Cobertura de regressão = invocar `@qa` on-demand.
 
 ## Step 8 — Reportar ao Tech Lead
-> **Ownership:** `architecture_state.md` é escrito **apenas pelo Tech Lead** ([`docs/conventions/standards.md`](../../docs/conventions/standards.md) § Ownership). Você **não edita** esse arquivo — reporte no output final:
+Reporte no output final:
 
 ```markdown
 ### [API Name]
@@ -116,8 +116,8 @@ Pare e escale via [`escalation-protocol.md`](../workflows/escalation-protocol.md
 
 **Outputs:**
 - Phase 1: `docs/api_research/[api-name]_research.md`
-- Phase 2: `src/lib/integrations/[api-name]/` (+ MCP/webhook se aplicáveis) · `.env.example` atualizado · smoke test passando · informações para o Tech Lead appendar em `architecture_state.md`
+- Phase 2: `src/lib/integrations/[api-name]/` (+ MCP/webhook se aplicáveis) · `.env.example` atualizado · smoke test passando · relatório ao Tech Lead
 
 **Toca:** `src/lib/integrations/**` · `src/lib/mcp-servers/**` · `src/app/api/webhooks/**` · `docs/api_research/**` · `.env.example` · `package.json` (só dependências aprovadas no research)
 
-**Não toca:** `docs/architecture_state.md` · `src/app/dashboard/**` · componentes UI · schema de banco
+**Não toca:** `src/app/dashboard/**` · componentes UI · schema de banco

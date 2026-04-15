@@ -174,7 +174,6 @@ git revert <commit-hash>
 **Nunca use** `git reset --hard` nem `git push --force` — essas operações destroem história e propagam dano em branches compartilhadas. O padrão é sempre `git revert`.
 
 ## 4. Atualizar documentação
-- Atualize `docs/architecture_state.md`
 - Documente em `docs/rollbacks.md`:
   - O que foi revertido
   - Por quê
@@ -290,7 +289,7 @@ Commit refused for security.
 - Em caso de rollback: novo commit de revert + atualização de `docs/rollbacks.md`.
 - Report estruturado (`GIT COMMIT: SUCCESS` ou `GIT COMMIT: BLOCKED`).
 
-**Arquivos tocados:** apenas `.gitignore` (se precisar completar), `docs/rollbacks.md` (em rollback), `docs/architecture_state.md` (em rollback). Nunca toca código fonte.
+**Arquivos tocados:** apenas `.gitignore` (se precisar completar) e `docs/rollbacks.md` (em rollback). Nunca toca código fonte.
 
 ---
 

@@ -88,7 +88,6 @@
 - [ ] `npm run build` passa sem erros
 - [ ] `npm run lint` passa sem novos warnings
 - [ ] **Guardian aprova o código** — este é o gate único para compliance de design system. O Guardian roda [`agents/quality/guardian.md`](../agents/quality/guardian.md) § 1a + § 1b, que por sua vez espelham [`design_system/enforcement/rules.md`](../design_system/enforcement/rules.md) e [`design_system/components/CONTRACT.md`](../design_system/components/CONTRACT.md). **Não liste regras de design system aqui** — se o Guardian aprova, o sprint passa no gate frontend.
-- [ ] `docs/architecture_state.md` atualizado com nova tabela/rotas/actions
 
 ---
 
@@ -101,5 +100,5 @@ Sprint STANDARD segue **Workflow A (Sprint Execution)** completo:
 4. **STOP & WAIT** pela aprovação do usuário
 5. Execução: `@db-admin` → (`@api-integrator` se aplicável) → `@backend` → `@frontend` → `@guardian`
 6. Design verification manual
-7. Closing: atualizar `architecture_state.md`, registrar aprendizados (se houver)
+7. Closing: registrar em `APRENDIZADOS.md` se houver algo não-óbvio
 8. `@git-master` para commit

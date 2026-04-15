@@ -114,8 +114,6 @@ Aplicam-se a **toda** Server Action do framework, sem exceção:
 
 | Arquivo | Único writer | Outros agentes |
 |---|---|---|
-| `docs/architecture_state.md` | Tech Lead (closing do sprint — **apenas narrativa**) | Todos lêem; ninguém mais escreve |
-| `docs/architecture_state.auto.md` | Script `scripts/generate-architecture-inventory.mjs` (closing) | Todos lêem; **ninguém edita à mão** |
 | `docs/schema_snapshot.json` | `@db-admin` (após cada introspecção) | Todos lêem; ninguém mais escreve |
 | `docs/APRENDIZADOS.md` | Qualquer agente que descubra algo surpreendente | Todos lêem na fase de planejamento |
 | `docs/conventions/standards.md` | Tech Lead | Todos lêem; ninguém mais escreve |

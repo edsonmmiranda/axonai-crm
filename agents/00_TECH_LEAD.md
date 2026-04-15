@@ -24,14 +24,10 @@ O modelo de delegação, a hierarquia de autoridade entre documentos, a ordem de
 
 ```
 PASSO 1: view_file(docs/conventions/standards.md)     → Hierarquia de autoridade, regras invioláveis, modelo de delegação, ordem de leitura
-PASSO 2a: view_file(docs/architecture_state.md)       → Narrativa (por que módulos existem, decisões)
+PASSO 2: view_file(docs/schema_snapshot.json)         → Estado real do schema do banco (única fonte canônica de tabelas/RLS)
 ```
 
-**LEITURA CONDICIONAL (apenas em Workflow A — planejamento e closing do sprint):**
-```
-view_file(docs/architecture_state.auto.md)  → Inventário mecânico gerado por script (tabelas, rotas, actions, integrações)
-```
-Em Workflow B (maintenance), **não carregue** `architecture_state.auto.md` no boot — leia apenas se o pedido do usuário explicitamente tocar inventário existente.
+**Descoberta de estrutura do projeto (módulos, rotas, componentes, integrações):** use `Glob`/`Grep` sob demanda (`src/app/`, `src/components/`, `src/lib/integrations/`). Não existe arquivo de inventário narrativo — o código é a verdade.
 
 O boot do harness (`CLAUDE.md` na raiz) já foi carregado automaticamente e contém o gatilho "Tech Lead..." e as regras duras. Não precisa reler.
 
@@ -62,13 +58,7 @@ git status --porcelain
 ```
 Se o output **não é vazio**, há mudanças uncommitted. **PARE** e peça ao usuário para commitar ou stashear antes de continuar.
 
-## Passo 2: Architecture state
-```bash
-ls docs/architecture_state.md
-```
-Se o arquivo não existe ou está desatualizado (sprint anterior não aplicado), pare e reporte.
-
-## Passo 3: Detecção de bootstrap
+## Passo 2: Detecção de bootstrap
 ```bash
 ls package.json src/ 2>/dev/null
 ```
@@ -92,9 +82,9 @@ Antes do próximo sprint, você precisa:
 3. Salvar e rodar o próximo sprint
 ```
 
-Se **ambos** presentes → continue para o Passo 4.
+Se **ambos** presentes → continue para o Passo 3.
 
-## Passo 4: Validação REAL de `.env.local` (obrigatório fora do bootstrap)
+## Passo 3: Validação REAL de `.env.local` (obrigatório fora do bootstrap)
 
 Não basta confirmar que o arquivo existe — verifique que cada variável obrigatória está **presente e não-vazia**.
 
@@ -142,7 +132,7 @@ Ação requerida:
 Não posso prosseguir sem credenciais Supabase válidas.
 ```
 
-## Passo 5: Preflight do bootstrap do framework de DB
+## Passo 4: Preflight do bootstrap do framework de DB
 
 Se o projeto já tem `supabase/migrations/`, execute a probe do bootstrap migration (ver [`agents/ops/db-admin.md`](ops/db-admin.md) → Protocolo de introspeção). Se `get_schema_tables` não existe no banco, pare e peça `supabase db push`.
 
@@ -214,12 +204,7 @@ Depois do preflight, leia o sprint file e identifique o marcador `> **Nível:** 
 > [!NOTE]
 > **Sobre testes automatizados:** Este framework **não possui suíte de testes automatizada obrigatória**. O projeto não tem vitest/playwright instalados, e o fluxo padrão depende de build + lint + Guardian + verificação manual de design. Se quiser gerar testes pontuais para um módulo crítico, invoque `@qa` explicitamente como agente on-demand.
 7. **Encerramento (Auto-Memory):**
-   - **Ação:** Leia os arquivos recém-criados.
-   - **Ação:** Rode o script de inventário para regenerar `docs/architecture_state.auto.md`:
-     ```bash
-     node scripts/generate-architecture-inventory.mjs
-     ```
-   - **Ação:** Atualize `docs/architecture_state.md` **apenas com narrativa** — por que o módulo existe, decisões arquiteturais, módulo-a-negócio. **Não duplique** o inventário (tabelas, rotas, actions) — isso vive em `architecture_state.auto.md`.
+   - **Ação:** Leia os arquivos recém-criados para confirmar que tudo foi escrito onde esperado.
    - **Ação:** Se algum bug, erro, ou novo padrão foi descoberto durante o sprint → Appende em `docs/APRENDIZADOS.md` seguindo o formato de entrada padrão documentado no topo do arquivo. Isso é OBRIGATÓRIO, não opcional.
    - **Ação (AGENT-DRIFT):** Conte re-delegações por agente/categoria. Se você pediu ≥2 correções para o **mesmo agente** sobre o **mesmo tipo de problema** nesta sprint, appende entrada `[AGENT-DRIFT]` em `docs/APRENDIZADOS.md` usando o formato específico da seção. Isso é obrigatório e não depende de "foi não-óbvio".
    - **Report:** "Build Complete & Memory Updated."
@@ -484,16 +469,16 @@ Peça ao agente para completar, depois re-valide.
 - **Preflight Passos 0-1** (git repo + git limpo) — sempre obrigatórios
 - **GATE 2** (build + lint) — sempre obrigatório após mudanças de código
 - **GATE 4** (`@guardian` review) — sempre obrigatório
-- **Encerramento** (architecture_state + APRENDIZADOS se aplicável)
+- **Encerramento** (APRENDIZADOS se aplicável)
 - **Controle de versão** (`@git-master`)
 
 ### O que Workflow B **PULA**:
-- Preflight Passos 2, 3, 5 (architecture state check, bootstrap detection, DB framework check) — assumidos OK para manutenção
-- Preflight Passo 4 (`.env.local`) — **pulado por padrão, MAS obrigatório condicionalmente**. Antes de pular, rode:
+- Preflight Passos 2, 4 (bootstrap detection, DB framework check) — assumidos OK para manutenção
+- Preflight Passo 3 (`.env.local`) — **pulado por padrão, MAS obrigatório condicionalmente**. Antes de pular, rode:
   ```bash
   git diff --name-only HEAD
   ```
-  Se a saída incluir qualquer arquivo em `src/**/actions.ts`, `src/lib/supabase/**` ou `supabase/migrations/**`, **execute o Passo 4 do Preflight** (validação real das 3 variáveis). Só assim fica garantido que Server Actions / cliente Supabase terão credenciais válidas em runtime. Em qualquer outro diff (CSS, copy, componente puro), pule normalmente.
+  Se a saída incluir qualquer arquivo em `src/**/actions.ts`, `src/lib/supabase/**` ou `supabase/migrations/**`, **execute o Passo 3 do Preflight** (validação real das 3 variáveis). Só assim fica garantido que Server Actions / cliente Supabase terão credenciais válidas em runtime. Em qualquer outro diff (CSS, copy, componente puro), pule normalmente.
 - `@spec-writer` e PRD — não há PRD em Workflow B
 - `@sanity-checker` — não há PRD para validar
 - GATE 1 (DB validation) — só se não há mudanças de banco
@@ -504,7 +489,7 @@ Peça ao agente para completar, depois re-valide.
 1. **Análise:** Identifique o arquivo causando o problema a partir do pedido do usuário ou do sprint file LIGHT. A mensagem do usuário ou o sprint file LIGHT é o spec.
 2. **Correção:** Comande `@frontend` e/ou `@backend` para modificar o código.
 3. **Qualidade:** Comande `@guardian` para revisar as mudanças. Rode **GATE 2** (build + lint).
-4. **Encerramento:** Atualize `docs/architecture_state.md` se criou rota/componente/action nova. Registre em `docs/APRENDIZADOS.md` se algo surpreendente aconteceu.
+4. **Encerramento:** Registre em `docs/APRENDIZADOS.md` se algo surpreendente aconteceu. Não há inventário narrativo a atualizar — o código é a fonte.
 5. **Controle de versão:** Comande `@git-master` para commitar a correção.
 
 ---
@@ -514,7 +499,7 @@ Peça ao agente para completar, depois re-valide.
 **Inputs:**
 - Sprint file (`sprints/active/sprint_XX_*.md`) — LIGHT ou STANDARD
 - Ou pedido direto do usuário (Workflow B)
-- Estado do projeto (`docs/architecture_state.md`, schema real, `.env.local`)
+- Estado do projeto (`docs/schema_snapshot.json`, código em `src/`, `.env.local`)
 
 **Outputs:**
 - Orquestração end-to-end com gates validados
@@ -526,7 +511,6 @@ Peça ao agente para completar, depois re-valide.
 **On-demand (apenas por pedido explícito do usuário):** `@qa`, `@performance-engineer`, `@sprint-creator`
 
 **Arquivos tocados diretamente pelo Tech Lead:**
-- `docs/architecture_state.md` — append de novas tabelas/rotas/integrações
 - `docs/APRENDIZADOS.md` — apenas quando algo não-óbvio aconteceu
 - `docs/sprint_telemetry.jsonl` — append de uma linha por avaliação de gate (ver "Telemetria de gates")
 - Nunca toca código, migrations, PRDs, sprint files (delega aos agentes apropriados)

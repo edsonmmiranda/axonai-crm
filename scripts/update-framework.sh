@@ -34,7 +34,6 @@ FRAMEWORK_PATHS=(
   "AGENTS.md"
   "scripts/verify-design.mjs"
   "scripts/telemetry-report.mjs"
-  "scripts/generate-architecture-inventory.mjs"
   "scripts/update-framework.sh"
   "docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md"
   "docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md"
@@ -45,7 +44,7 @@ FRAMEWORK_PATHS=(
 # ──────────────────────────────────────────────────────────────────────────────
 # sprints/active/, sprints/done/ — sprints do projeto
 # src/, app/, public/, components/ — código da aplicação
-# docs/architecture_state.md, docs/APRENDIZADOS.md, docs/stack.md
+# docs/APRENDIZADOS.md, docs/stack.md, docs/schema_snapshot.json
 # supabase/migrations/ (exceto bootstrap inicial)
 # design_system/telas_prontas/ — mockups específicos do projeto
 # .env*, package.json, package-lock.json, pnpm-lock.yaml

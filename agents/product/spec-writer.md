@@ -190,7 +190,7 @@ Se o sprint tem ambiguidade, informação faltando ou requisitos conflitantes, *
 **Inputs:**
 - Sprint file (`sprints/active/sprint_XX_*.md`)
 - Design refs (se disponíveis)
-- Estado atual do sistema (`docs/architecture_state.md`, schema snapshot)
+- Estado atual do sistema (`docs/schema_snapshot.json` + descoberta em `src/` via Glob/Grep)
 
 **Outputs:**
 - PRD salvo em `docs/prds/prd_[name].md` usando o template correto
