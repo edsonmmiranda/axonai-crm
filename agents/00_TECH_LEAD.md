@@ -208,8 +208,8 @@ Depois do preflight, leia o sprint file e identifique o marcador `> **Nível:** 
 > **Sobre testes automatizados:** Este framework **não possui suíte de testes automatizada obrigatória**. O projeto não tem vitest/playwright instalados, e o fluxo padrão depende de build + lint + Guardian + verificação manual de design. Se quiser gerar testes pontuais para um módulo crítico, invoque `@qa` explicitamente como agente on-demand.
 7. **Encerramento (Auto-Memory):**
    - **Ação:** Leia os arquivos recém-criados para confirmar que tudo foi escrito onde esperado.
-   - **Ação:** Se algum bug, erro, ou novo padrão foi descoberto durante o sprint → Appende em `docs/APRENDIZADOS.md` seguindo o formato de entrada padrão documentado no topo do arquivo. Isso é OBRIGATÓRIO, não opcional.
-   - **Ação (AGENT-DRIFT):** Conte re-delegações por agente/categoria. Se você pediu ≥2 correções para o **mesmo agente** sobre o **mesmo tipo de problema** nesta sprint, appende entrada `[AGENT-DRIFT]` em `docs/APRENDIZADOS.md` usando o formato específico da seção. Isso é obrigatório e não depende de "foi não-óbvio".
+   - **Ação:** Se algum bug, erro, ou novo padrão foi descoberto durante o sprint → Appende em `docs/APRENDIZADOS.md` seguindo o formato enxuto definido em [`docs/APRENDIZADOS_FORMATO.md`](../docs/APRENDIZADOS_FORMATO.md) (≤3 linhas: título + Regra + Follow-up opcional). Isso é OBRIGATÓRIO, não opcional.
+   - **Ação (AGENT-DRIFT):** Conte re-delegações por agente/categoria. Se você pediu ≥2 correções para o **mesmo agente** sobre o **mesmo tipo de problema** nesta sprint, appende entrada `[AGENT-DRIFT]` em `docs/APRENDIZADOS.md` usando o formato específico de AGENT-DRIFT em `APRENDIZADOS_FORMATO.md`. Obrigatório, não depende de "foi não-óbvio".
    - **Report:** "Build Complete & Memory Updated."
 8. **Controle de versão:**
    - **Ação:** Comande `@git-master` para commitar as mudanças.

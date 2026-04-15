@@ -37,6 +37,7 @@ FRAMEWORK_PATHS=(
   "scripts/update-framework.sh"
   "docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md"
   "docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md"
+  "docs/APRENDIZADOS_FORMATO.md"
 )
 
 # ──────────────────────────────────────────────────────────────────────────────
