@@ -1,6 +1,6 @@
 # Roadmap — Alinhar o sistema ao banco existente
 
-**Última atualização:** 2026-04-15
+**Última atualização:** 2026-04-16
 **Status do banco:** 15 tabelas em `public` (multi-tenant por `organization_id`). Snapshot em [`schema_snapshot.json`](./schema_snapshot.json).
 **Status do app:** bootstrap + dashboard mockado. Zero auth, zero módulo de negócio real.
 
@@ -13,28 +13,37 @@ Este documento é o **plano executivo** para levar o app de "dashboard mockado" 
 ```
 Sprint 03 → Auth & Tenancy          ← bloqueia tudo - Feito
 Sprint 04 → Profile & Org Settings  ← fecha auth - Feito
-Sprint 05 → Categories (catálogo)   ← warm-up CRUD
-Sprint 06 → Products + Storage      ← upload + galeria
-Sprint 07 → Lead Origins · Loss Reasons · Tags (settings)
-Sprint 08 → Leads — Lista (table)   ← core do produto
-Sprint 09 → Funnels & Stages
-Sprint 10 → Pipeline — Kanban DnD
-Sprint 11 → Dashboard real          ← substitui mocks
-Sprint 12 → WhatsApp Groups (CRUD)
-Sprint 13 → WhatsApp Integração (externo)
+Sprint 05 → Categories (catálogo)   ← warm-up CRUD - Feito
+Sprint 06 → Products + Storage      ← upload + galeria - Feito
+Sprint 07 → Lead Origins (settings)
+Sprint 08 → Loss Reasons (settings)
+Sprint 09 → Tags (settings)
+Sprint 10 → Leads — Lista (table)   ← core do produto
+Sprint 11 → Funnels
+Sprint 12 → Funnel Stages
+Sprint 13 → Pipeline — Kanban DnD
+Sprint 14 → Dashboard real          ← substitui mocks
+Sprint 15 → WhatsApp Groups (CRUD)
+Sprint 16 → WhatsApp Research (provider + mapping)
+Sprint 17 → WhatsApp Inbox (webhook + messages)
 ```
 
 Sprint	Modelo	Por quê
 05 — Categories	Sonnet 4.6	CRUD mínimo (8 colunas), é o warm-up. Padrão vai ser replicado — vale investir um pouco para deixar o template limpo, mas não precisa de Opus.
 06 — Products + Storage	Opus 4.6	20 colunas + 2 tabelas auxiliares + Storage (buckets, is_primary, position, reorder). Primeira vez tocando Storage → decisões que vão virar padrão.
-07 — Lead Origins / Loss / Tags	Sonnet 4.6 (ou Haiku se optar por 3 LIGHT)	3 CRUDs curtos seguindo template do Sprint 05/06. Mecânico.
-08 — Leads Lista	Opus 4.6	27 colunas, tabs, filtros server-side, paginação, lead_tags M2M, UTM, export. Core do produto — erros aqui custam caro.
-09 — Funnels & Stages	Sonnet 4.6	CRUD + reordenação de linhas. Padrão conhecido.
-10 — Pipeline Kanban DnD	Opus 4.6	DnD com @dnd-kit, bulk update atômico de card_order, transação, modal condicional de perda. Performance + correção.
-11 — Dashboard real	Opus 4.6 para a decisão arquitetural (manter/cortar tasks e sales_goals) → Sonnet 4.6 para executar as queries depois de decidido	Decisão de escopo é o valor; queries em si são diretas.
-12 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples + FK pra lead_origins.
-13 — WhatsApp Integração	Opus 4.6 (fase 1 research + fase 2 webhook/migration)	Escolha de provider, webhook seguro, nova tabela com RLS, matching por telefone. Alto impacto e ambíguo.
-Regra geral para este roadmap: Opus nos sprints 06, 08, 10, 13 (e na fase de decisão do 11); Sonnet no resto. Se um sprint Sonnet travar em decisão não-óbvia, escalar para Opus na hora em vez de forçar.
+07 — Lead Origins	Haiku 4.5	CRUD curto (type, platform). Mecânico, padrão já definido no 05.
+08 — Loss Reasons	Haiku 4.5	CRUD curto. Mecânico.
+09 — Tags	Haiku 4.5 / Sonnet 4.6	CRUD curto + color picker. Quase mecânico.
+10 — Leads Lista	Opus 4.6	27 colunas, tabs, filtros server-side, paginação, lead_tags M2M, UTM, export. Core do produto — erros aqui custam caro.
+11 — Funnels	Sonnet 4.6	CRUD simples, toggle is_active.
+12 — Funnel Stages	Sonnet 4.6	CRUD + reordenação de linhas (drag). Padrão conhecido.
+13 — Pipeline Kanban DnD	Opus 4.6	DnD com @dnd-kit, bulk update atômico de card_order, transação, modal condicional de perda. Performance + correção.
+14 — Dashboard real	Opus 4.6 para a decisão arquitetural (manter/cortar tasks e sales_goals) → Sonnet 4.6 para executar as queries depois de decidido	Decisão de escopo é o valor; queries em si são diretas.
+15 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples + FK pra lead_origins.
+16 — WhatsApp Research	Opus 4.6	Escolha de provider (Evolution / Z-API / Cloud API), mapeamento de grupos → origens. Ambíguo, alta alavancagem.
+17 — WhatsApp Inbox	Opus 4.6	Webhook seguro, nova tabela com RLS, matching por telefone, página /whatsapp/inbox. Alto impacto.
+
+Regra geral para este roadmap: Opus nos sprints 06, 10, 13, 16, 17 (e na fase de decisão do 14); Sonnet/Haiku no resto. Se um sprint Sonnet/Haiku travar em decisão não-óbvia, escalar para Opus na hora em vez de forçar.
 
 
 
@@ -122,17 +131,37 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 ---
 
-## 📋 Sprint 07 — Settings de Lead (Origins · Loss Reasons · Tags)
+## 📋 Sprint 07 — Lead Origins
 
-**Tabelas:** `lead_origins`, `loss_reasons`, `tags`.
+**Tabela:** `lead_origins`.
 
-**Trabalho:** 3 CRUDs curtos em `/settings/leads/*`. Pode ser 1 sprint STANDARD ou 3 LIGHT — Tech Lead decide.
+**Trabalho:** CRUD curto em `/settings/leads/origins`. Form com name, type, platform, active.
 
-**Aceite:** admin consegue criar origens (type, platform), motivos de perda, e tags coloridas.
+**Aceite:** admin consegue criar/editar/desativar origens; RLS bloqueia origem de outra org.
 
 ---
 
-## 📋 Sprint 08 — Leads (Lista / Table view)
+## 📋 Sprint 08 — Loss Reasons
+
+**Tabela:** `loss_reasons`.
+
+**Trabalho:** CRUD curto em `/settings/leads/loss-reasons`. Form com name, description, active.
+
+**Aceite:** admin consegue criar/editar/desativar motivos de perda; lista mostra apenas os da org.
+
+---
+
+## 📋 Sprint 09 — Tags
+
+**Tabela:** `tags`.
+
+**Trabalho:** CRUD curto em `/settings/leads/tags`. Form com name, color (picker), active. Preview visual no listing.
+
+**Aceite:** admin cria tag colorida, edita cor, desativa; pronto para consumo pelo módulo de Leads (lead_tags M2M).
+
+---
+
+## 📋 Sprint 10 — Leads (Lista / Table view)
 
 **Tabelas:** `leads` (27 colunas), `lead_tags`, `lead_origins`, `loss_reasons`, `profiles` (assigned_to, created_by), `tags`.
 
@@ -146,19 +175,33 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Aceite:** criar lead com UTM completo, mudar status, atribuir a outro user, filtrar, exportar CSV (opcional).
 
----
-
-## 📋 Sprint 09 — Funnels & Stages
-
-**Tabelas:** `funnels`, `funnel_stages`.
-
-**Trabalho:** `/settings/pipeline` — admin cria funis, adiciona/reordena estágios (drag de linhas). Toggle is_active.
-
-**Aceite:** admin configura 1 funil com 5 estágios, ativa, desativa outro.
+**Pré-requisito:** Sprints 07–09 concluídos (origens, motivos de perda e tags já cadastráveis pelo admin).
 
 ---
 
-## 📋 Sprint 10 — Pipeline (Kanban com DnD)
+## 📋 Sprint 11 — Funnels
+
+**Tabela:** `funnels`.
+
+**Trabalho:** `/settings/pipeline/funnels` — CRUD de funis. Form com name, description, is_active, is_default. Regra: só um funil default por org.
+
+**Aceite:** admin cria funil, marca como default, desativa outro; default exclusivo é respeitado.
+
+---
+
+## 📋 Sprint 12 — Funnel Stages
+
+**Tabela:** `funnel_stages` (FK → `funnels`).
+
+**Trabalho:** dentro da tela do funil (`/settings/pipeline/funnels/[id]/stages`), CRUD + reordenação de linhas (drag). Campos: name, position, color, is_won, is_lost.
+
+**Aceite:** admin adiciona 5 estágios, reordena, marca um como won e outro como lost; ordem persiste.
+
+**Pré-requisito:** Sprint 11 concluído.
+
+---
+
+## 📋 Sprint 13 — Pipeline (Kanban com DnD)
 
 **Tabelas:** `leads.stage_id`, `leads.card_order`, `funnel_stages`, `funnels`.
 
@@ -175,20 +218,20 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 ---
 
-## 📋 Sprint 11 — Dashboard real
+## 📋 Sprint 14 — Dashboard real
 
 **Trabalho:** substituir `src/lib/mocks/dashboard.ts` por queries reais:
 - KPIs: COUNT leads por status do mês + comparação com mês anterior.
 - Leads recentes: últimos 5 por `created_at`.
 - Pipeline card: contagem + soma de `value` por estágio.
-- Sales goal / monthly goal: **precisa de tabela nova** (ainda não existe). Decidir: criar `sales_goals` agora ou deixar mockado até Sprint 13+?
+- Sales goal / monthly goal: **precisa de tabela nova** (ainda não existe). Decidir: criar `sales_goals` agora ou deixar mockado até sprint futura?
 - Upcoming tasks: **precisa de tabela `tasks`** que ainda não existe.
 
 **Decisão arquitetural pendente:** criar `tasks` + `sales_goals` como parte deste sprint ou adiar. Recomendo **adiar os mocks de meta/tarefa** — remover os cards até ter a tabela.
 
 ---
 
-## 📋 Sprint 12 — WhatsApp Groups (CRUD)
+## 📋 Sprint 15 — WhatsApp Groups (CRUD)
 
 **Tabela:** `whatsapp_groups`.
 
@@ -198,13 +241,27 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 ---
 
-## 📋 Sprint 13 — WhatsApp Integração (real)
+## 📋 Sprint 16 — WhatsApp Research
 
-**Fase 1 (research do `@api-integrator`):** avaliar Evolution API vs Z-API vs WhatsApp Cloud API oficial. Definir provider. Gera `docs/api_research/whatsapp_research.md`.
+**Fase única (research do `@api-integrator`):** avaliar Evolution API vs Z-API vs WhatsApp Cloud API oficial. Definir provider. Mapear fluxo de autenticação, limites, custo, webhook format. Entregável: `docs/api_research/whatsapp_research.md` com recomendação + spike de prova-de-conceito (conectar, listar grupos, receber 1 mensagem em ambiente de dev).
 
-**Fase 2:** webhook de mensagens, ingestão, nova tabela `whatsapp_messages` (migration do `@db-admin`), vincular mensagem a lead por telefone, página `/whatsapp/inbox`.
+**Aceite:** decisão de provider documentada com trade-offs + POC funcional numa sandbox.
 
-**⚠️ Sprint grande.** Possivelmente quebrar em 13a (research + groups mapping) e 13b (inbox + linking).
+---
+
+## 📋 Sprint 17 — WhatsApp Inbox
+
+**Tabela nova:** `whatsapp_messages` (migration do `@db-admin`) com RLS por `organization_id`.
+
+**Trabalho:**
+- Webhook seguro (assinatura/HMAC conforme provider escolhido no Sprint 16).
+- Ingestão de mensagens → `whatsapp_messages`.
+- Matching por telefone contra `leads` (vincular `lead_id` quando houver match).
+- Página `/whatsapp/inbox` — lista de conversas, filtros, abertura de thread.
+
+**Pré-requisito:** Sprint 16 concluído (provider decidido + POC).
+
+**Aceite:** mensagem recebida via webhook aparece no inbox em <5s, linkada ao lead correto quando o telefone bate.
 
 ---
 
@@ -214,10 +271,10 @@ Descobertas pelo mock do dashboard que ainda não têm schema:
 
 | Entidade | Onde aparece | Quando criar |
 |---|---|---|
-| `tasks` | `UpcomingTasksCard` | Sprint 11 (se decidirmos manter) ou sprint dedicada |
-| `sales_goals` / `monthly_goals` | `GoalsRow` | Sprint 11 ou dedicada |
-| `whatsapp_messages` | não mockado | Sprint 13b |
-| `lead_activities` / `lead_notes` | timeline de lead | provável Sprint 8 ou pós-MVP |
+| `tasks` | `UpcomingTasksCard` | Sprint 14 (se decidirmos manter) ou sprint dedicada |
+| `sales_goals` / `monthly_goals` | `GoalsRow` | Sprint 14 ou dedicada |
+| `whatsapp_messages` | não mockado | Sprint 17 |
+| `lead_activities` / `lead_notes` | timeline de lead | provável Sprint 10 ou pós-MVP |
 | `audit_log` | auditoria de quem mudou o quê | pós-MVP |
 
 Cada uma exige: migration idempotente do `@db-admin` + RLS por `organization_id` + atualização do snapshot.
@@ -238,10 +295,15 @@ Tech Lead, no closing:
 
 Assumindo 1 sprint ≈ 1 sessão de trabalho (+/- 2–4h de execução humana de revisão):
 
-- Sprints 03–04 (auth): **2 sessões** · desbloqueia tudo
-- Sprints 05–07 (catálogo + settings de lead): **3 sessões** · CRUDs simples
-- Sprints 08–10 (core CRM): **3 sessões** · o coração
-- Sprint 11 (dashboard): **1 sessão**
-- Sprints 12–13 (WhatsApp): **2–3 sessões** · depende do provider
+- Sprints 03–04 (auth): **2 sessões** · desbloqueia tudo ✅
+- Sprint 05 (categorias): **1 sessão**
+- Sprint 06 (products + storage): **1 sessão**
+- Sprints 07–09 (settings de lead, 1 por CRUD): **3 sessões**
+- Sprint 10 (leads lista): **1 sessão** · core
+- Sprints 11–12 (funnels + stages): **2 sessões**
+- Sprint 13 (pipeline kanban): **1 sessão**
+- Sprint 14 (dashboard): **1 sessão**
+- Sprint 15 (whatsapp groups): **1 sessão**
+- Sprints 16–17 (whatsapp research + inbox): **2 sessões**
 
-**Total:** ~11–13 sessões pra cobertura 100% das tabelas existentes + integração WhatsApp viva.
+**Total:** ~15 sessões pra cobertura 100% das tabelas existentes + integração WhatsApp viva.
