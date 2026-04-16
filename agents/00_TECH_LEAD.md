@@ -624,5 +624,5 @@ Preflight pode ser enxuto:
 
 **Arquivos tocados diretamente pelo Tech Lead:**
 - `docs/APRENDIZADOS.md` — apenas quando algo não-óbvio aconteceu
-- `docs/sprint_telemetry.jsonl` — append de uma linha por avaliação de gate (ver "Telemetria de gates")
+
 - Nunca toca código, migrations, PRDs, sprint files (delega aos agentes apropriados)
