@@ -123,7 +123,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         </div>
       </div>
 
-      <div className="flex items-start justify-between gap-4 rounded-lg border border-subtle bg-surface-sunken px-4 py-3">
+      <div className="flex items-start justify-between gap-4 rounded-lg border border-border-subtle bg-surface-sunken px-4 py-3">
         <div>
           <p className="text-sm font-medium text-text-primary">Notificações por email</p>
           <p className="text-xs text-text-secondary">

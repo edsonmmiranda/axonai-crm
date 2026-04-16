@@ -79,14 +79,14 @@ export function ProductsPagination({
   const btnDisabled = 'border border-border bg-surface-raised text-text-muted cursor-not-allowed';
 
   return (
-    <div className="flex flex-col gap-3 border-t border-subtle px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <div className="flex flex-col gap-3 border-t border-border-subtle px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <div className="flex flex-col items-start gap-3 text-sm text-text-secondary sm:flex-row sm:items-center sm:gap-4">
         <p>
           Mostrando <span className="font-medium text-text-primary">{start}</span> a{' '}
           <span className="font-medium text-text-primary">{end}</span> de{' '}
           <span className="font-medium text-text-primary">{total}</span> resultados
         </p>
-        <div className="flex items-center gap-2 sm:border-l sm:border-subtle sm:pl-4">
+        <div className="flex items-center gap-2 sm:border-l sm:border-border-subtle sm:pl-4">
           <Label htmlFor="productsPageSize" className="whitespace-nowrap">
             Exibir
           </Label>

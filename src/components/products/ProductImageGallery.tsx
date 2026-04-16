@@ -204,7 +204,7 @@ export function ProductImageGallery({ productId, images }: ProductImageGalleryPr
       ) : null}
 
       {sorted.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-default px-6 py-10 text-center">
+        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-border px-6 py-10 text-center">
           <ImageIcon className="size-6 text-text-muted" aria-hidden="true" />
           <p className="text-sm font-medium text-text-primary">
             Nenhuma imagem ainda
@@ -220,7 +220,7 @@ export function ProductImageGallery({ productId, images }: ProductImageGalleryPr
             return (
               <li
                 key={image.id}
-                className="group relative flex flex-col overflow-hidden rounded-md border border-default bg-surface-raised"
+                className="group relative flex flex-col overflow-hidden rounded-md border border-border bg-surface-raised"
               >
                 <div className="relative aspect-square w-full bg-surface-sunken">
                   {image.signed_url ? (

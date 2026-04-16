@@ -123,7 +123,7 @@ export function ProductsSortPanel() {
       {open ? (
         <div
           id="products-sort-body"
-          className="flex flex-col gap-3 border-t border-subtle px-4 pb-4 pt-3"
+          className="flex flex-col gap-3 border-t border-border-subtle px-4 pb-4 pt-3"
         >
           <div className="flex items-center justify-between gap-3">
             {rules.length === 0 ? (
@@ -186,7 +186,7 @@ export function ProductsSortPanel() {
           ) : null}
 
           {availableKeys.length > 0 ? (
-            <div className="flex flex-wrap items-center gap-2 border-t border-subtle pt-3">
+            <div className="flex flex-wrap items-center gap-2 border-t border-border-subtle pt-3">
               <div className="w-full sm:w-52">
                 <Select value={pendingKey} onValueChange={setPendingKey}>
                   <SelectTrigger className="h-9">

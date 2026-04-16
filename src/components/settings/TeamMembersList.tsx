@@ -40,7 +40,7 @@ export function TeamMembersList({ members, viewerId, viewerRole }: TeamMembersLi
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
+          <tr className="border-b border-border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
             <th scope="col" className="px-4 py-3 font-semibold">
               Nome
             </th>
@@ -66,7 +66,7 @@ export function TeamMembersList({ members, viewerId, viewerRole }: TeamMembersLi
             const roleVariant =
               m.role === 'owner' ? 'role-owner' : m.role === 'admin' ? 'role-admin' : 'role-member';
             return (
-              <tr key={m.id} className="border-b border-subtle">
+              <tr key={m.id} className="border-b border-border-subtle">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar className="size-8">

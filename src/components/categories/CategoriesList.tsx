@@ -53,7 +53,7 @@ export function CategoriesList({ categories, hasFilter }: CategoriesListProps) {
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
+          <tr className="border-b border-border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
             <th scope="col" className="px-4 py-3 font-semibold">
               Nome
             </th>
@@ -76,7 +76,7 @@ export function CategoriesList({ categories, hasFilter }: CategoriesListProps) {
         </thead>
         <tbody>
           {categories.map((c) => (
-            <tr key={c.id} className="border-b border-subtle">
+            <tr key={c.id} className="border-b border-border-subtle">
               <td className="px-4 py-3">
                 <Link
                   href={`/settings/catalog/categories/${c.id}`}

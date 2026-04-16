@@ -112,7 +112,7 @@ export function MemberForm({ member }: MemberFormProps) {
         </p>
       </div>
 
-      <div className="flex items-center justify-between rounded-md border border-default bg-surface-raised px-4 py-3">
+      <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
         <div className="flex flex-col">
           <Label htmlFor="memberActive">Acesso ativo</Label>
           <p className="text-xs text-text-secondary">

@@ -90,7 +90,7 @@ export function PendingInvitationsList({ invitations }: { invitations: PendingIn
     <div className="overflow-x-auto">
       <table className="w-full min-w-[720px] border-collapse text-sm">
         <thead>
-          <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
+          <tr className="border-b border-border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
             <th scope="col" className="px-4 py-3 font-semibold">
               Email
             </th>
@@ -113,7 +113,7 @@ export function PendingInvitationsList({ invitations }: { invitations: PendingIn
             const remaining = timeRemaining(inv.expires_at);
             const rowPending = isPending && pendingId === inv.id;
             return (
-              <tr key={inv.id} className="border-b border-subtle">
+              <tr key={inv.id} className="border-b border-border-subtle">
                 <td className="px-4 py-3 font-medium text-text-primary">{inv.email}</td>
                 <td className="px-4 py-3">
                   <Badge variant={inv.role === 'admin' ? 'role-admin' : 'role-member'}>

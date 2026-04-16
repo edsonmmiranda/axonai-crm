@@ -37,7 +37,7 @@ const STATUS_STYLES: Record<'active' | 'archived', StatusStyle> = {
   },
   archived: {
     label: 'Arquivado',
-    className: 'bg-surface-sunken text-text-muted border-subtle',
+    className: 'bg-surface-sunken text-text-muted border-border-subtle',
   },
 };
 
@@ -79,7 +79,7 @@ export function ProductsList({ products, hasFilter, thumbnailUrls }: ProductsLis
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left text-sm">
-        <thead className="border-b border-subtle bg-surface-sunken text-xs uppercase text-text-secondary">
+        <thead className="border-b border-border-subtle bg-surface-sunken text-xs uppercase text-text-secondary">
           <tr>
             <th
               scope="col"
@@ -107,7 +107,7 @@ export function ProductsList({ products, hasFilter, thumbnailUrls }: ProductsLis
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-subtle">
+        <tbody className="divide-y divide-border-subtle">
           {products.map((p) => {
             const thumbUrl = p.primary_image_path
               ? thumbnailUrls[p.primary_image_path] ?? null
@@ -119,7 +119,7 @@ export function ProductsList({ products, hasFilter, thumbnailUrls }: ProductsLis
                 className="group transition-colors hover:bg-surface-sunken/80"
               >
                 <td className="whitespace-nowrap py-4 pl-6 pr-3">
-                  <div className="flex size-10 items-center justify-center overflow-hidden rounded-md border border-subtle bg-surface-sunken">
+                  <div className="flex size-10 items-center justify-center overflow-hidden rounded-md border border-border-subtle bg-surface-sunken">
                     {thumbUrl ? (
                       <Image
                         src={thumbUrl}

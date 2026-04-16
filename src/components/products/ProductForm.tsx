@@ -420,7 +420,7 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded-md border border-default bg-surface-raised px-4 py-3">
+        <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
           <div className="flex flex-col">
             <Label htmlFor="productActive">Produto ativo</Label>
             <p className="text-xs text-text-secondary">
@@ -539,7 +539,7 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-3 border-t border-subtle pt-6">
+      <div className="flex items-center justify-end gap-3 border-t border-border-subtle pt-6">
         <Button
           type="button"
           variant="ghost"

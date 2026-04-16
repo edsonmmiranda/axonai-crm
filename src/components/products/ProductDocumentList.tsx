@@ -217,7 +217,7 @@ export function ProductDocumentList({
       </div>
 
       {documents.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-default px-6 py-10 text-center">
+        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-border px-6 py-10 text-center">
           <FileText className="size-6 text-text-muted" aria-hidden="true" />
           <p className="text-sm font-medium text-text-primary">
             Nenhum documento anexado
@@ -227,7 +227,7 @@ export function ProductDocumentList({
           </p>
         </div>
       ) : (
-        <ul className="flex flex-col divide-y divide-border-subtle rounded-md border border-default">
+        <ul className="flex flex-col divide-y divide-border-subtle rounded-md border border-border">
           {documents.map((doc) => {
             const Icon = iconForMime(doc.mime_type);
             const typeLabel = labelForType(doc.document_type);
