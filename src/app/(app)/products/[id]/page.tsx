@@ -75,18 +75,17 @@ export default async function EditProductPage(props: {
         Voltar para produtos
       </Link>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{product.name}</CardTitle>
-          <CardDescription>
-            SKU <span className="font-mono">{product.sku}</span>
-            {product.category_name ? ` · ${product.category_name}` : ''}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProductForm mode="edit" product={product} categories={categories} />
-        </CardContent>
-      </Card>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+          {product.name}
+        </h1>
+        <p className="text-sm text-text-secondary">
+          SKU <span className="font-mono">{product.sku}</span>
+          {product.category_name ? ` · ${product.category_name}` : ''}
+        </p>
+      </div>
+
+      <ProductForm mode="edit" product={product} categories={categories} />
 
       <Card>
         <CardHeader>

@@ -1,14 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { ProductForm } from '@/components/products/ProductForm';
 import { getCategoriesAction } from '@/lib/actions/categories';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
@@ -29,25 +22,39 @@ export default async function NewProductPage() {
       : [];
 
   return (
-    <div className="flex flex-col gap-4">
-      <Link
-        href="/products"
-        className="inline-flex w-fit items-center gap-1 text-sm text-text-secondary hover:text-text-primary focus-visible:outline-none focus-visible:shadow-focus rounded"
+    <div className="flex flex-col gap-6 pb-10">
+      <nav
+        aria-label="breadcrumb"
+        className="flex items-center gap-2 text-sm text-text-secondary"
       >
-        <ChevronLeft className="size-4" aria-hidden="true" />
-        Voltar para produtos
-      </Link>
-      <Card>
-        <CardHeader>
-          <CardTitle>Novo produto</CardTitle>
-          <CardDescription>
-            Cadastre os dados básicos. Após salvar, você pode adicionar imagens e documentos.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProductForm mode="create" categories={categories} />
-        </CardContent>
-      </Card>
+        <Link
+          href="/"
+          className="rounded transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:shadow-focus"
+        >
+          Home
+        </Link>
+        <ChevronRight className="size-4 text-text-muted" aria-hidden="true" />
+        <Link
+          href="/products"
+          className="rounded transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:shadow-focus"
+        >
+          Produtos
+        </Link>
+        <ChevronRight className="size-4 text-text-muted" aria-hidden="true" />
+        <span className="font-semibold text-text-primary">Novo produto</span>
+      </nav>
+
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+          Novo produto
+        </h1>
+        <p className="text-sm text-text-secondary">
+          Cadastre as informações do produto. Após salvar, você poderá adicionar
+          imagens e documentos.
+        </p>
+      </div>
+
+      <ProductForm mode="create" categories={categories} />
     </div>
   );
 }

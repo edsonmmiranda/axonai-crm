@@ -6,6 +6,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { CircleDollarSign, NotebookPen, Package, User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +19,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
   createProductAction,
@@ -80,8 +80,6 @@ const FormSchema = z.object({
 
 type FormValues = z.infer<typeof FormSchema>;
 
-type TabKey = 'basic' | 'commercial' | 'dimensions' | 'notes';
-
 interface CategoryOption {
   id: string;
   name: string;
@@ -124,7 +122,6 @@ function tagsStringToArray(input: string | undefined): string[] | undefined {
 export function ProductForm({ mode, product, categories }: ProductFormProps) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
-  const [tab, setTab] = useState<TabKey>('basic');
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -166,17 +163,14 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
 
     if (values.price && price === undefined) {
       setError('price', { message: 'Preço inválido' });
-      setTab('commercial');
       return;
     }
     if (values.stock && stockRaw === undefined) {
       setError('stock', { message: 'Estoque inválido' });
-      setTab('commercial');
       return;
     }
     if (stockRaw !== undefined && !Number.isInteger(stockRaw)) {
       setError('stock', { message: 'Estoque deve ser um número inteiro' });
-      setTab('commercial');
       return;
     }
 
@@ -212,10 +206,8 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
         const lower = message.toLowerCase();
         if (lower.includes('sku')) {
           setError('sku', { message });
-          setTab('basic');
         } else if (lower.includes('nome')) {
           setError('name', { message });
-          setTab('basic');
         } else {
           setFormError(message);
         }
@@ -243,208 +235,233 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
         </div>
       ) : null}
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as TabKey)}>
-        <TabsList className="h-auto flex-wrap">
-          <TabsTrigger value="basic">Básico</TabsTrigger>
-          <TabsTrigger value="commercial">Comercial</TabsTrigger>
-          <TabsTrigger value="dimensions">Dimensões</TabsTrigger>
-          <TabsTrigger value="notes">Notas</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      {/* Card: Informações Básicas */}
+      <section className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+        <header className="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-feedback-info-bg text-feedback-info-fg">
+            <User className="size-5" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-text-primary">Informações Básicas</h3>
+            <p className="text-sm text-text-secondary">
+              Identificação, categoria e descrição do produto.
+            </p>
+          </div>
+        </header>
 
-      <div
-        className={tab === 'basic' ? 'flex flex-col gap-6' : 'hidden'}
-        aria-hidden={tab !== 'basic'}
-      >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="productName" required>
+                Nome
+              </Label>
+              <Input
+                id="productName"
+                aria-invalid={errors.name ? true : undefined}
+                placeholder="Ex.: Notebook Pro 14"
+                {...register('name')}
+              />
+              {errors.name ? (
+                <p className="text-xs text-feedback-danger-fg">{errors.name.message}</p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="productSku" required>
+                SKU
+              </Label>
+              <Input
+                id="productSku"
+                aria-invalid={errors.sku ? true : undefined}
+                placeholder="Ex.: NB-PRO-14"
+                className="font-mono"
+                {...register('sku')}
+              />
+              {errors.sku ? (
+                <p className="text-xs text-feedback-danger-fg">{errors.sku.message}</p>
+              ) : (
+                <p className="text-xs text-text-secondary">
+                  Apenas letras, números, hífen e underscore. Único por organização.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="productCategory">Categoria</Label>
+              <Controller
+                control={control}
+                name="category_id"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="productCategory">
+                      <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={CATEGORY_NONE}>Sem categoria</SelectItem>
+                      {categories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="productBrand">Marca</Label>
+              <Input
+                id="productBrand"
+                aria-invalid={errors.brand ? true : undefined}
+                placeholder="Ex.: AxonTech"
+                {...register('brand')}
+              />
+              {errors.brand ? (
+                <p className="text-xs text-feedback-danger-fg">{errors.brand.message}</p>
+              ) : null}
+            </div>
+          </div>
+
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="productName" required>
-              Nome
-            </Label>
+            <Label htmlFor="productShortDescription">Resumo</Label>
             <Input
-              id="productName"
-              aria-invalid={errors.name ? true : undefined}
-              placeholder="Ex.: Notebook Pro 14"
-              {...register('name')}
+              id="productShortDescription"
+              aria-invalid={errors.short_description ? true : undefined}
+              placeholder="Frase curta que aparece nas listagens"
+              {...register('short_description')}
             />
-            {errors.name ? (
-              <p className="text-xs text-feedback-danger-fg">{errors.name.message}</p>
+            {errors.short_description ? (
+              <p className="text-xs text-feedback-danger-fg">
+                {errors.short_description.message}
+              </p>
             ) : null}
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="productSku" required>
-              SKU
-            </Label>
-            <Input
-              id="productSku"
-              aria-invalid={errors.sku ? true : undefined}
-              placeholder="Ex.: NB-PRO-14"
-              className="font-mono"
-              {...register('sku')}
+            <Label htmlFor="productDescription">Descrição</Label>
+            <Textarea
+              id="productDescription"
+              rows={5}
+              aria-invalid={errors.description ? true : undefined}
+              placeholder="Descrição completa do produto, especificações, diferenciais."
+              {...register('description')}
             />
-            {errors.sku ? (
-              <p className="text-xs text-feedback-danger-fg">{errors.sku.message}</p>
+            {errors.description ? (
+              <p className="text-xs text-feedback-danger-fg">
+                {errors.description.message}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="productTags">Tags</Label>
+            <Input
+              id="productTags"
+              aria-invalid={errors.tags ? true : undefined}
+              placeholder="Separe por vírgula — ex.: notebook, 14 polegadas, premium"
+              {...register('tags')}
+            />
+            {errors.tags ? (
+              <p className="text-xs text-feedback-danger-fg">{errors.tags.message}</p>
             ) : (
               <p className="text-xs text-text-secondary">
-                Apenas letras, números, hífen e underscore. Único por organização.
+                Até 20 tags, cada uma com no máximo 30 caracteres.
               </p>
             )}
           </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="productCategory">Categoria</Label>
+      {/* Card: Comercial */}
+      <section className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+        <header className="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-feedback-success-bg text-feedback-success-fg">
+            <CircleDollarSign className="size-5" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-text-primary">Comercial</h3>
+            <p className="text-sm text-text-secondary">
+              Preço, estoque e disponibilidade do produto.
+            </p>
+          </div>
+        </header>
+
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="productPrice">Preço (R$)</Label>
+              <Input
+                id="productPrice"
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                aria-invalid={errors.price ? true : undefined}
+                {...register('price')}
+              />
+              {errors.price ? (
+                <p className="text-xs text-feedback-danger-fg">{errors.price.message}</p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="productStock">Estoque</Label>
+              <Input
+                id="productStock"
+                type="number"
+                inputMode="numeric"
+                min="0"
+                step="1"
+                placeholder="0"
+                aria-invalid={errors.stock ? true : undefined}
+                {...register('stock')}
+              />
+              {errors.stock ? (
+                <p className="text-xs text-feedback-danger-fg">{errors.stock.message}</p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-border bg-surface-base px-4 py-3">
+            <div className="flex flex-col">
+              <Label htmlFor="productActive">Produto ativo</Label>
+              <p className="text-xs text-text-secondary">
+                Produtos arquivados ficam ocultos da listagem padrão.
+              </p>
+            </div>
             <Controller
               control={control}
-              name="category_id"
+              name="active"
               render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger id="productCategory">
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={CATEGORY_NONE}>Sem categoria</SelectItem>
-                    {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Switch
+                  id="productActive"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
               )}
             />
           </div>
+        </div>
+      </section>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="productBrand">Marca</Label>
-            <Input
-              id="productBrand"
-              aria-invalid={errors.brand ? true : undefined}
-              placeholder="Ex.: AxonTech"
-              {...register('brand')}
-            />
-            {errors.brand ? (
-              <p className="text-xs text-feedback-danger-fg">{errors.brand.message}</p>
-            ) : null}
+      {/* Card: Dimensões */}
+      <section className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+        <header className="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-feedback-accent-bg text-feedback-accent-fg">
+            <Package className="size-5" aria-hidden="true" />
           </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="productShortDescription">Resumo</Label>
-          <Input
-            id="productShortDescription"
-            aria-invalid={errors.short_description ? true : undefined}
-            placeholder="Frase curta que aparece nas listagens"
-            {...register('short_description')}
-          />
-          {errors.short_description ? (
-            <p className="text-xs text-feedback-danger-fg">
-              {errors.short_description.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="productDescription">Descrição</Label>
-          <Textarea
-            id="productDescription"
-            rows={5}
-            aria-invalid={errors.description ? true : undefined}
-            placeholder="Descrição completa do produto, especificações, diferenciais."
-            {...register('description')}
-          />
-          {errors.description ? (
-            <p className="text-xs text-feedback-danger-fg">
-              {errors.description.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="productTags">Tags</Label>
-          <Input
-            id="productTags"
-            aria-invalid={errors.tags ? true : undefined}
-            placeholder="Separe por vírgula — ex.: notebook, 14 polegadas, premium"
-            {...register('tags')}
-          />
-          {errors.tags ? (
-            <p className="text-xs text-feedback-danger-fg">{errors.tags.message}</p>
-          ) : (
-            <p className="text-xs text-text-secondary">
-              Até 20 tags, cada uma com no máximo 30 caracteres.
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div
-        className={tab === 'commercial' ? 'flex flex-col gap-6' : 'hidden'}
-        aria-hidden={tab !== 'commercial'}
-      >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="productPrice">Preço (R$)</Label>
-            <Input
-              id="productPrice"
-              type="number"
-              inputMode="decimal"
-              min="0"
-              step="0.01"
-              placeholder="0,00"
-              aria-invalid={errors.price ? true : undefined}
-              {...register('price')}
-            />
-            {errors.price ? (
-              <p className="text-xs text-feedback-danger-fg">{errors.price.message}</p>
-            ) : null}
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="productStock">Estoque</Label>
-            <Input
-              id="productStock"
-              type="number"
-              inputMode="numeric"
-              min="0"
-              step="1"
-              placeholder="0"
-              aria-invalid={errors.stock ? true : undefined}
-              {...register('stock')}
-            />
-            {errors.stock ? (
-              <p className="text-xs text-feedback-danger-fg">{errors.stock.message}</p>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
-          <div className="flex flex-col">
-            <Label htmlFor="productActive">Produto ativo</Label>
-            <p className="text-xs text-text-secondary">
-              Produtos arquivados ficam ocultos da listagem padrão.
+          <div>
+            <h3 className="text-lg font-bold text-text-primary">Dimensões</h3>
+            <p className="text-sm text-text-secondary">
+              Peso e medidas para cálculo de frete e logística.
             </p>
           </div>
-          <Controller
-            control={control}
-            name="active"
-            render={({ field }) => (
-              <Switch
-                id="productActive"
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
-            )}
-          />
-        </div>
-      </div>
+        </header>
 
-      <div
-        className={tab === 'dimensions' ? 'flex flex-col gap-6' : 'hidden'}
-        aria-hidden={tab !== 'dimensions'}
-      >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="productWeight">Peso (kg)</Label>
@@ -514,14 +531,24 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
             ) : null}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div
-        className={tab === 'notes' ? 'flex flex-col gap-6' : 'hidden'}
-        aria-hidden={tab !== 'notes'}
-      >
+      {/* Card: Notas internas */}
+      <section className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+        <header className="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-feedback-accent-bg text-feedback-accent-fg">
+            <NotebookPen className="size-5" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-text-primary">Notas internas</h3>
+            <p className="text-sm text-text-secondary">
+              Anotações privadas, visíveis apenas para a equipe interna.
+            </p>
+          </div>
+        </header>
+
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="productNotes">Notas internas</Label>
+          <Label htmlFor="productNotes">Notas</Label>
           <Textarea
             id="productNotes"
             rows={6}
@@ -533,13 +560,14 @@ export function ProductForm({ mode, product, categories }: ProductFormProps) {
             <p className="text-xs text-feedback-danger-fg">{errors.notes.message}</p>
           ) : (
             <p className="text-xs text-text-secondary">
-              Visível apenas para a equipe interna. Até 2000 caracteres.
+              Até 2000 caracteres. Não aparece para clientes.
             </p>
           )}
         </div>
-      </div>
+      </section>
 
-      <div className="flex items-center justify-end gap-3 border-t border-border-subtle pt-6">
+      {/* Action bar */}
+      <div className="flex items-center justify-end gap-3 pt-2">
         <Button
           type="button"
           variant="ghost"
