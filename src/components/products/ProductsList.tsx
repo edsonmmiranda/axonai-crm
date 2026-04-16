@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Package } from 'lucide-react';
+import { Folder, Package } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { ProductListRow } from '@/lib/actions/products';
+
 import { ProductRowActions } from './ProductRowActions';
+import { ProductsSortableHeader } from './ProductsSortableHeader';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR');
@@ -23,6 +24,22 @@ function formatStock(value: number | null): string {
   if (value === null) return '—';
   return value.toLocaleString('pt-BR');
 }
+
+interface StatusStyle {
+  label: string;
+  className: string;
+}
+
+const STATUS_STYLES: Record<'active' | 'archived', StatusStyle> = {
+  active: {
+    label: 'Ativo',
+    className: 'bg-feedback-success-bg text-feedback-success-fg border-feedback-success-border',
+  },
+  archived: {
+    label: 'Arquivado',
+    className: 'bg-surface-sunken text-text-muted border-subtle',
+  },
+};
 
 interface ProductsListProps {
   products: ProductListRow[];
@@ -61,46 +78,47 @@ export function ProductsList({ products, hasFilter, thumbnailUrls }: ProductsLis
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
-            <th scope="col" className="px-4 py-3 font-semibold">
+      <table className="min-w-full text-left text-sm">
+        <thead className="border-b border-subtle bg-surface-sunken text-xs uppercase text-text-secondary">
+          <tr>
+            <th
+              scope="col"
+              className="py-3.5 pl-6 pr-3 font-semibold tracking-wide"
+            >
               Imagem
             </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              Nome
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              SKU
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
+            <ProductsSortableHeader sortKey="name" label="Nome" />
+            <ProductsSortableHeader sortKey="sku" label="SKU" />
+            <th
+              scope="col"
+              className="px-3 py-3.5 font-semibold tracking-wide"
+            >
               Categoria
             </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              Preço
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              Estoque
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              Status
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              Criado em
-            </th>
-            <th scope="col" className="px-4 py-3 text-right font-semibold">
+            <ProductsSortableHeader sortKey="price" label="Preço" />
+            <ProductsSortableHeader sortKey="stock" label="Estoque" />
+            <ProductsSortableHeader sortKey="status" label="Status" />
+            <ProductsSortableHeader sortKey="created_at" label="Criado em" />
+            <th
+              scope="col"
+              className="py-3.5 pl-3 pr-6 text-right font-semibold tracking-wide"
+            >
               Ações
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-subtle">
           {products.map((p) => {
             const thumbUrl = p.primary_image_path
               ? thumbnailUrls[p.primary_image_path] ?? null
               : null;
+            const statusStyle = STATUS_STYLES[p.status];
             return (
-              <tr key={p.id} className="border-b border-subtle">
-                <td className="px-4 py-3">
+              <tr
+                key={p.id}
+                className="group transition-colors hover:bg-surface-sunken/80"
+              >
+                <td className="whitespace-nowrap py-4 pl-6 pr-3">
                   <div className="flex size-10 items-center justify-center overflow-hidden rounded-md border border-subtle bg-surface-sunken">
                     {thumbUrl ? (
                       <Image
@@ -119,37 +137,49 @@ export function ProductsList({ products, hasFilter, thumbnailUrls }: ProductsLis
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3">
+                <td className="whitespace-nowrap px-3 py-4">
                   <Link
                     href={`/products/${p.id}`}
-                    className="font-medium text-text-primary hover:text-action-primary focus-visible:outline-none focus-visible:shadow-focus rounded"
+                    className="rounded font-bold text-text-primary transition-colors hover:text-action-primary focus-visible:outline-none focus-visible:shadow-focus"
                   >
                     {p.name}
                   </Link>
+                  {p.brand ? (
+                    <div className="text-xs text-text-secondary">{p.brand}</div>
+                  ) : null}
                 </td>
-                <td className="px-4 py-3 font-mono text-xs text-text-secondary">
+                <td className="whitespace-nowrap px-3 py-4 font-mono text-xs text-text-secondary">
                   {p.sku}
                 </td>
-                <td className="px-4 py-3 text-text-secondary">
-                  {p.category_name ?? '—'}
+                <td className="whitespace-nowrap px-3 py-4">
+                  {p.category_name ? (
+                    <span className="inline-flex items-center gap-1 rounded border border-border bg-surface-sunken px-2 py-1 text-xs font-medium text-text-secondary">
+                      <Folder className="size-3.5" aria-hidden="true" />
+                      {p.category_name}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-text-muted">—</span>
+                  )}
                 </td>
-                <td className="px-4 py-3 text-text-primary">
-                  {formatPrice(p.price)}
+                <td className="whitespace-nowrap px-3 py-4">
+                  <span className="font-semibold text-text-primary">
+                    {formatPrice(p.price)}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-text-secondary">
+                <td className="whitespace-nowrap px-3 py-4 text-text-secondary">
                   {formatStock(p.stock)}
                 </td>
-                <td className="px-4 py-3">
-                  <Badge
-                    variant={p.status === 'active' ? 'role-admin' : 'status-inactive'}
+                <td className="whitespace-nowrap px-3 py-4">
+                  <span
+                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusStyle.className}`}
                   >
-                    {p.status === 'active' ? 'Ativo' : 'Arquivado'}
-                  </Badge>
+                    {statusStyle.label}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-text-secondary">
+                <td className="whitespace-nowrap px-3 py-4 text-text-secondary">
                   {formatDate(p.created_at)}
                 </td>
-                <td className="px-4 py-3">
+                <td className="whitespace-nowrap py-4 pl-3 pr-6 text-right">
                   <ProductRowActions id={p.id} name={p.name} status={p.status} />
                 </td>
               </tr>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
-import { Pencil } from 'lucide-react';
+import { Archive, ArchiveRestore, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -18,14 +18,17 @@ import {
 import {
   archiveProductAction,
   restoreProductAction,
-  type ProductStatus,
 } from '@/lib/actions/products';
+import type { ProductStatus } from '@/lib/products/constants';
 
 interface ProductRowActionsProps {
   id: string;
   name: string;
   status: ProductStatus;
 }
+
+const ICON_BTN_BASE =
+  'inline-flex size-8 items-center justify-center rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:shadow-focus disabled:opacity-50';
 
 export function ProductRowActions({ id, name, status }: ProductRowActionsProps) {
   const [open, setOpen] = useState(false);
@@ -48,17 +51,33 @@ export function ProductRowActions({ id, name, status }: ProductRowActionsProps) 
 
   return (
     <div className="flex items-center justify-end gap-1">
-      <Button variant="ghost" size="sm" asChild>
-        <Link href={`/products/${id}`} aria-label={`Editar ${name}`}>
-          <Pencil className="size-4" aria-hidden="true" />
-        </Link>
-      </Button>
+      <Link
+        href={`/products/${id}`}
+        aria-label={`Editar ${name}`}
+        title="Editar"
+        className={`${ICON_BTN_BASE} text-text-muted hover:bg-surface-sunken hover:text-text-primary`}
+      >
+        <Pencil className="size-4" aria-hidden="true" />
+      </Link>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="sm">
-            {isActive ? 'Arquivar' : 'Restaurar'}
-          </Button>
+          <button
+            type="button"
+            aria-label={isActive ? `Arquivar ${name}` : `Restaurar ${name}`}
+            title={isActive ? 'Arquivar' : 'Restaurar'}
+            className={
+              isActive
+                ? `${ICON_BTN_BASE} text-text-muted hover:bg-feedback-warning-bg hover:text-feedback-warning-fg`
+                : `${ICON_BTN_BASE} text-feedback-success-fg hover:bg-feedback-success-bg`
+            }
+          >
+            {isActive ? (
+              <Archive className="size-4" aria-hidden="true" />
+            ) : (
+              <ArchiveRestore className="size-4" aria-hidden="true" />
+            )}
+          </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

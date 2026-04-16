@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'AI-native CRM for modern sales teams.',
 };
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+const themeInitScript = `(function(){try{var p=localStorage.getItem('theme');if(p!=='light'&&p!=='dark'&&p!=='system'){p='system';}var r=p;if(p==='system'){r=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',r);}catch(e){}})();`;
 
 export default function RootLayout({
   children,

@@ -5,6 +5,7 @@ import { Bell, LogOut, Search, Settings } from 'lucide-react';
 
 import type { SessionContext } from '@/lib/supabase/getSessionContext';
 import { logoutAction } from '@/lib/actions/auth';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 interface TopbarProps {
   session: SessionContext;
@@ -61,6 +62,7 @@ export function Topbar({ session }: TopbarProps) {
           <Bell className="size-5" aria-hidden="true" />
           <span className="absolute right-2 top-2 size-2 rounded-full border-2 border-surface-raised bg-feedback-danger-solid-bg" />
         </button>
+        <ThemeToggle />
         <button
           type="button"
           aria-label="Configurações"

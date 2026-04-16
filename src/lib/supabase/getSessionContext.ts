@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
 export type SessionRole = 'owner' | 'admin' | 'member';
+export type ThemePreference = 'system' | 'light' | 'dark';
 
 export type SessionContext = {
   userId: string;
@@ -13,15 +14,24 @@ export type SessionContext = {
   fullName: string;
   avatarUrl: string | null;
   organizationName: string;
+  themePreference: ThemePreference;
 };
 
 const VALID_ROLES: readonly SessionRole[] = ['owner', 'admin', 'member'] as const;
+const VALID_THEMES: readonly ThemePreference[] = ['system', 'light', 'dark'] as const;
 
 function normalizeRole(raw: unknown): SessionRole {
   if (typeof raw === 'string' && (VALID_ROLES as readonly string[]).includes(raw)) {
     return raw as SessionRole;
   }
   return 'member';
+}
+
+function normalizeTheme(raw: unknown): ThemePreference {
+  if (typeof raw === 'string' && (VALID_THEMES as readonly string[]).includes(raw)) {
+    return raw as ThemePreference;
+  }
+  return 'system';
 }
 
 export async function getSessionContext(): Promise<SessionContext> {
@@ -37,7 +47,7 @@ export async function getSessionContext(): Promise<SessionContext> {
 
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('id, organization_id, role, full_name, avatar_url, organizations(name)')
+    .select('id, organization_id, role, full_name, avatar_url, preferences, organizations(name)')
     .eq('id', user.id)
     .single<{
       id: string;
@@ -45,6 +55,7 @@ export async function getSessionContext(): Promise<SessionContext> {
       role: string | null;
       full_name: string | null;
       avatar_url: string | null;
+      preferences: Record<string, unknown> | null;
       organizations: { name: string } | { name: string }[] | null;
     }>();
 
@@ -68,5 +79,6 @@ export async function getSessionContext(): Promise<SessionContext> {
     fullName: profile.full_name ?? '',
     avatarUrl: profile.avatar_url,
     organizationName,
+    themePreference: normalizeTheme(profile.preferences?.theme),
   };
 }

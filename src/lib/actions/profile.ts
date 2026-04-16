@@ -88,6 +88,61 @@ export async function updateProfileAction(
   }
 }
 
+const ThemePreferenceSchema = z.object({
+  theme: z.enum(['system', 'light', 'dark']),
+});
+
+export type UpdateThemePreferenceInput = z.infer<typeof ThemePreferenceSchema>;
+
+export async function updateThemePreferenceAction(
+  input: UpdateThemePreferenceInput
+): Promise<ActionResponse<{ ok: true }>> {
+  const parsed = ThemePreferenceSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message };
+  }
+
+  try {
+    const ctx = await getSessionContext();
+    const supabase = await createClient();
+
+    const { data: existing, error: readError } = await supabase
+      .from('profiles')
+      .select('preferences')
+      .eq('id', ctx.userId)
+      .single<{ preferences: Record<string, unknown> | null }>();
+
+    if (readError) {
+      console.error('[profile:updateTheme] read preferences failed', readError);
+      return { success: false, error: 'Não foi possível atualizar tema' };
+    }
+
+    const mergedPreferences = {
+      ...(existing?.preferences ?? {}),
+      theme: parsed.data.theme,
+    };
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        preferences: mergedPreferences,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', ctx.userId);
+
+    if (updateError) {
+      console.error('[profile:updateTheme]', updateError);
+      return { success: false, error: 'Não foi possível atualizar tema' };
+    }
+
+    revalidatePath('/', 'layout');
+    return { success: true, data: { ok: true } };
+  } catch (error) {
+    console.error('[profile:updateTheme] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}
+
 export async function uploadAvatarAction(
   formData: FormData
 ): Promise<ActionResponse<{ url: string }>> {

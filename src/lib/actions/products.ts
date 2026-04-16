@@ -4,6 +4,11 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
+import {
+  PRODUCT_PAGE_SIZES,
+  PRODUCT_SORT_KEYS,
+  type ProductStatus,
+} from '@/lib/products/constants';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
 
@@ -20,8 +25,6 @@ interface PaginationMeta {
   currentPage: number;
   itemsPerPage: number;
 }
-
-export type ProductStatus = 'active' | 'archived';
 
 export interface ProductRow {
   id: string;
@@ -142,12 +145,25 @@ const ProductPayloadSchema = z.object({
 const CreateProductSchema = ProductPayloadSchema;
 const UpdateProductSchema = ProductPayloadSchema;
 
+const SortRuleSchema = z.object({
+  key: z.enum(PRODUCT_SORT_KEYS),
+  dir: z.enum(['asc', 'desc']),
+});
+
 const ListParamsSchema = z.object({
   search: z.string().trim().max(255).optional(),
   categoryId: z.string().uuid().optional(),
   status: z.enum(['active', 'archived', 'all']).optional().default('active'),
   page: z.number().int().min(1).optional().default(1),
-  pageSize: z.number().int().min(1).max(100).optional().default(20),
+  pageSize: z
+    .number()
+    .int()
+    .refine((v) => (PRODUCT_PAGE_SIZES as readonly number[]).includes(v), {
+      message: 'Tamanho de página inválido',
+    })
+    .optional()
+    .default(20),
+  sort: z.array(SortRuleSchema).max(6).optional().default([]),
 });
 
 export type CreateProductInput = z.input<typeof CreateProductSchema>;
@@ -200,16 +216,24 @@ export async function getProductsAction(
     const ctx = await getSessionContext();
     const supabase = await createClient();
 
-    const { search, categoryId, status, page, pageSize } = parsed.data;
+    const { search, categoryId, status, page, pageSize, sort } = parsed.data;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
     let query = supabase
       .from('products')
       .select(`${PRODUCT_SELECT}, category:categories(id, name)`, { count: 'exact' })
-      .eq('organization_id', ctx.organizationId)
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .eq('organization_id', ctx.organizationId);
+
+    if (sort.length > 0) {
+      for (const rule of sort) {
+        query = query.order(rule.key, { ascending: rule.dir === 'asc' });
+      }
+    } else {
+      query = query.order('created_at', { ascending: false });
+    }
+
+    query = query.range(from, to);
 
     if (status !== 'all') {
       query = query.eq('status', status);
@@ -535,4 +559,54 @@ export async function restoreProductAction(
   id: string
 ): Promise<ActionResponse<{ ok: true }>> {
   return setStatus(id, 'active', 'restore');
+}
+
+export interface ProductStats {
+  total: number;
+  active: number;
+  archived: number;
+  noStock: number;
+}
+
+export async function getProductsStatsAction(): Promise<ActionResponse<ProductStats>> {
+  try {
+    const ctx = await getSessionContext();
+    const supabase = await createClient();
+
+    const baseSelect = () =>
+      supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', ctx.organizationId);
+
+    const [totalRes, activeRes, archivedRes, noStockRes] = await Promise.all([
+      baseSelect(),
+      baseSelect().eq('status', 'active'),
+      baseSelect().eq('status', 'archived'),
+      baseSelect().eq('status', 'active').or('stock.is.null,stock.eq.0'),
+    ]);
+
+    if (totalRes.error || activeRes.error || archivedRes.error || noStockRes.error) {
+      console.error('[products:stats]', {
+        total: totalRes.error,
+        active: activeRes.error,
+        archived: archivedRes.error,
+        noStock: noStockRes.error,
+      });
+      return { success: false, error: 'Não foi possível carregar as estatísticas.' };
+    }
+
+    return {
+      success: true,
+      data: {
+        total: totalRes.count ?? 0,
+        active: activeRes.count ?? 0,
+        archived: archivedRes.count ?? 0,
+        noStock: noStockRes.count ?? 0,
+      },
+    };
+  } catch (error) {
+    console.error('[products:stats] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
 }

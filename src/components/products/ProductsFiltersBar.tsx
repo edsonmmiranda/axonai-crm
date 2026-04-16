@@ -1,11 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -20,7 +19,7 @@ interface CategoryOption {
   name: string;
 }
 
-interface ProductsToolbarProps {
+interface ProductsFiltersBarProps {
   categories: CategoryOption[];
 }
 
@@ -29,7 +28,7 @@ const STATUS_ACTIVE = 'active';
 const STATUS_ARCHIVED = 'archived';
 const STATUS_ALL = 'all';
 
-export function ProductsToolbar({ categories }: ProductsToolbarProps) {
+export function ProductsFiltersBar({ categories }: ProductsFiltersBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentSearch = searchParams.get('search') ?? '';
@@ -80,22 +79,26 @@ export function ProductsToolbar({ categories }: ProductsToolbarProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="w-full sm:max-w-xs">
-          <Label htmlFor="productsSearch" className="sr-only">
-            Buscar produto
-          </Label>
-          <Input
-            id="productsSearch"
-            type="search"
-            placeholder="Buscar por nome ou SKU…"
-            value={value}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+    <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm xl:flex-row xl:items-center">
+      <div className="relative flex-1">
+        <Label htmlFor="productsSearch" className="sr-only">
+          Buscar produto
+        </Label>
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <Search className="size-5 text-text-secondary" aria-hidden="true" />
         </div>
+        <input
+          id="productsSearch"
+          type="search"
+          placeholder="Buscar por nome ou SKU…"
+          value={value}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="block w-full rounded-lg border border-field-border bg-field py-2.5 pl-10 pr-3 text-sm text-field-fg transition-all placeholder:text-field-placeholder hover:border-field-border-hover focus-visible:border-field-border-focus focus-visible:outline-none focus-visible:shadow-focus"
+        />
+      </div>
 
-        <div className="w-full sm:w-48">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-row">
+        <div className="w-full lg:w-52">
           <Label htmlFor="productsCategory" className="sr-only">
             Filtrar por categoria
           </Label>
@@ -114,7 +117,7 @@ export function ProductsToolbar({ categories }: ProductsToolbarProps) {
           </Select>
         </div>
 
-        <div className="w-full sm:w-40">
+        <div className="w-full lg:w-44">
           <Label htmlFor="productsStatus" className="sr-only">
             Filtrar por status
           </Label>
@@ -129,11 +132,12 @@ export function ProductsToolbar({ categories }: ProductsToolbarProps) {
             </SelectContent>
           </Select>
         </div>
-      </div>
 
-      <Button asChild>
-        <Link href="/products/new">Novo produto</Link>
-      </Button>
+        <Button variant="secondary" type="button" disabled className="lg:w-auto">
+          <SlidersHorizontal className="size-4" aria-hidden="true" />
+          Filtros
+        </Button>
+      </div>
     </div>
   );
 }

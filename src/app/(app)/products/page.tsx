@@ -1,18 +1,17 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { ChevronRight, Plus, Printer } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { ProductsFiltersBar } from '@/components/products/ProductsFiltersBar';
 import { ProductsList } from '@/components/products/ProductsList';
-import { ProductsToolbar } from '@/components/products/ProductsToolbar';
+import { ProductsPagination } from '@/components/products/ProductsPagination';
+import { ProductsSortPanel } from '@/components/products/ProductsSortPanel';
+import { ProductsStatsCards } from '@/components/products/ProductsStatsCards';
+import { parseSortParam } from '@/components/products/sort-utils';
 import { getCategoriesAction } from '@/lib/actions/categories';
-import { getProductsAction } from '@/lib/actions/products';
+import { getProductsAction, getProductsStatsAction } from '@/lib/actions/products';
+import { PRODUCT_PAGE_SIZES, type ProductPageSize } from '@/lib/products/constants';
 import { getSignedUrlsBatch } from '@/lib/storage/signed-urls';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 
@@ -21,11 +20,21 @@ interface SearchParams {
   categoryId?: string;
   status?: string;
   page?: string;
+  pageSize?: string;
+  sort?: string;
 }
 
 function parseStatus(raw: string | undefined): 'active' | 'archived' | 'all' {
   if (raw === 'archived' || raw === 'all') return raw;
   return 'active';
+}
+
+function parsePageSize(raw: string | undefined): ProductPageSize {
+  const n = Number(raw);
+  if ((PRODUCT_PAGE_SIZES as readonly number[]).includes(n)) {
+    return n as ProductPageSize;
+  }
+  return 20;
 }
 
 export default async function ProductsPage(props: {
@@ -41,11 +50,13 @@ export default async function ProductsPage(props: {
   const categoryId = searchParams.categoryId || undefined;
   const status = parseStatus(searchParams.status);
   const page = Math.max(1, Number(searchParams.page) || 1);
-  const pageSize = 20;
+  const pageSize = parsePageSize(searchParams.pageSize);
+  const sort = parseSortParam(searchParams.sort);
 
-  const [productsRes, categoriesRes] = await Promise.all([
-    getProductsAction({ search, categoryId, status, page, pageSize }),
+  const [productsRes, categoriesRes, statsRes] = await Promise.all([
+    getProductsAction({ search, categoryId, status, page, pageSize, sort }),
     getCategoriesAction({ activeOnly: true, pageSize: 100 }),
+    getProductsStatsAction(),
   ]);
 
   const hasFilter =
@@ -74,79 +85,83 @@ export default async function ProductsPage(props: {
   const currentPage = meta?.currentPage ?? page;
   const total = meta?.total ?? products.length;
 
-  function buildPageHref(target: number): string {
-    const qs = new URLSearchParams();
-    if (search) qs.set('search', search);
-    if (categoryId) qs.set('categoryId', categoryId);
-    if (status !== 'active') qs.set('status', status);
-    if (target > 1) qs.set('page', String(target));
-    const s = qs.toString();
-    return s ? `/products?${s}` : '/products';
-  }
+  const stats =
+    statsRes.success && statsRes.data
+      ? statsRes.data
+      : { total: 0, active: 0, archived: 0, noStock: 0 };
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Produtos</CardTitle>
-          <CardDescription>
-            Catálogo da sua organização com imagens e documentos de apoio.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4 p-6">
-          <ProductsToolbar categories={categories} />
-          {productsRes.success ? (
-            <>
-              <ProductsList
-                products={products}
-                hasFilter={hasFilter}
-                thumbnailUrls={thumbnailUrls}
+    <div className="mr-auto flex max-w-[1400px] flex-col gap-6 pb-10">
+      <nav className="flex text-sm font-medium text-text-secondary">
+        <ol className="flex items-center gap-2">
+          <li>
+            <Link
+              href="/dashboard"
+              className="transition-colors hover:text-action-ghost-fg"
+            >
+              Home
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="size-4 text-text-muted" />
+          </li>
+          <li className="font-semibold text-text-primary">Produtos</li>
+        </ol>
+      </nav>
+
+      <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary">
+            Catálogo de Produtos
+          </h2>
+          <p className="max-w-2xl text-text-secondary">
+            Gerencie seu catálogo, mantenha imagens e documentos atualizados e
+            acompanhe o estoque dos seus produtos.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="secondary" type="button" disabled>
+            <Printer className="size-4" aria-hidden="true" />
+            Imprimir
+          </Button>
+          <Button asChild>
+            <Link href="/products/new">
+              <Plus className="size-4" aria-hidden="true" />
+              Novo produto
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <ProductsStatsCards stats={stats} />
+
+      <ProductsFiltersBar categories={categories} />
+
+      <ProductsSortPanel />
+
+      <div className="overflow-hidden rounded-xl border border-border bg-surface-raised shadow-sm">
+        {productsRes.success ? (
+          <>
+            <ProductsList
+              products={products}
+              hasFilter={hasFilter}
+              thumbnailUrls={thumbnailUrls}
+            />
+            {sort.length === 0 && total === 0 ? null : (
+              <ProductsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                total={total}
+                pageSize={pageSize}
               />
-              {totalPages > 1 ? (
-                <div className="flex items-center justify-between border-t border-subtle pt-4 text-sm text-text-secondary">
-                  <p>
-                    Página {currentPage} de {totalPages} · {total} produto(s)
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      disabled={currentPage <= 1}
-                    >
-                      <Link
-                        href={buildPageHref(Math.max(1, currentPage - 1))}
-                        aria-disabled={currentPage <= 1}
-                      >
-                        Anterior
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      disabled={currentPage >= totalPages}
-                    >
-                      <Link
-                        href={buildPageHref(
-                          Math.min(totalPages, currentPage + 1)
-                        )}
-                        aria-disabled={currentPage >= totalPages}
-                      >
-                        Próxima
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-            </>
-          ) : (
-            <p className="text-sm text-feedback-danger-fg">
-              {productsRes.error ?? 'Erro ao carregar produtos.'}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </>
+        ) : (
+          <p className="px-6 py-6 text-sm text-feedback-danger-fg">
+            {productsRes.error ?? 'Erro ao carregar produtos.'}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
