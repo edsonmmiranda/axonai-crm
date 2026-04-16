@@ -113,7 +113,7 @@
 
 ### Opção 2 — COMPLETA (com PRD)
 - **Fluxo:** Tech Lead → @spec-writer → @sanity-checker (loop até 3×) → STOP & WAIT → execução idêntica à Opção 1
-- **PRD:** gerado em `docs/prds/prd_[name].md` e validado
+- **PRD:** gerado em `prds/prd_[name].md` e validado
 - **Modelo sugerido:** Opus (cold review só paga o custo em Opus)
 - **Quando faz sentido:** [razão específica]
 

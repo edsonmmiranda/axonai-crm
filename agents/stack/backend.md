@@ -31,7 +31,7 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 
 **Antes de criar qualquer Server Action**, verifique se existe uma especificação de Reference Module:
 
-- **Opção 2 (com PRD):** abra `docs/prds/prd_*.md` e procure a seção **"Reference Module Compliance"**
+- **Opção 2 (com PRD):** abra `prds/prd_*.md` e procure a seção **"Reference Module Compliance"**
 - **Opção 1 (sem PRD) ou sprint LIGHT:** abra `sprints/active/sprint_XX_*.md` e procure a seção **"Reference Module Compliance"**
 
 **Se há Reference Module especificado:**

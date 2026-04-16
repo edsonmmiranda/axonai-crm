@@ -97,7 +97,7 @@ Após Step 0 confirmar STANDARD, calcule o complexity score para decidir entre P
 
 # Output: o PRD
 
-Alvo: `docs/prds/prd_[name].md`
+Alvo: `prds/prd_[name].md`
 
 ## Step 1.5: ler módulo de referência (crítico — se especificado no sprint)
 
@@ -129,7 +129,7 @@ Substitua todos os placeholders ([Feature Name], [table_name], etc.) com os valo
 - Todos os `[Description]` → descrições específicas do sprint
 
 ## Step 4: salvar o PRD
-Salve o template preenchido em `docs/prds/prd_[name].md`.
+Salve o template preenchido em `prds/prd_[name].md`.
 
 ---
 
@@ -173,8 +173,8 @@ Se o sprint tem ambiguidade, informação faltando ou requisitos conflitantes, *
 - Estado atual do sistema (`docs/schema_snapshot.json` + descoberta em `src/` via Glob/Grep)
 
 **Outputs:**
-- PRD salvo em `docs/prds/prd_[name].md` usando `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)
+- PRD salvo em `prds/prd_[name].md` usando `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)
 - Ou recusa + report ao Tech Lead se invocado indevidamente para sprint LIGHT
 - Ou escalação formal via `escalation-protocol.md` em caso de ambiguidade
 
-**Arquivos tocados:** apenas `docs/prds/prd_[name].md`. Nunca toca código, migrations nem sprint files.
+**Arquivos tocados:** apenas `prds/prd_[name].md`. Nunca toca código, migrations nem sprint files.

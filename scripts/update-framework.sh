@@ -44,6 +44,7 @@ FRAMEWORK_PATHS=(
 # Pastas protegidas (NUNCA tocadas — apenas referência/documentação)
 # ──────────────────────────────────────────────────────────────────────────────
 # sprints/active/, sprints/done/ — sprints do projeto
+# prds/ — PRDs gerados pelo @spec-writer (artefato de trabalho)
 # src/, app/, public/, components/ — código da aplicação
 # docs/APRENDIZADOS.md, docs/stack.md, docs/schema_snapshot.json
 # supabase/migrations/ (exceto bootstrap inicial)
@@ -67,6 +68,30 @@ if ! git diff-index --quiet HEAD -- 2>/dev/null; then
   echo "    Recomendado: commit ou stash antes de sincronizar."
   read -rp "Continuar mesmo assim? [y/N] " ans
   [[ "$ans" =~ ^[Yy]$ ]] || { echo "Cancelado."; exit 1; }
+fi
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Migrações one-shot do layout do framework
+# Cada bloco é idempotente: só roda se o estado antigo existir.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 2026-04-16: mover PRDs de docs/prds/ para prds/ (artefato de trabalho no root)
+if [[ -d "$PROJECT_ROOT/docs/prds" ]]; then
+  echo "🔀 Migração: docs/prds/ → prds/"
+  mkdir -p "$PROJECT_ROOT/prds"
+  # Move arquivos preservando .gitkeep/histórico. git mv cobre arquivos trackeados.
+  shopt -s nullglob dotglob
+  for f in "$PROJECT_ROOT/docs/prds/"*; do
+    name="$(basename "$f")"
+    if git ls-files --error-unmatch "docs/prds/$name" >/dev/null 2>&1; then
+      git mv "docs/prds/$name" "prds/$name"
+    else
+      mv "$f" "$PROJECT_ROOT/prds/$name"
+    fi
+    echo "   ✅ $name"
+  done
+  shopt -u nullglob dotglob
+  rmdir "$PROJECT_ROOT/docs/prds" 2>/dev/null || true
 fi
 
 TMP_DIR="$(mktemp -d -t framework-sync-XXXXXX)"

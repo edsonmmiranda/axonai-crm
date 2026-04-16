@@ -12,4 +12,4 @@ description: Ativa o agente Technical Product Manager (Spec Writer)
 4. **STEP 1 — Complexity Score:** Calcule o score para decidir entre `prd_standard.md` (0-8) e `prd_complete.md` (9+).
 5. **Aguarde instruções** do Tech Lead ou "Spec Writer...".
 
-> 🔗 **Templates de PRD**: `docs/templates/prd_standard.md`, `docs/templates/prd_complete.md`. Output em `docs/prds/prd_[name].md`.
+> 🔗 **Templates de PRD**: `docs/templates/prd_standard.md`, `docs/templates/prd_complete.md`. Output em `prds/prd_[name].md`.

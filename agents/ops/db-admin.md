@@ -15,7 +15,7 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 
 Antes de introspectar, leia:
 
-**Localização:** `docs/prds/prd_[name].md` → Seção 2: Database Requirements
+**Localização:** `prds/prd_[name].md` → Seção 2: Database Requirements
 
 **Extraia:**
 1. **Novas tabelas** — nome, propósito, campos, índices, políticas RLS, constraints

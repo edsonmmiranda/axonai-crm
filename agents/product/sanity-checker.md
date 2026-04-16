@@ -265,7 +265,7 @@ Se o PRD tem problemas fundamentais que o Spec Writer não pode resolver sozinho
 # Contrato
 
 **Inputs:**
-- PRD gerado pelo `@spec-writer` em `docs/prds/prd_[name].md`
+- PRD gerado pelo `@spec-writer` em `prds/prd_[name].md`
 - Sprint file correspondente (para detecção de nível)
 - `agents/workflows/validation-checklist.md` (fonte única de critérios)
 - Para conferir claims sobre schema: [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json)

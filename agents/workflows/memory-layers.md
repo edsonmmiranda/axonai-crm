@@ -57,7 +57,7 @@ Mudou o schema do banco?
 Outros artefatos armazenam informação mas **não são memória persistente do framework**:
 
 - `sprints/active/sprint_XX_*.md` (e `sprints/done/` após conclusão) — intenção/escopo de uma sprint específica (input, não memória acumulada)
-- `docs/prds/*.md` — especificação técnica de uma sprint (gerado a partir do sprint file, efêmero após execução)
+- `prds/*.md` — especificação técnica de uma sprint (gerado a partir do sprint file, efêmero após execução)
 - `docs/api_research/*_research.md` — relatórios Fase 1 do `@api-integrator` (input para Fase 2)
 - Git history — autoridade sobre "quem mudou o quê e quando"
 
