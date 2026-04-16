@@ -10,7 +10,7 @@ O framework tem **duas camadas de memória persistente**, cada uma com propósit
 **Leitores:** Tech Lead carrega `APRENDIZADOS.md` integralmente no boot (PASSO 3) e repassa entradas relevantes como contexto ao delegar para sub-agentes. Sub-agentes recebem apenas o recorte que interessa à tarefa.
 **Writers:** os writers específicos de cada camada abaixo.
 
-"O que foi construído" **não tem arquivo dedicado** — é derivável do código (`src/app/`, `src/components/`, `src/lib/integrations/`, `supabase/migrations/`) e do git log. Manter esse inventário em doc só gera drift.
+"O que foi construído" **não tem arquivo dedicado** — é derivável do código (`src/app/`, `src/components/`, `src/lib/integrations/`) e do git log. Estado do banco vem de [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json), nunca de `supabase/migrations/` (histórico write-only). Manter esse inventário em doc só gera drift.
 
 ---
 

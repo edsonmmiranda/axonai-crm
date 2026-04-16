@@ -106,7 +106,7 @@ Aplicam-se a **toda** Server Action do framework, sem exceção:
 1. **Nunca** modifique `.env.local`
 2. **Nunca** rode `git reset --hard` nem `git push --force`
 3. **Nunca** pule hooks (`--no-verify`) nem bypass signing
-4. **Migrations** vivem em `supabase/migrations/` — sempre delegue ao `@db-admin`
+4. **Migrations** vivem em `supabase/migrations/` — único writer é `@db-admin`. Nunca leia como fonte de estado: são histórico write-only (podem refletir estado revertido). Estado real vem de `docs/schema_snapshot.json`.
 
 ---
 

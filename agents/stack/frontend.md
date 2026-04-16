@@ -44,7 +44,21 @@ O design system vive em [`design_system/`](../../design_system/) na raiz do proj
 - Siga o protocolo de 4 passos exatamente
 - Veja `agents/skills/reference-module-copy/examples/` para exemplos completos
 
-**Se NÃO houver Reference Module especificado:** siga as regras do design system linkadas acima.
+**Se NÃO houver Reference Module especificado:** siga o **Protocolo de cópia de tela pronta** abaixo e as regras do design system linkadas acima.
+
+---
+
+# 📋 Protocolo de cópia de tela pronta (CRÍTICO)
+
+**ANTES de autorar qualquer `page.tsx`**, identifique o HTML de referência visual:
+
+1. **Sprint/PRD nomeia a tela explicitamente?** Procure por "Visual reference:" ou "Tela de referência:" no arquivo. Se encontrar, abra esse HTML em `design_system/telas_prontas/`.
+2. **Senão, use o catálogo:** identifique o tipo da tela (listagem, form-create, form-edit, kanban, print, dashboard), abra o YAML correspondente em [`design_system/components/catalog/templates/`](../../design_system/components/catalog/templates/) e abra o HTML apontado pela linha `prototype:`.
+3. **Nenhum dos dois cobre o caso?** → escale ao Tech Lead via [`escalation-protocol.md`](../workflows/escalation-protocol.md). **Não invente layout.**
+
+**Por que:** tokens semânticos (cor, spacing, shadow, radius) vêm do DS. A **composição** (ordem de blocos, hierarquia, max-width, posição de action bars, sticky/scroll) vem do HTML de referência. Inventar composição produz telas irmãs que não parecem irmãs.
+
+O HTML de `telas_prontas/` já é pintado com tokens semânticos — é consistente com o DS por construção. Copie a estrutura, troque o domínio (Leads → Empresas), reuse os mesmos tokens.
 
 ---
 

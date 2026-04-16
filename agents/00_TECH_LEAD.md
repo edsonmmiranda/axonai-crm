@@ -466,10 +466,8 @@ node scripts/verify-design.mjs --changed
   - Reporte as violações listadas pelo script (AppLayout faltando, Tailwind arbitrário, hex em className, style inline, etc.)
   - Delegue ao `@frontend` com o output literal do script como contexto de erro
   - Re-rode o script após a correção
-  - Logue `gate: "GATE_5", result: "fail", error_tag: "<id-da-regra>"` em `sprint_telemetry.jsonl`
 
-- **Se sair com `✅ 0 violações`:**
-  - Logue `gate: "GATE_5", result: "pass"` e continue para o Passo 2
+- **Se sair com `✅ 0 violações`:** continue para o Passo 2
 
 ### Passo 2 (manual): Verificação visual com o Gold Standard
 
@@ -485,22 +483,6 @@ Abra `docs/PROCESS_DESIGN_VERIFICATION.md` (Parte 2) e cubra o que o script não
 > Em execução headless (sem humano para verificar side-by-side), o GATE 5 **estático** (Passo 1) é sinal bloqueante. O Passo 2 fica pendente e a sprint é marcada como `design-static-ok` até revisão humana.
 
 ---
-
-## 📊 Telemetria de gates (obrigatório)
-
-Toda avaliação de gate gera uma linha em `docs/sprint_telemetry.jsonl`. **Formato completo, campos, quando logar e template bash** em [`agents/workflows/telemetry.md`](workflows/telemetry.md) — leia no momento de appendar.
-
-### Comando: `@tech-lead telemetry report`
-
-Quando o usuário pedir "relatório de telemetria", "como estão as sprints", ou similar, rode:
-
-```bash
-node scripts/telemetry-report.mjs                  # últimas 10 sprints
-node scripts/telemetry-report.mjs --sprints 25
-node scripts/telemetry-report.mjs --agent @backend
-```
-
-O script imprime: pass rate global, top gates com falha (com `error_tag`), retry rate por agente (sinaliza `⚠️ drift` quando `avg attempts > 1.5`), contagem de escalações e latência média por gate (se `duration_ms` presente). **Use o output como base para decidir se deve appendar `[AGENT-DRIFT]` em `docs/APRENDIZADOS.md` no closing.**
 
 ## 🔄 Protocolo de falha em gate
 
@@ -624,5 +606,4 @@ Preflight pode ser enxuto:
 
 **Arquivos tocados diretamente pelo Tech Lead:**
 - `docs/APRENDIZADOS.md` — apenas quando algo não-óbvio aconteceu
-
 - Nunca toca código, migrations, PRDs, sprint files (delega aos agentes apropriados)

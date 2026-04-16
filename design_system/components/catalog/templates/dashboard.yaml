@@ -51,6 +51,8 @@ molecules:
   - path: molecules/task-item.yaml
     notes: Usado dentro do task-list
 
+prototype: telas_prontas/dashboard.html
+
 layout_exceptions:
   - value: "max-w-[1400px]"
     justification: Container máximo para dashboard wide. Mesmo do listing.

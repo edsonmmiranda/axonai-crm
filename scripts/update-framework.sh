@@ -33,7 +33,6 @@ FRAMEWORK_PATHS=(
   "CLAUDE.md"
   "AGENTS.md"
   "scripts/verify-design.mjs"
-  "scripts/telemetry-report.mjs"
   "scripts/update-framework.sh"
   "docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md"
   "docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md"
