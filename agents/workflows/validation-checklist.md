@@ -34,25 +34,24 @@ Abra o sprint file de origem `sprints/active/sprint_XX_*.md` e busque no header 
 | Sprint `**Nível:** STANDARD` + PRD_COMPLETE   | ✅ prosseguir com validação (Step 1+)                                               |
 | Sprint `**Nível:** LIGHT` (qualquer PRD)      | ❌ REJECTED — Tech Lead não deveria ter invocado sanity-checker                     |
 | Sem marcador de nível                         | Assumir STANDARD, seguir                                                             |
-| PRD com header `PRD_LIGHT`                    | ❌ REJECTED — deprecated na v2.0                                                    |
+| PRD com header diferente de STANDARD/COMPLETE | ❌ REJECTED — regerar com template válido                                           |
 
 ### Resposta para sprint LIGHT com PRD (erro de roteamento)
 ```
 SANITY CHECK: REJEITADO — Erro de roteamento
 
-O sprint é LIGHT. Sprints LIGHT rodam Opção 1 (sem PRD) por design na v2.0 do framework.
+O sprint é LIGHT. Sprints LIGHT rodam Opção 1 (sem PRD) por design.
 O sanity-checker não deveria ter sido invocado.
 
 AÇÃO: Tech Lead deve abortar o fluxo, descartar o PRD, e retomar execução na Opção 1
 (delegação direta para @frontend/@backend).
 ```
 
-### Resposta para PRD_LIGHT (template deprecated)
+### Resposta para template de PRD inválido
 ```
-SANITY CHECK: REJEITADO — PRD_LIGHT deprecated na v2.0
+SANITY CHECK: REJEITADO — template de PRD inválido
 
-O template PRD_LIGHT não é mais usado. Sprints LIGHT rodam Opção 1 (sem PRD);
-sprints STANDARD usam PRD_STANDARD (score 0-8) ou PRD_COMPLETE (score 9+).
+Os únicos templates suportados são PRD_STANDARD (score 0-8) e PRD_COMPLETE (score 9+).
 
 OBRIGATÓRIO: @spec-writer deve regerar o PRD usando `prd_standard.md` ou `prd_complete.md`
 conforme o complexity score documentado.
@@ -160,9 +159,9 @@ checks:
     rule: "sprint.level == 'STANDARD' (or no marker, which assumes STANDARD)"
     fail: REJECTED  # sprint LIGHT não deveria estar aqui — erro de roteamento
 
-  - id: S0_template_not_deprecated
+  - id: S0_template_is_valid
     rule: "prd.template in ['PRD_STANDARD', 'PRD_COMPLETE']"
-    fail: REJECTED  # PRD_LIGHT deprecated na v2.0 — spec-writer regera
+    fail: REJECTED  # template inválido — spec-writer regera com o template correto
 
   # STEP 1 — required fields present (template-specific)
   - id: S1_all_required_fields_present
@@ -305,7 +304,7 @@ Rejeite um sprint ou PRD se **qualquer** um dos abaixo for verdadeiro:
 7. **Sem schemas Zod** em seções de Server Action (STANDARD/COMPLETE)
 8. **Reference Module Compliance faltando** quando um módulo de referência é declarado
 9. **Plano de rollback faltando**
-10. **PRD invocado para sprint LIGHT** (erro de roteamento — sprints LIGHT rodam Opção 1 sem PRD na v2.0) ou **uso de PRD_LIGHT** (template deprecated)
+10. **PRD invocado para sprint LIGHT** (erro de roteamento — sprints LIGHT rodam Opção 1 sem PRD) ou **template de PRD inválido** (apenas PRD_STANDARD e PRD_COMPLETE são suportados)
 
 ---
 

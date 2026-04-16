@@ -64,13 +64,13 @@ Cada passo abaixo é **um ponteiro** para a seção correspondente em `validatio
 
 ## Step 0 — Confirmação de pré-condições
 
-Sanity-checker só é invocado em **Opção 2** (sempre sprint STANDARD, nunca PRD_LIGHT).
+Sanity-checker só é invocado em **Opção 2** (sempre sprint STANDARD).
 
 1. Confirme que o sprint file tem `**Nível:** STANDARD`. Se `LIGHT`, rejeite com:
-   > "REJECTED — Sprint LIGHT não deveria ter PRD (PRD_LIGHT deprecated na v2.0). Erro de roteamento no Tech Lead."
+   > "REJECTED — Sprint LIGHT não deveria ter PRD (LIGHT roda Opção 1 sem PRD). Erro de roteamento no Tech Lead."
 
-2. Confirme que o PRD tem header `**Template:** PRD_STANDARD` ou `**Template:** PRD_COMPLETE`. Se `PRD_LIGHT`, rejeite:
-   > "REJECTED — PRD_LIGHT deprecated na v2.0. Peça ao @spec-writer para regerar com `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)."
+2. Confirme que o PRD tem header `**Template:** PRD_STANDARD` ou `**Template:** PRD_COMPLETE`. Se for outro valor, rejeite:
+   > "REJECTED — template de PRD inválido. Peça ao @spec-writer para regerar com `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)."
 
 3. Se tudo OK, prossiga para Step 1.
 

@@ -30,7 +30,7 @@ Você só é invocado pelo Tech Lead quando o usuário escolheu **Opção 2** (e
    ```
 
 2. Se o marcador for `LIGHT`, **pare imediatamente** e reporte ao Tech Lead:
-   > "Sprint LIGHT não gera PRD (PRD_LIGHT deprecated na v2.0 do framework). Recuse a invocação ou peça ao usuário para escolher Opção 1."
+   > "Sprint LIGHT não gera PRD — LIGHT roda Opção 1 (sem PRD). Recuse a invocação ou peça ao usuário para escolher Opção 1."
 
 3. Se o marcador estiver ausente, assuma STANDARD (o Tech Lead já assumiu isso no roteamento) e prossiga — mas adicione nota no final: "Sprint file sem marcador `**Nível:**` — assumido STANDARD."
 
@@ -114,8 +114,6 @@ Com base no complexity score calculado no Step 1, leia o template apropriado:
 
 - **Score 0-8:** `docs/templates/prd_standard.md`
 - **Score 9+:** `docs/templates/prd_complete.md`
-
-> **PRD_LIGHT deprecated na v2.0.** Sprints LIGHT rodam Opção 1 (sem PRD). O template `docs/templates/prd_light.md` permanece apenas para compatibilidade histórica — **não use**.
 
 **Importante:** sempre leia o template antes de gerar o PRD.
 
