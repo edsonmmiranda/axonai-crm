@@ -22,33 +22,40 @@ export default async function NewProductPage() {
       : [];
 
   return (
-    <div className="flex flex-col gap-6 pb-10">
-      <nav
-        aria-label="breadcrumb"
-        className="flex items-center gap-2 text-sm text-text-secondary"
-      >
-        <Link
-          href="/"
-          className="rounded transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:shadow-focus"
-        >
-          Home
-        </Link>
-        <ChevronRight className="size-4 text-text-muted" aria-hidden="true" />
-        <Link
-          href="/products"
-          className="rounded transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:shadow-focus"
-        >
-          Produtos
-        </Link>
-        <ChevronRight className="size-4 text-text-muted" aria-hidden="true" />
-        <span className="font-semibold text-text-primary">Novo produto</span>
+    <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
+      <nav className="flex text-sm font-medium text-text-secondary" aria-label="breadcrumb">
+        <ol className="flex items-center gap-2">
+          <li>
+            <Link
+              href="/dashboard"
+              className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
+            >
+              Home
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="size-4 text-text-muted" />
+          </li>
+          <li>
+            <Link
+              href="/products"
+              className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
+            >
+              Produtos
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="size-4 text-text-muted" />
+          </li>
+          <li className="font-semibold text-text-primary">Novo produto</li>
+        </ol>
       </nav>
 
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-bold tracking-tight text-text-primary">
           Novo produto
-        </h1>
-        <p className="text-sm text-text-secondary">
+        </h2>
+        <p className="max-w-2xl text-text-secondary">
           Cadastre as informações do produto. Após salvar, você poderá adicionar
           imagens e documentos.
         </p>

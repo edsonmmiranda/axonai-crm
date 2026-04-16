@@ -1,17 +1,8 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { ProductDocumentList } from '@/components/products/ProductDocumentList';
 import { ProductForm } from '@/components/products/ProductForm';
-import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { getCategoriesAction } from '@/lib/actions/categories';
 import { getProductByIdAction } from '@/lib/actions/products';
 import { getSignedUrlsBatch } from '@/lib/storage/signed-urls';
@@ -66,50 +57,55 @@ export default async function EditProductPage(props: {
   }));
 
   return (
-    <div className="flex flex-col gap-6">
-      <Link
-        href="/products"
-        className="inline-flex w-fit items-center gap-1 text-sm text-text-secondary hover:text-text-primary focus-visible:outline-none focus-visible:shadow-focus rounded"
-      >
-        <ChevronLeft className="size-4" aria-hidden="true" />
-        Voltar para produtos
-      </Link>
+    <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
+      <nav className="flex text-sm font-medium text-text-secondary" aria-label="breadcrumb">
+        <ol className="flex items-center gap-2">
+          <li>
+            <Link
+              href="/dashboard"
+              className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
+            >
+              Home
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="size-4 text-text-muted" />
+          </li>
+          <li>
+            <Link
+              href="/products"
+              className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
+            >
+              Produtos
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="size-4 text-text-muted" />
+          </li>
+          <li className="truncate font-semibold text-text-primary" title={product.name}>
+            {product.name}
+          </li>
+        </ol>
+      </nav>
 
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-bold tracking-tight text-text-primary">
           {product.name}
-        </h1>
-        <p className="text-sm text-text-secondary">
+        </h2>
+        <p className="max-w-2xl text-text-secondary">
           SKU <span className="font-mono">{product.sku}</span>
           {product.category_name ? ` · ${product.category_name}` : ''}
         </p>
       </div>
 
-      <ProductForm mode="edit" product={product} categories={categories} />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Galeria de imagens</CardTitle>
-          <CardDescription>
-            Controle a capa e a ordem das imagens do produto.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProductImageGallery productId={product.id} images={galleryItems} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Documentos</CardTitle>
-          <CardDescription>
-            Manuais, fichas técnicas e certificados para apoio de vendas.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProductDocumentList productId={product.id} documents={documentItems} />
-        </CardContent>
-      </Card>
+      <ProductForm
+        mode="edit"
+        product={product}
+        categories={categories}
+        productId={product.id}
+        images={galleryItems}
+        documents={documentItems}
+      />
     </div>
   );
 }

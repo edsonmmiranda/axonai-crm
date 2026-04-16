@@ -91,7 +91,7 @@ export default async function ProductsPage(props: {
       : { total: 0, active: 0, archived: 0, noStock: 0 };
 
   return (
-    <div className="mr-auto flex max-w-[1400px] flex-col gap-6 pb-10">
+    <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
       <nav className="flex text-sm font-medium text-text-secondary">
         <ol className="flex items-center gap-2">
           <li>
