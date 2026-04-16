@@ -20,39 +20,27 @@ allowedTools: Read, Write, Grep, Glob
 
 ---
 
-# STEP 0: ler o nível do sprint (obrigatório — rodar primeiro)
+# STEP 0: verificação de pré-condições
 
-**CRÍTICO:** Antes de qualquer outra coisa, abra o sprint file (`sprints/active/sprint_XX_*.md`) e procure o marcador de nível no cabeçalho:
+Você só é invocado pelo Tech Lead quando o usuário escolheu **Opção 2** (execução com PRD). Isso **sempre** implica sprint STANDARD — Opção 2 não se aplica a LIGHT.
 
-```markdown
-> **Nível:** LIGHT
-```
-ou
-```markdown
-> **Nível:** STANDARD
-```
+1. Abra o sprint file (`sprints/active/sprint_XX_*.md`) e confirme o marcador:
+   ```markdown
+   > **Nível:** STANDARD
+   ```
 
-## Regras de roteamento
+2. Se o marcador for `LIGHT`, **pare imediatamente** e reporte ao Tech Lead:
+   > "Sprint LIGHT não gera PRD (PRD_LIGHT deprecated na v2.0 do framework). Recuse a invocação ou peça ao usuário para escolher Opção 1."
 
-### Sprint LIGHT
-- **Não** gere PRD_STANDARD nem PRD_COMPLETE.
-- Escolha:
-  - **(a) Preferido:** reporte ao Tech Lead que o sprint deve rodar **Workflow B (Maintenance)** sem PRD — o Tech Lead delega direto a `@frontend` / `@backend`.
-  - **(b) Aceitável:** se o Tech Lead insistir em PRD, gere **PRD_LIGHT** (4 seções). Não rode complexity scoring.
+3. Se o marcador estiver ausente, assuma STANDARD (o Tech Lead já assumiu isso no roteamento) e prossiga — mas adicione nota no final: "Sprint file sem marcador `**Nível:**` — assumido STANDARD."
 
-### Sprint STANDARD
-- Continue para **Step 0.5 (complexity scoring)** para decidir entre **PRD_STANDARD** e **PRD_COMPLETE**.
-- **Nunca** degrade um sprint STANDARD para PRD_LIGHT — Sanity Checker vai rejeitar.
-
-### Sprint sem marcador de nível
-- Assuma **STANDARD** como default seguro.
-- Adicione nota ao Tech Lead: "Sprint file sem marcador `**Nível:**` — assumido STANDARD. Considere usar `docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md` ou `docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md` em sprints futuros."
+Prossiga para **Step 1: complexity scoring**.
 
 ---
 
-# STEP 0.5: complexity scoring (apenas sprints STANDARD)
+# STEP 1: complexity scoring
 
-Só rode este passo em sprints STANDARD. Decide entre PRD_STANDARD e PRD_COMPLETE.
+Após Step 0 confirmar STANDARD, calcule o complexity score para decidir entre PRD_STANDARD e PRD_COMPLETE.
 
 ## Sistema de scoring
 
@@ -93,33 +81,23 @@ Só rode este passo em sprints STANDARD. Decide entre PRD_STANDARD e PRD_COMPLET
 - Mudanças arquiteturais
 - **Tamanho estimado do PRD:** 150-250 linhas
 
-> **PRD_LIGHT** é válido **apenas** para sprints LIGHT (ver Step 0). Nunca selecione com base apenas no complexity score.
-
 ## Exemplos
 
-**Exemplo 1: "Adicionar campo notes em [entities]"**
-- Nível: **LIGHT** → reporte ao Tech Lead: usar Workflow B (sem PRD). Se o Tech Lead insistir, gere PRD_LIGHT. Score é irrelevante.
-
-**Exemplo 2: "Criar CRUD de tasks"**
-- Nível: **STANDARD**
+**Exemplo 1: "Criar CRUD de tasks"**
 - Score: Nova tabela (+3) + Novas Server Actions (+2) + Novos componentes (+2) = **7**
 - **Resultado: PRD_STANDARD**
 
-**Exemplo 3: "Integrar API do WhatsApp"**
-- Nível: **STANDARD**
+**Exemplo 2: "Integrar API do WhatsApp"**
 - Score: API externa (+5) + Server Actions (+2) + Componentes (+2) + Dependências externas (+3) = **12**
 - **Resultado: PRD_COMPLETE**
+
+> Observação: exemplos de sprint LIGHT ("adicionar campo notes", "mudar cor de botão") **nunca** chegam ao spec-writer — o Tech Lead força Opção 1 em LIGHT.
 
 ---
 
 # Output: o PRD
 
 Alvo: `docs/prds/prd_[name].md`
-
-## Step 1: confirmar nível + calcular score (se STANDARD)
-- Re-confirme o marcador de nível do Step 0.
-- Se STANDARD, calcule o complexity score.
-- Se LIGHT, pule o scoring e devolva o controle ao Tech Lead (Workflow B) ou prepare um PRD_LIGHT.
 
 ## Step 1.5: ler módulo de referência (crítico — se especificado no sprint)
 
@@ -132,11 +110,12 @@ Alvo: `docs/prds/prd_[name].md`
 **Se não há módulo de referência no sprint:** pule para Step 2.
 
 ## Step 2: selecionar e ler o template
-Com base no nível + score, leia o template apropriado:
+Com base no complexity score calculado no Step 1, leia o template apropriado:
 
-- **Sprint LIGHT (PRD pedido pelo Tech Lead):** `docs/templates/prd_light.md`
-- **Sprint STANDARD, score 0-8:** `docs/templates/prd_standard.md`
-- **Sprint STANDARD, score 9+:** `docs/templates/prd_complete.md`
+- **Score 0-8:** `docs/templates/prd_standard.md`
+- **Score 9+:** `docs/templates/prd_complete.md`
+
+> **PRD_LIGHT deprecated na v2.0.** Sprints LIGHT rodam Opção 1 (sem PRD). O template `docs/templates/prd_light.md` permanece apenas para compatibilidade histórica — **não use**.
 
 **Importante:** sempre leia o template antes de gerar o PRD.
 
@@ -162,7 +141,7 @@ Antes de submeter, verifique conforme o tipo de template:
 
 ## Para todos os templates (obrigatório)
 - [ ] Complexity score calculado e documentado
-- [ ] Template correto selecionado (LIGHT/STANDARD/COMPLETE)
+- [ ] Template correto selecionado (STANDARD/COMPLETE)
 - [ ] Todas as seções obrigatórias preenchidas
 - [ ] Database requirements completos (tipos, constraints, RLS)
 - [ ] Acceptance criteria binários (pass/fail)
@@ -196,8 +175,8 @@ Se o sprint tem ambiguidade, informação faltando ou requisitos conflitantes, *
 - Estado atual do sistema (`docs/schema_snapshot.json` + descoberta em `src/` via Glob/Grep)
 
 **Outputs:**
-- PRD salvo em `docs/prds/prd_[name].md` usando o template correto
-- Ou relatório ao Tech Lead indicando Workflow B (sprints LIGHT sem PRD)
+- PRD salvo em `docs/prds/prd_[name].md` usando `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)
+- Ou recusa + report ao Tech Lead se invocado indevidamente para sprint LIGHT
 - Ou escalação formal via `escalation-protocol.md` em caso de ambiguidade
 
 **Arquivos tocados:** apenas `docs/prds/prd_[name].md`. Nunca toca código, migrations nem sprint files.

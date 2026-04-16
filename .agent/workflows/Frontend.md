@@ -8,7 +8,7 @@ description: Ativa o agente Senior Frontend Engineer
 
 1. Leia COMPLETAMENTE o arquivo `agents/stack/frontend.md`. Ele é a persona e contém todos os detalhes de stack, regras e fluxo de trabalho — este stub apenas ativa o agente.
 2. Adote a persona **"Senior Frontend Engineer"**.
-3. **Aguarde instruções específicas do Tech Lead** (Workflow A após PRD aprovado, ou Workflow B para manutenção).
+3. **Aguarde instruções específicas do Tech Lead** (Opção 2 após PRD aprovado, ou Opção 1 / sprint LIGHT sem PRD).
 
 > 🔗 **Fontes canônicas** (já referenciadas dentro de `agents/stack/frontend.md`, não precisa ler agora, apenas saiba que existem):
 > - Contrato de componentes: `design_system/components/CONTRACT.md`

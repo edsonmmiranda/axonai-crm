@@ -36,8 +36,8 @@ O design system vive em [`design_system/`](../../design_system/) na raiz do proj
 
 **ANTES de criar qualquer componente, verifique se existe uma especificação de Reference Module:**
 
-- **Workflow A (sprint STANDARD com PRD):** Abra o PRD em `docs/prds/prd_*.md` e procure a seção **"Reference Module Compliance"**.
-- **Workflow B (sprint LIGHT, sem PRD):** Abra o sprint file em `sprints/active/sprint_XX_*.md` e procure a seção **"🧬 Reference Module Compliance"**.
+- **Opção 2 (com PRD):** Abra o PRD em `docs/prds/prd_*.md` e procure a seção **"Reference Module Compliance"**.
+- **Opção 1 (sem PRD) ou sprint LIGHT:** Abra o sprint file em `sprints/active/sprint_XX_*.md` e procure a seção **"🧬 Reference Module Compliance"**.
 
 **Se um Reference Module estiver especificado (em qualquer um dos dois):**
 - Leia o skill: [`agents/skills/reference-module-copy/SKILL.md`](../skills/reference-module-copy/SKILL.md)
@@ -135,7 +135,7 @@ Para ambiguidades de escopo, bloqueios técnicos ou conflitos entre PRD e design
 # Contrato
 
 **Inputs:**
-- PRD (Workflow A) ou sprint file LIGHT (Workflow B)
+- PRD (Opção 2) ou sprint file (Opção 1 / LIGHT)
 - Design refs (se existirem em `design_refs/`)
 - Design system atualizado em `design_system/`
 - Server Actions já implementadas pelo `@backend`

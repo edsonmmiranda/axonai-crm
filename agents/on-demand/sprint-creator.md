@@ -54,14 +54,18 @@ Antes de começar, preciso saber qual nível de sprint se encaixa:
 
 LIGHT (sprint rápida)
   - Para: bugfix, ajuste de UI, pequena feature em um único módulo
-  - Workflow: direto para @frontend/@backend (pula PRD e sanity check)
+  - Execução: sempre sem PRD (Opção 1 forçada) — direto para @frontend/@backend
   - Setup: ~2 minutos
   - Template: docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md
 
 STANDARD (sprint completa)
   - Para: novo módulo CRUD, nova tabela, nova integração externa,
     mudanças em múltiplos módulos, regras de negócio complexas
-  - Workflow: completo (spec-writer → sanity-checker → aprovação → execução)
+  - Execução: dual-option — Tech Lead pede escolha binária antes de executar:
+    - Opção 1 (sem PRD): direto para execução, sprint file é o contrato
+    - Opção 2 (com PRD): @spec-writer → @sanity-checker → STOP & WAIT → execução
+  - O sprint-creator gera uma RECOMENDAÇÃO (Opção 1 ou 2) com base em rubrica
+    objetiva; o usuário pode seguir ou sobrescrever no momento da execução.
   - Setup: ~10 minutos
   - Template: docs/templates/sprints/TEMPLATE_SPRINT_STANDARD.md
 
@@ -204,6 +208,54 @@ Está correto? (Sim/Não/Ajustar)
 
 **Naming:** `sprints/active/sprint_[number]_[short-name].md` (ambos os níveis — o nível é detectado pelo marcador, não pelo nome do arquivo). Quando o sprint for concluído, o `@git-master` ou o Tech Lead move o arquivo para `sprints/done/`.
 
+## Step 4.5: preencher a Recomendação de Execução
+
+> Para **LIGHT**, a seção já vem com Opção 1 forçada no template — nada a calcular. Pule para o Step 5.
+>
+> Para **STANDARD**, preencha a seção `🤖 Recomendação de Execução` usando a rubrica objetiva abaixo. **Não use feeling** — aplique os critérios binários literalmente.
+
+### Rubrica objetiva (critérios binários)
+
+**Complexity score:** reutilize o mesmo sistema do `@spec-writer` (ver `agents/product/spec-writer.md` → "STEP 1: complexity scoring"). Resumo:
+- DB changes: 0-5 pts (nova tabela +3, modificação de campo +1, múltiplas tabelas +2)
+- API changes: 0-7 pts (Server Action +2, API externa +5, múltiplos endpoints +2)
+- UI changes: 0-3 pts (novo componente +2, modificação +1)
+- Business logic: 0-5 pts (nova regra +3, validação complexa +2)
+- Dependências: 0-4 pts (externa +3, interna +1)
+
+### Árvore de decisão
+
+Aplique na ordem — primeiro match decide. A ordem garante cobertura total (nenhum caso fica sem recomendação).
+
+1. **Score ≥ 9** → **Opção 2 forçada** (sprint complexa; cold review + Implementation Plan valem o custo)
+2. **Integração com API externa** → **Opção 2 forçada** (ambiguidade típica em contratos externos)
+3. **Lógica de negócio nova/ambígua** (usuário mencionou regras, cálculos, workflow logic que não é cópia) → **Opção 2 forçada**
+4. **Múltiplas tabelas novas** (≥ 2 tabelas criadas) → **Opção 2 forçada**
+5. **Score ≤ 5 AND sem lógica nova** → **Opção 1 sugerida** (cobre cópia mecânica com Reference Module E features simples sem Reference Module — em ambos os casos cold review é teatro)
+6. **Reference Module presente AND score 6-8** → **Opção 1 sugerida** (estrutura já existe, ambiguidade moderada)
+7. **Caso intermediário** (score 6-8, sem Reference Module) → **Opção 2 sugerida** (default seguro, mas usuário pode escolher Opção 1)
+
+### Modelo sugerido
+
+- **Opção 1** → Sonnet (fluxo curto, Sonnet dá conta)
+- **Opção 2** → Opus (cold review + loop de sanity-checker só pagam o custo em Opus; em Sonnet drifta)
+
+### Sinais de ambiguity risk
+
+Classifique `Ambiguity Risk` em `baixo/médio/alto` com base em:
+- **Baixo:** Reference Module claro + campos bem definidos + sem regras novas
+- **Médio:** algum campo ambíguo ou regra de validação não-trivial, mas estrutura clara
+- **Alto:** múltiplas interpretações possíveis em requisitos críticos, lógica de domínio nova, edge cases complexos
+
+### Justificativa
+
+A justificativa (2-4 linhas) deve **citar os critérios que dispararam** a recomendação. Exemplos:
+
+- Opção 1: *"Reference Module presente (`src/app/dashboard/leads/`), score 4 (nova tabela + Server Actions padrão), sem lógica de negócio nova. Cópia estrutural com troca de domínio — cold review do spec-writer não tem nada a catch aqui."*
+- Opção 2: *"Score 12 (integração API externa +5, Server Actions +2, dependências externas +3, componentes +2). Ambiguity risk alto em contrato com API de terceiros. Implementation Plan + sanity-checker pagam o próprio custo."*
+
+**Regra anti-viés:** se você hesitar entre 1 e 2, escolha **Opção 2**. O custo extra de PRD é menor que o custo de executar spec ambígua e ter que reverter.
+
 ## Step 5: salvar e reportar
 
 **Para sprints LIGHT:**
@@ -212,7 +264,7 @@ Está correto? (Sim/Não/Ajustar)
 Sprint LIGHT criada.
 
 Arquivo: sprints/active/sprint_[number]_[name].md
-Nível: LIGHT (Workflow B / Maintenance)
+Nível: LIGHT (Opção 1 forçada — sem PRD)
 Status: pronta para execução
 
 Próximos passos:
@@ -227,14 +279,18 @@ Próximos passos:
 Sprint STANDARD criada.
 
 Arquivo: sprints/active/sprint_[number]_[name].md
-Nível: STANDARD (Workflow A / Sprint Execution)
+Nível: STANDARD (dual-option)
+Recomendação do sprint-creator: Opção [1 | 2] — [modelo sugerido]
+Justificativa: [resumo 1 linha]
 Status: pronta para execução
 
 Próximos passos:
-1. Revise o arquivo (opcional)
+1. Revise o arquivo — leia a seção "🤖 Recomendação de Execução" em especial
 2. Execute: "Tech Lead, execute sprint_[number]_[name].md"
-   O Tech Lead vai gerar PRD com @spec-writer, validar com @sanity-checker
-   e pedir sua aprovação antes de executar.
+   O Tech Lead vai apresentar a recomendação e pedir sua escolha:
+   - "execute opção 1" → sem PRD, fluxo direto
+   - "execute opção 2" → com PRD, spec-writer + sanity-checker + STOP & WAIT
+   - "execute" → aceita a recomendação do sprint-creator sem mudança
 ```
 
 ---
@@ -273,6 +329,7 @@ Detalhes completos em [`agents/workflows/validation-checklist.md`](../workflows/
 - [ ] Critérios de aceite binários
 - [ ] Design refs mencionadas (se fornecidas)
 - [ ] Seção Reference Module Compliance (se aplicável)
+- [ ] Seção `🤖 Recomendação de Execução` totalmente preenchida: análise, Opção 1, Opção 2, recomendação do sprint-creator, justificativa citando critérios da rubrica
 
 ---
 

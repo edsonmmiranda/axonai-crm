@@ -14,67 +14,53 @@ Este documento é a **referência completa** usada pelo `@sanity-checker` (e opc
 
 ---
 
-## 🧭 Step 0 — Detecção do nível do sprint
+## 🧭 Step 0 — Pré-condições
 
-### Como detectar
+Na v2.0 do framework, o sanity-checker só é invocado em **Opção 2** (usuário escolheu execução com PRD). Opção 2 **sempre** implica sprint STANDARD — LIGHT é forçada para Opção 1 (sem PRD) e nunca chega ao sanity-checker.
+
+### Como validar
+
 Abra o sprint file de origem `sprints/active/sprint_XX_*.md` e busque no header por:
 
-```markdown
-> **Nível:** LIGHT
-```
-ou
 ```markdown
 > **Nível:** STANDARD
 ```
 
-### Tabela de roteamento
+### Tabela de pré-condições
 
-| Nível do sprint | PRD esperado                 | Workflow esperado        | Regra de rejeição                                                 |
-|-----------------|------------------------------|--------------------------|-------------------------------------------------------------------|
-| LIGHT           | PRD_LIGHT **ou nenhum PRD**  | Workflow B (Maintenance) | Rejeitar se PRD_STANDARD/PRD_COMPLETE for gerado — over-eng.      |
-| STANDARD        | PRD_STANDARD ou PRD_COMPLETE | Workflow A (Sprint Exec) | Rejeitar se PRD_LIGHT for gerado — under-spec'd                   |
-| (sem marcador)  | Assumir STANDARD             | Workflow A               | Alertar no output; tratar como STANDARD                           |
+| Condição                                      | Ação                                                                                |
+|-----------------------------------------------|-------------------------------------------------------------------------------------|
+| Sprint `**Nível:** STANDARD` + PRD_STANDARD   | ✅ prosseguir com validação (Step 1+)                                               |
+| Sprint `**Nível:** STANDARD` + PRD_COMPLETE   | ✅ prosseguir com validação (Step 1+)                                               |
+| Sprint `**Nível:** LIGHT` (qualquer PRD)      | ❌ REJECTED — Tech Lead não deveria ter invocado sanity-checker                     |
+| Sem marcador de nível                         | Assumir STANDARD, seguir                                                             |
+| PRD com header `PRD_LIGHT`                    | ❌ REJECTED — deprecated na v2.0                                                    |
 
-### Resposta para over-engineering (sprint LIGHT com PRD pesado)
+### Resposta para sprint LIGHT com PRD (erro de roteamento)
 ```
-SANITY CHECK: APROVAÇÃO CONDICIONAL — Mismatch de nível entre Sprint e PRD
+SANITY CHECK: REJEITADO — Erro de roteamento
 
-O sprint é LIGHT mas o PRD foi gerado como PRD_STANDARD/COMPLETE.
-Isso é provavelmente over-engineering para o escopo.
+O sprint é LIGHT. Sprints LIGHT rodam Opção 1 (sem PRD) por design na v2.0 do framework.
+O sanity-checker não deveria ter sido invocado.
 
-RECOMENDAÇÃO:
-A) Downgrade para PRD_LIGHT (4 seções) — mais rápido, cabe no escopo
-B) Pular o PRD inteiramente e rodar Workflow B (Maintenance) — o mais rápido
-C) Manter o PRD mais pesado se realmente precisar (vai aceitar)
-
-Por favor responda: "A", "B", ou "C"
+AÇÃO: Tech Lead deve abortar o fluxo, descartar o PRD, e retomar execução na Opção 1
+(delegação direta para @frontend/@backend).
 ```
 
-### Resposta para under-spec'd (sprint STANDARD com PRD_LIGHT)
+### Resposta para PRD_LIGHT (template deprecated)
 ```
-SANITY CHECK: REJEITADO — Mismatch de nível entre Sprint e PRD
+SANITY CHECK: REJEITADO — PRD_LIGHT deprecated na v2.0
 
-O sprint é STANDARD (novo CRUD/módulo/integração) mas o PRD é PRD_LIGHT.
-PRD_LIGHT (4 seções) não é suficiente para o escopo de um sprint STANDARD.
+O template PRD_LIGHT não é mais usado. Sprints LIGHT rodam Opção 1 (sem PRD);
+sprints STANDARD usam PRD_STANDARD (score 0-8) ou PRD_COMPLETE (score 9+).
 
-OBRIGATÓRIO: @spec-writer deve regerar usando o template PRD_STANDARD (7 seções)
-com edge cases, Reference Module Compliance (se aplicável) e schemas Zod.
+OBRIGATÓRIO: @spec-writer deve regerar o PRD usando `prd_standard.md` ou `prd_complete.md`
+conforme o complexity score documentado.
 ```
 
 ---
 
 ## 📋 Step 1 — Checklists de completude por template
-
-### PRD_LIGHT (4 seções) — válido apenas para sprints LIGHT
-- [ ] **Visão geral** — O quê, Por quê, Impacto
-- [ ] **Mudanças** — DB/código/UI afetados
-- [ ] **Critérios de aceite** — todos binários
-- [ ] **Rollback** — passos + estimativa de tempo
-
-**Mínimos:**
-- 2–3 edge cases aceitáveis (não 10)
-- Não exige Implementation Plan
-- Não exige schemas Zod
 
 ### PRD_STANDARD (7 seções)
 - [ ] **Visão geral** — Objetivo de negócio, User Story, Métricas de sucesso
@@ -132,8 +118,8 @@ com edge cases, Reference Module Compliance (se aplicável) e schemas Zod.
 - [ ] **Fluxo do usuário** — Passo a passo
 - [ ] **Referência Gold Standard** — Qual módulo existente seguir
 
-### Edge Cases (STANDARD mínimo 5, LIGHT mínimo 2)
-Veja **Categorias de Edge Case** abaixo.
+### Edge Cases (STANDARD mínimo 5)
+Veja **Categorias de Edge Case** abaixo. Para LIGHT, edge cases são opcionais (sprint LIGHT não passa por sanity-checker na v2.0).
 
 ### Critérios de aceite
 - [ ] **Binários** — Passa/falha, sem ambiguidade
@@ -144,7 +130,7 @@ Veja **Categorias de Edge Case** abaixo.
 
 ## 🧪 Categorias de Edge Case (usadas pelo Step 3)
 
-Um PRD com cobertura de alta qualidade de edge cases toca na maioria dessas categorias. **PRD_COMPLETE deve cobrir todas as 7**; **PRD_STANDARD deve cobrir pelo menos 3**; PRD_LIGHT cobre as que forem relevantes.
+Um PRD com cobertura de alta qualidade de edge cases toca na maioria dessas categorias. **PRD_COMPLETE deve cobrir todas as 7**; **PRD_STANDARD deve cobrir pelo menos 3**.
 
 1. **Estados vazios** — sem dados, sem resultados de busca, primeira execução
 2. **Erros de validação** — input inválido, campos obrigatórios, erros de formato, limites de tamanho
@@ -169,16 +155,14 @@ Execute em ordem. Primeiro fail para a decisão.
 # Para cada regra, extraia a seção/campo correspondente e aplique o predicado.
 
 checks:
-  # STEP 0 — level match
-  - id: S0_level_marker
-    rule: "sprint.level in ['LIGHT', 'STANDARD']"
-    fail: REJECTED_WITH_CONDITIONS  # ask user to set level
+  # STEP 0 — pré-condições (v2.0)
+  - id: S0_sprint_is_standard
+    rule: "sprint.level == 'STANDARD' (or no marker, which assumes STANDARD)"
+    fail: REJECTED  # sprint LIGHT não deveria estar aqui — erro de roteamento
 
-  - id: S0_template_matches_level
-    rule: |
-      (sprint.level == 'LIGHT'  and prd.template == 'PRD_LIGHT') or
-      (sprint.level == 'STANDARD' and prd.template in ['PRD_STANDARD', 'PRD_COMPLETE'])
-    fail: REJECTED  # tech lead re-invokes spec-writer
+  - id: S0_template_not_deprecated
+    rule: "prd.template in ['PRD_STANDARD', 'PRD_COMPLETE']"
+    fail: REJECTED  # PRD_LIGHT deprecated na v2.0 — spec-writer regera
 
   # STEP 1 — required fields present (template-specific)
   - id: S1_all_required_fields_present
@@ -200,7 +184,6 @@ checks:
   # STEP 3 — edge case counts
   - id: S3_edge_case_count
     rule: |
-      LIGHT:    len(prd.edge_cases) >= 2
       STANDARD: len(prd.edge_cases) >= 5 and distinct(ec.category) >= 3
       COMPLETE: len(prd.edge_cases) >= 10 and distinct(ec.category) == 7
     fail: REJECTED
@@ -315,14 +298,14 @@ Rejeite um sprint ou PRD se **qualquer** um dos abaixo for verdadeiro:
 
 1. **Requisitos vagos** — "Adicionar CRUD", "Melhorar UI", "Funcionar bem"
 2. **Schema de banco de dados faltando** — Sem estrutura de tabela (STANDARD/COMPLETE)
-3. **Edge cases insuficientes** — <5 para STANDARD, <10 para COMPLETE, <2 para LIGHT
+3. **Edge cases insuficientes** — <5 para STANDARD, <10 para COMPLETE
 4. **Sem critérios de aceite** ou menos de 5 (STANDARD/COMPLETE)
 5. **Critérios não-binários** — não passa/falha
 6. **Contrato de API faltando** quando API externa está envolvida
 7. **Sem schemas Zod** em seções de Server Action (STANDARD/COMPLETE)
 8. **Reference Module Compliance faltando** quando um módulo de referência é declarado
 9. **Plano de rollback faltando**
-10. **Mismatch de nível Sprint/PRD** (sprint LIGHT → PRD pesado ou sprint STANDARD → PRD_LIGHT)
+10. **PRD invocado para sprint LIGHT** (erro de roteamento — sprints LIGHT rodam Opção 1 sem PRD na v2.0) ou **uso de PRD_LIGHT** (template deprecated)
 
 ---
 
@@ -330,7 +313,7 @@ Rejeite um sprint ou PRD se **qualquer** um dos abaixo for verdadeiro:
 
 Aprove quando **todos** forem verdadeiros:
 
-- ✅ Nível do sprint e template do PRD batem
+- ✅ Sprint é STANDARD (ou sem marcador) e PRD é PRD_STANDARD ou PRD_COMPLETE
 - ✅ Todas as seções obrigatórias presentes para o template escolhido
 - ✅ Sem linguagem vaga ou ambígua
 - ✅ Edge cases suficientes para o template

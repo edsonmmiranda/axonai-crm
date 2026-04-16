@@ -190,9 +190,9 @@ git revert <commit-hash>
 
 # Integração com workflow
 
-## Depois de completar sprint (Workflow A)
+## Depois de completar sprint (Opção 2 — com PRD)
 ```
-Tech Lead → DB Admin → API Integrator → Frontend/Backend → Guardian → Git Master
+Tech Lead → Spec Writer → Sanity Checker → DB Admin → API Integrator → Frontend/Backend → Guardian → Git Master
 ```
 
 > QA é um agente on-demand e **não** faz parte da cadeia automática. Só rode QA quando o usuário pedir explicitamente.
@@ -208,9 +208,9 @@ Git Master então:
 5. Atualiza história
 6. Reporta sucesso
 
-## Depois de Fast Track (Workflow B)
+## Depois de completar sprint (Opção 1 — sem PRD) ou sprint LIGHT
 ```
-Tech Lead → Frontend/Backend → Guardian → Git Master
+Tech Lead → DB Admin (se aplicável) → Frontend/Backend → Guardian → Git Master
 ```
 
 Git Master recebe instrução:

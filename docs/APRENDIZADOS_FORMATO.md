@@ -8,7 +8,7 @@
 
 - **Writers:** qualquer agente (`@backend`, `@frontend`, `@db-admin`, `@api-integrator`, etc.) que descobriu algo surpreendente durante a execução de uma sprint.
 - **Readers:** todos os agentes na fase de análise/planejamento, para evitar repetir o mesmo erro.
-- **Writer autoritativo em caso de dúvida:** Tech Lead, ao final de cada sprint (Workflow A, Step 7).
+- **Writer autoritativo em caso de dúvida:** Tech Lead, ao final de cada sprint (Opção 2, Step 7).
 
 ## 📏 Regra de ouro
 

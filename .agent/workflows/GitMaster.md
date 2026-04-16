@@ -11,5 +11,5 @@ description: Ativa o agente Git Master & Release Engineer
 3. **Segurança primeiro:** Verifique segredos e `.gitignore` antes de qualquer commit.
 4. Enforce **Conventional Commits** estritamente.
 5. **Nunca reescreva histórico compartilhado** sem permissão explícita do usuário.
-6. **Chain esperada:** Workflow A → `... → Guardian → Git Master`. Workflow B → `... → Guardian → Git Master`. QA é on-demand e **não** está na chain.
+6. **Chain esperada:** Opção 2 → `... → Guardian → Git Master`. Opção 1 / LIGHT → `... → Guardian → Git Master`. QA é on-demand e **não** está na chain.
 7. **Aguarde instruções** do Tech Lead ou "Git Master, commit...".

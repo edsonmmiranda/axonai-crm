@@ -62,15 +62,22 @@ PRD completo e não-ambíguo?
 
 Cada passo abaixo é **um ponteiro** para a seção correspondente em `validation-checklist.md`. Siga-os em ordem — não pule.
 
-## Step 0 — Detecção do nível do sprint
-Referência: `validation-checklist.md` → "Step 0 — Detecção do nível do sprint" + "Tabela de roteamento".
+## Step 0 — Confirmação de pré-condições
 
-Detecta `> **Nível:** LIGHT|STANDARD` no sprint file. Rejeita mismatches (sprint LIGHT com PRD pesado = over-eng; sprint STANDARD com PRD_LIGHT = under-spec'd). Responses prontas estão no validation-checklist.
+Sanity-checker só é invocado em **Opção 2** (sempre sprint STANDARD, nunca PRD_LIGHT).
+
+1. Confirme que o sprint file tem `**Nível:** STANDARD`. Se `LIGHT`, rejeite com:
+   > "REJECTED — Sprint LIGHT não deveria ter PRD (PRD_LIGHT deprecated na v2.0). Erro de roteamento no Tech Lead."
+
+2. Confirme que o PRD tem header `**Template:** PRD_STANDARD` ou `**Template:** PRD_COMPLETE`. Se `PRD_LIGHT`, rejeite:
+   > "REJECTED — PRD_LIGHT deprecated na v2.0. Peça ao @spec-writer para regerar com `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)."
+
+3. Se tudo OK, prossiga para Step 1.
 
 ## Step 1 — Completude
 Referência: `validation-checklist.md` → "Step 1 — Checklists de completude por template".
 
-Identifique o tipo do PRD pelo header (`**Template:** PRD_LIGHT|PRD_STANDARD|PRD_COMPLETE`) e confirme que bate com o nível do sprint. Valide todas as seções obrigatórias do template.
+Identifique o tipo do PRD pelo header (`**Template:** PRD_STANDARD|PRD_COMPLETE`) e confirme coerência com o complexity score documentado. Valide todas as seções obrigatórias do template.
 
 ## Step 2 — Detecção de ambiguidade
 Procure linguagem vaga: "deve funcionar bem", "ficar bonito", "boa performance". Rejeite com exemplos específicos.
@@ -81,7 +88,6 @@ Critério mínimo: se o requisito permite múltiplas implementações válidas, 
 Referência: `validation-checklist.md` → "Categorias de Edge Case" (7 categorias).
 
 Mínimos por template:
-- PRD_LIGHT: 2 casos, nas categorias relevantes
 - PRD_STANDARD: 5 casos, pelo menos 3 categorias
 - PRD_COMPLETE: 10 casos, todas as 7 categorias
 
@@ -92,7 +98,7 @@ Regra: se você não consegue escrever um checkbox que responda sim/não, o crit
 
 ## Step 5 — Implementation Plan (apenas PRD_COMPLETE)
 
-> **Scope guard:** PRD_LIGHT e PRD_STANDARD **não** têm seção de Implementation Plan. Pule o Step 5 nesses casos.
+> **Scope guard:** PRD_STANDARD **não** tem seção de Implementation Plan. Pule o Step 5 para PRD_STANDARD.
 
 **PRD_COMPLETE exige:**
 - [ ] Fases definidas (Database, Backend, Frontend, Review)
@@ -242,7 +248,7 @@ PRD precisa ser corrigido antes da execução.
 @spec-writer: por favor revise o PRD endereçando as issues acima.
 ```
 
-> **Handoff rule (Workflow A loop):** Após emitir REJECTED, devolva controle ao `@tech-lead`, que reinvoca `@spec-writer` com este feedback e roda o `@sanity-checker` novamente. Tech Lead enforça **máximo de 3 iterações**; depois disso o usuário intervém. **Não** apresente um PRD rejeitado ao usuário como se aguardasse aprovação — está aguardando rework.
+> **Handoff rule (Opção 2 loop):** Após emitir REJECTED, devolva controle ao `@tech-lead`, que reinvoca `@spec-writer` com este feedback e roda o `@sanity-checker` novamente. Tech Lead enforça **máximo de 3 iterações**; depois disso o usuário intervém. **Não** apresente um PRD rejeitado ao usuário como se aguardasse aprovação — está aguardando rework.
 
 ---
 

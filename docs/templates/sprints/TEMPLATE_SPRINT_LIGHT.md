@@ -29,11 +29,13 @@
 
 ---
 
-## 🧭 Notas para o Tech Lead
+## 🤖 Recomendação de Execução
 
-Sprint LIGHT segue **Workflow B (Maintenance)**:
-- **Pula** geração de PRD pelo `@spec-writer`
-- **Pula** sanity check
-- Tech Lead delega direto para `@frontend` ou `@backend` conforme o escopo
-- Guardian ainda valida o código
-- Manual design verification apenas se houver mudança visual
+Sprints LIGHT rodam **sempre sem PRD** (Opção 1 forçada). Não há escolha binária aqui — o modelo dual-option só se aplica a sprints STANDARD.
+
+- **Fluxo:** Tech Lead → @frontend e/ou @backend (conforme escopo) → @guardian → GATE 2 (build+lint) → @git-master
+- **PRD:** nunca gerado para LIGHT (PRD_LIGHT deprecated)
+- **Modelo sugerido:** Sonnet (fluxo curto, baixa ambiguidade)
+- **Design verification manual:** apenas se houver mudança visual
+
+**Para executar:** `"Tech Lead, execute sprint_XX_[name]"`

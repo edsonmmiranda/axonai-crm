@@ -91,14 +91,37 @@
 
 ---
 
-## 🧭 Notas para o Tech Lead
+## 🤖 Recomendação de Execução
 
-Sprint STANDARD segue **Workflow A (Sprint Execution)** completo:
-1. Preflight checks
-2. `@spec-writer` gera PRD em `docs/prds/`
-3. `@sanity-checker` valida PRD
-4. **STOP & WAIT** pela aprovação do usuário
-5. Execução: `@db-admin` → (`@api-integrator` se aplicável) → `@backend` → `@frontend` → `@guardian`
-6. Design verification manual
-7. Closing: registrar em `APRENDIZADOS.md` se houver algo não-óbvio
-8. `@git-master` para commit
+> Esta seção é preenchida pelo `@sprint-creator` com base em rubrica objetiva. O Tech Lead lê ela antes de executar e pede sua escolha binária (Opção 1 ou 2).
+
+**Análise:**
+- Nível: STANDARD
+- Complexity Score: [X] (0-8 = candidato Opção 1; 9+ = força Opção 2)
+- Reference Module: [sim/não — caminho se sim]
+- Integração com API externa: [sim/não]
+- Lógica de negócio nova/ambígua: [sim/não — descrever brevemente se sim]
+- Ambiguity Risk: [baixo/médio/alto]
+
+---
+
+### Opção 1 — SIMPLES (sem PRD)
+- **Fluxo:** Tech Lead → @db-admin → (@api-integrator se aplicável) → @backend → @frontend → @guardian → gates → @git-master
+- **PRD:** pulado; o próprio sprint file é o contrato
+- **Modelo sugerido:** [Sonnet | Opus] — [razão breve]
+- **Quando faz sentido:** [razão específica baseada na análise acima]
+
+### Opção 2 — COMPLETA (com PRD)
+- **Fluxo:** Tech Lead → @spec-writer → @sanity-checker (loop até 3×) → STOP & WAIT → execução idêntica à Opção 1
+- **PRD:** gerado em `docs/prds/prd_[name].md` e validado
+- **Modelo sugerido:** Opus (cold review só paga o custo em Opus)
+- **Quando faz sentido:** [razão específica]
+
+---
+
+**Recomendação do @sprint-creator:** Opção [1 | 2] — [Sonnet | Opus]
+
+**Justificativa:**
+[2-4 linhas explicando a escolha com base na análise acima]
+
+**Aguardando escolha do usuário:** responda ao Tech Lead com `"execute opção 1"` ou `"execute opção 2"` (ou aceite a recomendação dizendo apenas `"execute"`).
