@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LogOut,
   MessageCircle,
+  Package,
   Settings,
   TrendingUp,
   Users,
@@ -33,6 +34,7 @@ interface NavSection {
 
 const primaryNav: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/products', label: 'Produtos', icon: Package },
   { href: '#', label: 'Leads', icon: Users },
   { href: '#', label: 'Pipeline', icon: Kanban },
   { href: '#', label: 'WhatsApp', icon: MessageCircle, badge: '3' },
