@@ -26,6 +26,20 @@ Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arqui
 
 As demais regras invioláveis (paths canônicos de código/migrations, contratos de Server Action, proibições de estilo) são **autoritativas em** [`docs/conventions/standards.md`](docs/conventions/standards.md). Não as replique aqui — leia lá depois do gatilho.
 
+## 🔄 Gatilho: "Atualizar framework"
+
+Quando o usuário digitar **"Atualizar framework"** (case-insensitive), **antes de executar qualquer coisa**, pergunte:
+
+> Qual modo de atualização?
+> 1. **Padrão** — sincroniza agents, docs, design system (sem telas_prontas).
+> 2. **Completo** — tudo do padrão + `design_system/telas_prontas/` (sobrescreve mockups locais).
+
+Após a escolha:
+- **Padrão** → execute `bash scripts/update-framework.sh`
+- **Completo** → execute `bash scripts/update-framework-complete.sh`
+
+Mostre a saída do script e aguarde o usuário revisar com `git diff` antes de commitar.
+
 ## 🗺️ Mapa rápido do framework
 
 | Precisa de | Leia |
