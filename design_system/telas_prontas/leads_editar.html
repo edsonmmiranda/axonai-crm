@@ -276,33 +276,20 @@
                 </nav>
 
                 <!-- Page header -->
-                <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex items-center gap-3 flex-wrap">
-                            <h2 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">Editar Lead</h2>
-                            <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2.5 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
-                        </div>
-                        <div class="flex items-center gap-4 text-sm text-text-secondary">
-                            <span class="flex items-center gap-1.5">
-                                <i data-lucide="calendar" class="size-3.5"></i>
-                                Criado em 28/03/2026
-                            </span>
-                            <span class="flex items-center gap-1.5">
-                                <i data-lucide="clock" class="size-3.5"></i>
-                                Última atualização há 2 dias
-                            </span>
-                        </div>
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h2 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">Editar Lead</h2>
+                        <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2.5 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <a href="leads.html"
-                            class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover">
-                            Cancelar
-                        </a>
-                        <button
-                            class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover">
-                            <i data-lucide="check" class="size-4"></i>
-                            Salvar Alterações
-                        </button>
+                    <div class="flex items-center gap-4 text-sm text-text-secondary">
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="size-3.5"></i>
+                            Criado em 28/03/2026
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="clock" class="size-3.5"></i>
+                            Última atualização há 2 dias
+                        </span>
                     </div>
                 </div>
 
@@ -526,24 +513,33 @@
                     </div>
 
                     <!-- Bottom action bar -->
-                    <div class="flex items-center justify-between pt-2">
-                        <!-- Danger zone: delete -->
-                        <button type="button"
-                            class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-5 text-sm font-semibold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover">
-                            <i data-lucide="trash-2" class="size-4"></i>
-                            Excluir Lead
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                        <a href="leads.html"
+                            class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover">
+                            Cancelar
+                        </a>
+                        <button type="submit"
+                            class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover">
+                            <i data-lucide="check" class="size-4"></i>
+                            Salvar Alterações
                         </button>
-                        <!-- Save / Cancel -->
-                        <div class="flex items-center gap-3">
-                            <a href="leads.html"
-                                class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover">
-                                Cancelar
-                            </a>
-                            <button type="submit"
-                                class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover">
-                                <i data-lucide="check" class="size-4"></i>
-                                Salvar Alterações
-                            </button>
+                    </div>
+
+                    <!-- Card: Zona de Perigo (padrão para exclusão destrutiva) -->
+                    <div class="mt-4 rounded-xl border border-feedback-danger-border bg-feedback-danger-bg p-6 shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="alert-triangle" class="size-5 text-feedback-danger-fg flex-shrink-0 mt-0.5"></i>
+                            <div class="flex flex-col gap-3">
+                                <div>
+                                    <h3 class="text-base font-bold text-feedback-danger-fg">Zona de Perigo</h3>
+                                    <p class="text-sm text-feedback-danger-fg/90 mt-1">Excluir este lead é uma ação permanente e não pode ser desfeita. Todo o histórico de atividades e anexos associados também serão excluídos.</p>
+                                </div>
+                                <button type="button"
+                                    class="inline-flex h-10 w-fit items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-5 text-sm font-semibold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover">
+                                    <i data-lucide="trash-2" class="size-4"></i>
+                                    Excluir Lead
+                                </button>
+                            </div>
                         </div>
                     </div>
 

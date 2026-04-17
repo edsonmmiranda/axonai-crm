@@ -13,7 +13,7 @@ Este documento é o **plano executivo** para levar o app de "dashboard mockado" 
 ```
 Sprint 03 → Auth & Tenancy          ← bloqueia tudo - Feito
 Sprint 04 → Profile & Org Settings  ← fecha auth - Feito
-Sprint 05 → Categories (catálogo)   ← warm-up CRUD - Feito
+Sprint 05 → Categories   ← warm-up CRUD - Feito
 Sprint 06 → Products + Storage      ← upload + galeria - Feito
 Sprint 07 → Lead Origins (menu Leads > Origens)
 Sprint 08 → Loss Reasons (menu Leads > Motivos de Perda)
@@ -31,7 +31,7 @@ Sprint 17 → WhatsApp Inbox (webhook + messages)
 Sprint	Modelo	Por quê
 05 — Categories	Sonnet 4.6	CRUD mínimo (8 colunas), é o warm-up. Padrão vai ser replicado — vale investir um pouco para deixar o template limpo, mas não precisa de Opus.
 06 — Products + Storage	Opus 4.6	20 colunas + 2 tabelas auxiliares + Storage (buckets, is_primary, position, reorder). Primeira vez tocando Storage → decisões que vão virar padrão.
-07 — Lead Origins	Haiku 4.5	CRUD curto (type, platform). Mecânico, padrão já definido no 05.
+07 — Lead Origins	Haiku 4.5	CRUD curto (type, platform).
 08 — Loss Reasons	Haiku 4.5	CRUD curto. Mecânico.
 09 — Tags	Haiku 4.5 / Sonnet 4.6	CRUD curto + color picker. Quase mecânico.
 10 — Leads Lista	Opus 4.6	27 colunas, tabs, filtros server-side, paginação, lead_tags M2M, UTM, export. Core do produto — erros aqui custam caro.

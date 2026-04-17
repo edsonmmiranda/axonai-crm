@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SalesPro CRM - Gestão de Leads</title>
+
+    <!-- Design System: variables.css is the generated output (layer 3) -->
+    <link href="../generated/variables.css" rel="stylesheet" />
+
+    <!-- Font: loaded from the primitive font.family.sans token (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons: Lucide (per CONTRACT.md — Lucide only) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CDN configured with semantic token names -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        surface: {
+                            base:    "rgb(var(--ds-surface-base) / <alpha-value>)",
+                            raised:  "rgb(var(--ds-surface-raised) / <alpha-value>)",
+                            sunken:  "rgb(var(--ds-surface-sunken) / <alpha-value>)",
+                            overlay: "rgb(var(--ds-surface-overlay) / <alpha-value>)",
+                            inverse: "rgb(var(--ds-surface-inverse) / <alpha-value>)",
+                        },
+                        text: {
+                            primary:   "rgb(var(--ds-text-primary) / <alpha-value>)",
+                            secondary: "rgb(var(--ds-text-secondary) / <alpha-value>)",
+                            muted:     "rgb(var(--ds-text-muted) / <alpha-value>)",
+                            inverse:   "rgb(var(--ds-text-inverse) / <alpha-value>)",
+                            link:      "rgb(var(--ds-text-link) / <alpha-value>)",
+                            disabled:  "rgb(var(--ds-text-disabled) / <alpha-value>)",
+                        },
+                        border: {
+                            DEFAULT: "rgb(var(--ds-border-default) / <alpha-value>)",
+                            strong:  "rgb(var(--ds-border-strong) / <alpha-value>)",
+                            subtle:  "rgb(var(--ds-border-subtle) / <alpha-value>)",
+                            focus:   "rgb(var(--ds-border-focus) / <alpha-value>)",
+                        },
+                        action: {
+                            primary: {
+                                DEFAULT: "rgb(var(--ds-action-primary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-primary-bg-hover) / <alpha-value>)",
+                                active:  "rgb(var(--ds-action-primary-bg-active) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-primary-fg) / <alpha-value>)",
+                            },
+                            secondary: {
+                                DEFAULT: "rgb(var(--ds-action-secondary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-secondary-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-secondary-fg) / <alpha-value>)",
+                                border:  "rgb(var(--ds-action-secondary-border) / <alpha-value>)",
+                            },
+                            ghost: {
+                                hover:  "rgb(var(--ds-action-ghost-bg-hover) / <alpha-value>)",
+                                active: "rgb(var(--ds-action-ghost-bg-active) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-action-ghost-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                DEFAULT: "rgb(var(--ds-action-danger-bg) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-danger-fg) / <alpha-value>)",
+                            },
+                        },
+                        field: {
+                            DEFAULT:       "rgb(var(--ds-field-bg) / <alpha-value>)",
+                            fg:            "rgb(var(--ds-field-fg) / <alpha-value>)",
+                            placeholder:   "rgb(var(--ds-field-placeholder) / <alpha-value>)",
+                            border:        "rgb(var(--ds-field-border) / <alpha-value>)",
+                            "border-hover":"rgb(var(--ds-field-border-hover) / <alpha-value>)",
+                            "border-focus":"rgb(var(--ds-field-border-focus) / <alpha-value>)",
+                            "border-error":"rgb(var(--ds-field-border-error) / <alpha-value>)",
+                        },
+                        feedback: {
+                            success: {
+                                bg:         "rgb(var(--ds-feedback-success-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-success-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-success-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-success-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-success-solid-fg) / <alpha-value>)",
+                            },
+                            warning: {
+                                bg:         "rgb(var(--ds-feedback-warning-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-warning-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-warning-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-warning-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-warning-solid-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                bg:         "rgb(var(--ds-feedback-danger-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-danger-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-danger-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-danger-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-danger-solid-fg) / <alpha-value>)",
+                            },
+                            info: {
+                                bg:         "rgb(var(--ds-feedback-info-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-info-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-info-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-info-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-info-solid-fg) / <alpha-value>)",
+                            },
+                            accent: {
+                                bg:         "rgb(var(--ds-feedback-accent-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-accent-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-accent-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-accent-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-accent-solid-fg) / <alpha-value>)",
+                            },
+                        },
+                    },
+                    fontFamily: {
+                        sans: ["var(--ds-font-family-sans)"],
+                        mono: ["var(--ds-font-family-mono)"],
+                    },
+                    borderRadius: {
+                        none: "var(--ds-radius-none)",
+                        sm:   "var(--ds-radius-sm)",
+                        md:   "var(--ds-radius-md)",
+                        lg:   "var(--ds-radius-lg)",
+                        xl:   "var(--ds-radius-xl)",
+                        full: "var(--ds-radius-full)",
+                    },
+                    boxShadow: {
+                        sm:    "var(--ds-shadow-sm)",
+                        md:    "var(--ds-shadow-md)",
+                        lg:    "var(--ds-shadow-lg)",
+                        xl:    "var(--ds-shadow-xl)",
+                        focus: "var(--ds-shadow-focus)",
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--ds-surface-sunken)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--ds-border-strong)); border-radius: var(--ds-radius-sm); }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--ds-text-muted)); }
+    </style>
+</head>
+
+<body class="bg-surface-base text-text-primary font-sans h-screen flex overflow-hidden selection:bg-action-primary selection:text-action-primary-fg">
+
+    <!-- ================================================================
+         SIDEBAR
+         ================================================================ -->
+    <aside class="hidden md:flex flex-col w-64 h-full border-r border-border bg-surface-raised flex-shrink-0 z-30 shadow-sm">
+        <!-- Logo -->
+        <div class="p-6 pb-2">
+            <div class="flex gap-3 items-center">
+                <div class="bg-action-primary rounded-xl size-10 shadow-lg flex items-center justify-center">
+                    <i data-lucide="building-2" class="size-5 text-action-primary-fg"></i>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-text-primary text-base font-bold leading-tight tracking-tight">SalesPro CRM</h1>
+                    <p class="text-text-secondary text-xs font-normal">Gestão de Vendas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 flex flex-col gap-2 px-4 py-6 overflow-y-auto">
+            <!-- Dashboard (inactive) -->
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="dashboard.html">
+                <i data-lucide="layout-dashboard" class="size-5"></i>
+                <p class="text-sm font-medium">Dashboard</p>
+            </a>
+            <!-- Leads (active) -->
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-action-primary/10 border border-action-primary/20 group transition-all hover:bg-action-primary/20"
+                href="#">
+                <i data-lucide="users" class="size-5 text-action-primary"></i>
+                <p class="text-action-primary text-sm font-medium">Leads</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="pipeline.html">
+                <i data-lucide="kanban" class="size-5"></i>
+                <p class="text-sm font-medium">Pipeline</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="#">
+                <i data-lucide="message-circle" class="size-5"></i>
+                <div class="flex flex-1 justify-between items-center">
+                    <p class="text-sm font-medium">WhatsApp</p>
+                    <span class="bg-feedback-success-solid-bg text-feedback-success-solid-fg text-[10px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+                </div>
+            </a>
+
+            <!-- Section divider -->
+            <div class="mt-4 pt-4 border-t border-border">
+                <p class="px-3 text-xs font-semibold text-text-muted uppercase tracking-wide mb-2">Relatórios</p>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                    href="#">
+                    <i data-lucide="bar-chart-3" class="size-5"></i>
+                    <p class="text-sm font-medium">Desempenho</p>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-border">
+            <button class="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-surface-sunken transition-colors text-left group">
+                <i data-lucide="log-out" class="size-5 text-text-secondary group-hover:text-action-ghost-fg"></i>
+                <span class="text-text-secondary text-sm font-medium group-hover:text-action-ghost-fg">Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================================================================
+         MAIN CONTENT
+         ================================================================ -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-surface-base">
+
+        <!-- ============================================================
+             HEADER
+             ============================================================ -->
+        <header class="h-16 flex items-center justify-between px-6 border-b border-border bg-surface-raised/80 backdrop-blur-md sticky top-0 z-20">
+            <!-- Mobile menu toggle -->
+            <button class="md:hidden text-text-primary mr-4">
+                <i data-lucide="menu" class="size-6"></i>
+            </button>
+
+            <!-- Search -->
+            <div class="flex-1 max-w-md hidden sm:flex">
+                <div class="relative w-full group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="size-5 text-text-secondary group-focus-within:text-action-primary transition-colors"></i>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-2 border border-field-border rounded-lg leading-5 bg-field text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus focus:bg-surface-raised text-sm transition-all shadow-sm"
+                        placeholder="Buscar leads, empresas ou contratos..." type="text" />
+                </div>
+            </div>
+
+            <!-- Right actions -->
+            <div class="flex items-center gap-4 ml-4">
+                <button class="relative p-2 text-text-secondary hover:text-action-ghost-fg transition-colors rounded-lg hover:bg-surface-sunken">
+                    <i data-lucide="bell" class="size-5"></i>
+                    <span class="absolute top-2 right-2 size-2 bg-feedback-danger-solid-bg rounded-full border-2 border-surface-raised"></span>
+                </button>
+                <button class="p-2 text-text-secondary hover:text-action-ghost-fg transition-colors rounded-lg hover:bg-surface-sunken">
+                    <i data-lucide="settings" class="size-5"></i>
+                </button>
+                <div class="h-8 w-px bg-border mx-2"></div>
+                <div class="flex items-center gap-3 cursor-pointer group">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary group-hover:text-action-ghost-fg transition-colors">Roberto Silva</p>
+                        <p class="text-xs text-text-secondary">Executivo de Contas</p>
+                    </div>
+                    <div class="size-9 rounded-full bg-action-primary flex items-center justify-center text-action-primary-fg font-bold text-sm border-2 border-transparent group-hover:border-action-primary transition-all shadow-sm">
+                        RS
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ============================================================
+             SCROLLABLE CONTENT — LEADS LISTING
+             ============================================================ -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-[1400px] mr-auto flex flex-col gap-6 pb-10">
+
+                <!-- ========================================================
+                     BREADCRUMB
+                     ======================================================== -->
+                <nav class="flex text-sm font-medium text-text-secondary">
+                    <ol class="flex items-center gap-2">
+                        <li><a class="hover:text-action-ghost-fg transition-colors" href="dashboard.html">Home</a></li>
+                        <li><i data-lucide="chevron-right" class="size-4 text-text-muted"></i></li>
+                        <li class="text-text-primary font-semibold">Gestão de Leads</li>
+                    </ol>
+                </nav>
+
+                <!-- ========================================================
+                     PAGE HEADER
+                     ======================================================== -->
+                <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+                    <div class="flex flex-col gap-2">
+                        <h2 class="text-3xl font-bold tracking-tight text-text-primary">Gestão de Leads</h2>
+                        <p class="text-text-secondary max-w-2xl">
+                            Acompanhe seus leads comerciais, qualifique oportunidades e gerencie seu funil de vendas.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="leads_imprimir.html"
+                            class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-border bg-surface-raised px-4 text-sm font-semibold text-text-secondary shadow-sm transition-colors hover:bg-surface-sunken hover:text-text-primary">
+                            <i data-lucide="printer" class="size-4"></i>
+                            Imprimir
+                        </a>
+                        <button class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action-primary">
+                            <i data-lucide="user-plus" class="size-5"></i>
+                            Novo Lead
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ========================================================
+                     STAT CARDS
+                     ======================================================== -->
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <!-- Total de Leads -->
+                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <i data-lucide="users" class="size-16 text-action-primary"></i>
+                        </div>
+                        <div class="flex flex-col gap-1 relative z-10">
+                            <p class="text-text-secondary text-sm font-medium">Total de Leads</p>
+                            <div class="flex items-baseline gap-2">
+                                <h3 class="text-3xl font-bold text-text-primary">100</h3>
+                                <span class="text-feedback-success-fg text-xs font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="trending-up" class="size-3.5"></i> 15%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Leads Qualificados -->
+                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <i data-lucide="shield-check" class="size-16 text-feedback-success-fg"></i>
+                        </div>
+                        <div class="flex flex-col gap-1 relative z-10">
+                            <p class="text-text-secondary text-sm font-medium">Leads Qualificados</p>
+                            <div class="flex items-baseline gap-2">
+                                <h3 class="text-3xl font-bold text-text-primary">412</h3>
+                                <span class="text-feedback-success-fg text-xs font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="trending-up" class="size-3.5"></i> 7%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Taxa de Conversão -->
+                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <i data-lucide="percent" class="size-16 text-feedback-warning-fg"></i>
+                        </div>
+                        <div class="flex flex-col gap-1 relative z-10">
+                            <p class="text-text-secondary text-sm font-medium">Taxa de Conversão</p>
+                            <div class="flex items-baseline gap-2">
+                                <h3 class="text-3xl font-bold text-text-primary">14,5%</h3>
+                                <span class="text-feedback-danger-fg text-xs font-bold bg-feedback-danger-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="trending-down" class="size-3.5"></i> 1,2%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Novos Leads (Hoje) -->
+                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <i data-lucide="sparkles" class="size-16 text-feedback-info-fg"></i>
+                        </div>
+                        <div class="flex flex-col gap-1 relative z-10">
+                            <p class="text-text-secondary text-sm font-medium">Novos Leads (Hoje)</p>
+                            <div class="flex items-baseline gap-2">
+                                <h3 class="text-3xl font-bold text-text-primary">24</h3>
+                                <span class="text-feedback-success-fg text-xs font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="zap" class="size-3.5"></i> Ativo
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================
+                     FILTERS BAR
+                     ======================================================== -->
+                <div class="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm xl:flex-row xl:items-center">
+                    <!-- Search field -->
+                    <div class="relative flex-1">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i data-lucide="search" class="size-5 text-text-secondary"></i>
+                        </div>
+                        <input
+                            class="block w-full rounded-lg border border-field-border py-2.5 pl-10 pr-3 bg-field text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all"
+                            placeholder="Buscar por nome do lead ou empresa..." type="text" />
+                    </div>
+                    <!-- Filter controls -->
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-row">
+                        <select class="block w-full rounded-lg border border-field-border py-2.5 pl-3 pr-10 bg-field text-field-fg focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm lg:w-44">
+                            <option>Status: Todos</option>
+                            <option>Novo</option>
+                            <option>Em Contato</option>
+                            <option>Qualificado</option>
+                            <option>Perdido</option>
+                        </select>
+                        <select class="block w-full rounded-lg border border-field-border py-2.5 pl-3 pr-10 bg-field text-field-fg focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm lg:w-44">
+                            <option>Responsável: Todos</option>
+                            <option>Roberto Silva</option>
+                            <option>Ana Clara</option>
+                            <option>Marcos Paulo</option>
+                        </select>
+                        <select class="block w-full rounded-lg border border-field-border py-2.5 pl-3 pr-10 bg-field text-field-fg focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm lg:w-44">
+                            <option>Origem: Todas</option>
+                            <option>Google Ads</option>
+                            <option>Site Institucional</option>
+                            <option>Indicação</option>
+                            <option>LinkedIn</option>
+                        </select>
+                        <button class="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-raised px-4 py-2 text-sm font-semibold text-text-secondary hover:bg-surface-sunken hover:text-text-primary transition-colors">
+                            <i data-lucide="sliders-horizontal" class="size-4"></i>
+                            <span>Filtros</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ========================================================
+                     SORT CONTROL
+                     ======================================================== -->
+                <div id="sort-panel" class="rounded-xl border border-border bg-surface-raised shadow-sm overflow-hidden">
+                    <!-- Collapsible header (always visible) -->
+                    <button id="sort-toggle" onclick="toggleSortPanel()" class="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-sunken/50 transition-colors">
+                        <div class="flex items-center gap-2 text-sm font-semibold text-text-primary">
+                            <i data-lucide="arrow-up-down" class="size-4 text-text-secondary"></i>
+                            Ordenação
+                            <span id="sort-badge" class="hidden items-center justify-center rounded-full bg-action-primary text-action-primary-fg text-[10px] font-bold size-5"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <!-- Inline pills preview when collapsed -->
+                            <div id="sort-pills-preview" class="hidden items-center gap-1.5"></div>
+                            <i data-lucide="chevron-down" id="sort-chevron" class="size-4 text-text-muted transition-transform duration-200"></i>
+                        </div>
+                    </button>
+
+                    <!-- Expandable body -->
+                    <div id="sort-body" class="hidden border-t border-border-subtle px-4 pb-4 pt-3 flex flex-col gap-3">
+                        <div class="flex items-center justify-between">
+                            <span id="sort-empty-msg" class="text-sm text-text-muted italic">Clique nos títulos das colunas para ordenar ou adicione abaixo</span>
+                            <button id="sort-clear-btn" onclick="clearAllSorts()" class="hidden items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-feedback-danger-fg hover:bg-feedback-danger-bg transition-colors">
+                                <i data-lucide="x" class="size-3.5"></i>
+                                Limpar ordenação
+                            </button>
+                        </div>
+
+                        <!-- Active sort pills -->
+                        <div id="sort-pills" class="flex flex-wrap items-center gap-2"></div>
+
+                        <!-- Add sort rule -->
+                        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-border-subtle">
+                            <select id="sort-col-select" class="rounded-lg border border-field-border py-1.5 pl-3 pr-8 bg-field text-field-fg text-sm focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus">
+                                <option value="">Adicionar coluna...</option>
+                                <option value="lead">Lead</option>
+                                <option value="empresa">Empresa</option>
+                                <option value="valor">Valor Estimado</option>
+                                <option value="status">Status</option>
+                                <option value="origem">Origem</option>
+                                <option value="data">Data Entrada</option>
+                            </select>
+                            <select id="sort-dir-select" class="rounded-lg border border-field-border py-1.5 pl-3 pr-8 bg-field text-field-fg text-sm focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus">
+                                <option value="asc">Ascendente (A→Z)</option>
+                                <option value="desc">Descendente (Z→A)</option>
+                            </select>
+                            <button onclick="addSortFromSelect()" class="inline-flex items-center gap-1.5 rounded-lg bg-action-primary px-3 py-1.5 text-xs font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover">
+                                <i data-lucide="plus" class="size-3.5"></i>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================
+                     LEADS TABLE
+                     ======================================================== -->
+                <div class="bg-surface-raised rounded-xl border border-border shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table id="leads-table" class="min-w-full text-sm text-left">
+                            <thead class="text-xs text-text-secondary uppercase bg-surface-sunken border-b border-border-subtle">
+                                <tr>
+                                    <th class="py-3.5 pl-6 pr-3 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" scope="col" data-sort-key="lead" onclick="toggleColumnSort('lead')">
+                                        <span class="inline-flex items-center gap-1.5">Lead <span class="sort-icon text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" data-col="lead"><i data-lucide="arrow-up-down" class="size-3.5"></i></span></span>
+                                    </th>
+                                    <th class="px-3 py-3.5 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" scope="col" data-sort-key="empresa" onclick="toggleColumnSort('empresa')">
+                                        <span class="inline-flex items-center gap-1.5">Empresa <span class="sort-icon text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" data-col="empresa"><i data-lucide="arrow-up-down" class="size-3.5"></i></span></span>
+                                    </th>
+                                    <th class="px-3 py-3.5 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" scope="col" data-sort-key="valor" onclick="toggleColumnSort('valor')">
+                                        <span class="inline-flex items-center gap-1.5">Valor Estimado <span class="sort-icon text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" data-col="valor"><i data-lucide="arrow-up-down" class="size-3.5"></i></span></span>
+                                    </th>
+                                    <th class="px-3 py-3.5 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" scope="col" data-sort-key="status" onclick="toggleColumnSort('status')">
+                                        <span class="inline-flex items-center gap-1.5">Status <span class="sort-icon text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" data-col="status"><i data-lucide="arrow-up-down" class="size-3.5"></i></span></span>
+                                    </th>
+                                    <th class="px-3 py-3.5 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" scope="col" data-sort-key="origem" onclick="toggleColumnSort('origem')">
+                                        <span class="inline-flex items-center gap-1.5">Origem <span class="sort-icon text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" data-col="origem"><i data-lucide="arrow-up-down" class="size-3.5"></i></span></span>
+                                    </th>
+                                    <th class="px-3 py-3.5 font-semibold tracking-wide cursor-pointer select-none hover:text-text-primary transition-colors group" scope="col" data-sort-key="data" onclick="toggleColumnSort('data')">
+                                        <span class="inline-flex items-center gap-1.5">Data Entrada <span class="sort-icon text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" data-col="data"><i data-lucide="arrow-up-down" class="size-3.5"></i></span></span>
+                                    </th>
+                                    <th class="py-3.5 pl-3 pr-6 font-semibold tracking-wide text-right" scope="col">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-tbody" class="divide-y divide-border-subtle">
+                                <!-- Rows generated via JS — see generateLeads() -->
+                            </tbody>
+                            <script>
+                            (function() {
+                                const LEADS_DATA = [
+                                    { nome: "André Martins", email: "andre.m@email.com", empresa: "TechSolutions SA", valor: 15000, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "10/06/2024, 09:15" },
+                                    { nome: "Carla Oliveira", email: "carla@construtora.com", empresa: "Construtora Horizonte", valor: 42500, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "09/06/2024, 14:30" },
+                                    { nome: "Fernando Prata", email: "fernando@prata.com.br", empresa: "Prata Consultoria", valor: 8900, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "08/06/2024, 11:00" },
+                                    { nome: "Luiza Menezes", email: "luiza@luxe.com", empresa: "Luxe Eventos", valor: 22000, status: "Perdido", origem: "Site", origemIcon: "globe", data: "07/06/2024, 16:20" },
+                                    { nome: "Ricardo Nunes", email: "ricardo@nunes.ind.br", empresa: "Nunes Indústria", valor: 67000, status: "Em Contato", origem: "LinkedIn", origemIcon: "linkedin", data: "06/06/2024, 10:45" },
+                                    { nome: "Patrícia Duarte", email: "patricia@duarte.adv.br", empresa: "Duarte Advocacia", valor: 31200, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "05/06/2024, 08:50" },
+                                    { nome: "Marcos Paulo", email: "marcos@logistica.com", empresa: "Logística Express", valor: 55800, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "04/06/2024, 13:20" },
+                                    { nome: "Juliana Ferreira", email: "juliana@ferreiramed.com.br", empresa: "Clínica Ferreira", valor: 18500, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "03/06/2024, 17:40" },
+                                    { nome: "Eduardo Campos", email: "eduardo@camposauto.com", empresa: "Campos Automação", valor: 95000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "02/06/2024, 09:30" },
+                                    { nome: "Beatriz Lemos", email: "beatriz@lemosarq.com.br", empresa: "Lemos Arquitetura", valor: 27300, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "01/06/2024, 11:15" },
+                                    { nome: "Gustavo Ramos", email: "gustavo@ramostech.io", empresa: "Ramos Tech", valor: 120000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "31/05/2024, 14:00" },
+                                    { nome: "Tatiana Sousa", email: "tatiana@sousafarma.com", empresa: "Sousa Farma", valor: 38700, status: "Perdido", origem: "Google Ads", origemIcon: "megaphone", data: "30/05/2024, 10:20" },
+                                    { nome: "Diego Almeida", email: "diego@almeidaeng.com.br", empresa: "Almeida Engenharia", valor: 73400, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "29/05/2024, 15:45" },
+                                    { nome: "Camila Torres", email: "camila@torresdesign.com", empresa: "Torres Design Studio", valor: 12800, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "28/05/2024, 08:10" },
+                                    { nome: "Fernanda Costa", email: "fernanda@techsolutions.com.br", empresa: "Tech Solutions Ltda", valor: 45000, status: "Em Contato", origem: "LinkedIn", origemIcon: "linkedin", data: "27/05/2024, 13:50" },
+                                    { nome: "Roberto Mendes", email: "roberto@mendeslog.com", empresa: "Mendes Logística", valor: 34500, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "26/05/2024, 09:00" },
+                                    { nome: "Vanessa Lima", email: "vanessa@limacontabil.com", empresa: "Lima Contabilidade", valor: 19800, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "25/05/2024, 16:30" },
+                                    { nome: "Thiago Barbosa", email: "thiago@barbosaadv.com", empresa: "Barbosa & Advogados", valor: 88000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "24/05/2024, 10:15" },
+                                    { nome: "Larissa Cardoso", email: "larissa@cardosovet.com", empresa: "Cardoso Veterinária", valor: 14200, status: "Perdido", origem: "WhatsApp", origemIcon: "message-circle", data: "23/05/2024, 11:45" },
+                                    { nome: "Henrique Dias", email: "henrique@diasimport.com", empresa: "Dias Importação", valor: 156000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "22/05/2024, 14:20" },
+                                    { nome: "Aline Rocha", email: "aline@rochadesign.com.br", empresa: "Rocha Design", valor: 23400, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "21/05/2024, 08:30" },
+                                    { nome: "Felipe Moreira", email: "felipe@moreiratech.com", empresa: "Moreira Tecnologia", valor: 67500, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "20/05/2024, 15:00" },
+                                    { nome: "Gabriela Santos", email: "gabriela@santosmed.com", empresa: "Santos Medicina", valor: 41200, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "19/05/2024, 09:45" },
+                                    { nome: "Leonardo Teixeira", email: "leonardo@teixeiracivil.com", empresa: "Teixeira Civil", valor: 210000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "18/05/2024, 16:10" },
+                                    { nome: "Mariana Cunha", email: "mariana@cunhaeventos.com", empresa: "Cunha Eventos", valor: 8500, status: "Perdido", origem: "WhatsApp", origemIcon: "message-circle", data: "17/05/2024, 10:30" },
+                                    { nome: "Bruno Azevedo", email: "bruno@azevedoauto.com", empresa: "Azevedo Automotivo", valor: 53000, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "16/05/2024, 13:15" },
+                                    { nome: "Daniela Freitas", email: "daniela@freitasrh.com", empresa: "Freitas RH", valor: 29600, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "15/05/2024, 08:50" },
+                                    { nome: "Rafael Correia", email: "rafael@correiaseg.com", empresa: "Correia Seguros", valor: 47800, status: "Qualificado", origem: "LinkedIn", origemIcon: "linkedin", data: "14/05/2024, 14:40" },
+                                    { nome: "Isabela Monteiro", email: "isabela@monteirofarma.com", empresa: "Monteiro Farma", valor: 62000, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "13/05/2024, 11:20" },
+                                    { nome: "Vinícius Pinto", email: "vinicius@pintoagro.com", empresa: "Pinto Agronegócio", valor: 185000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "12/05/2024, 09:00" },
+                                    { nome: "Priscila Ribeiro", email: "priscila@ribeiromoda.com", empresa: "Ribeiro Moda", valor: 16300, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "11/05/2024, 17:30" },
+                                    { nome: "Anderson Vieira", email: "anderson@vieiraprop.com", empresa: "Vieira Propaganda", valor: 33700, status: "Em Contato", origem: "Google Ads", origemIcon: "megaphone", data: "10/05/2024, 10:00" },
+                                    { nome: "Natália Fonseca", email: "natalia@fonsecajur.com", empresa: "Fonseca Jurídico", valor: 78000, status: "Perdido", origem: "LinkedIn", origemIcon: "linkedin", data: "09/05/2024, 15:15" },
+                                    { nome: "Rodrigo Machado", email: "rodrigo@machadoind.com", empresa: "Machado Indústria", valor: 144000, status: "Proposta", origem: "Site", origemIcon: "globe", data: "08/05/2024, 08:45" },
+                                    { nome: "Carolina Pereira", email: "carolina@pereirasaude.com", empresa: "Pereira Saúde", valor: 51000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "07/05/2024, 14:30" },
+                                    { nome: "Lucas Gomes", email: "lucas@gomesinfo.com", empresa: "Gomes Informática", valor: 11700, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "06/05/2024, 09:20" },
+                                    { nome: "Amanda Nascimento", email: "amanda@nascimentoarq.com", empresa: "Nascimento Arquitetura", valor: 39800, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "05/05/2024, 16:00" },
+                                    { nome: "Pedro Henriques", email: "pedro@henriqueseng.com", empresa: "Henriques Engenharia", valor: 98000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "04/05/2024, 11:30" },
+                                    { nome: "Renata Castro", email: "renata@castrovet.com", empresa: "Castro Veterinária", valor: 13500, status: "Perdido", origem: "WhatsApp", origemIcon: "message-circle", data: "03/05/2024, 10:10" },
+                                    { nome: "Fábio Souza", email: "fabio@souzatrans.com", empresa: "Souza Transportes", valor: 72000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "02/05/2024, 13:45" },
+                                    { nome: "Cristina Araújo", email: "cristina@araujodecor.com", empresa: "Araújo Decoração", valor: 21500, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "01/05/2024, 08:00" },
+                                    { nome: "Marcelo Batista", email: "marcelo@batistaelec.com", empresa: "Batista Elétrica", valor: 46300, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "30/04/2024, 15:50" },
+                                    { nome: "Sandra Moura", email: "sandra@mouraclin.com", empresa: "Moura Clínica", valor: 57000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "29/04/2024, 09:30" },
+                                    { nome: "Paulo Rezende", email: "paulo@rezendealim.com", empresa: "Rezende Alimentos", valor: 133000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "28/04/2024, 14:15" },
+                                    { nome: "Elaine Borges", email: "elaine@borgestextil.com", empresa: "Borges Têxtil", valor: 87500, status: "Perdido", origem: "Google Ads", origemIcon: "megaphone", data: "27/04/2024, 10:40" },
+                                    { nome: "Tiago Sampaio", email: "tiago@sampaiodev.com", empresa: "Sampaio Dev", valor: 28900, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "26/04/2024, 17:20" },
+                                    { nome: "Michele Nogueira", email: "michele@nogueiratur.com", empresa: "Nogueira Turismo", valor: 19000, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "25/04/2024, 08:15" },
+                                    { nome: "Jorge Cavalcanti", email: "jorge@cavalcantiagro.com", empresa: "Cavalcanti Agro", valor: 245000, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "24/04/2024, 13:00" },
+                                    { nome: "Simone Barros", email: "simone@barrosestetic.com", empresa: "Barros Estética", valor: 15700, status: "Qualificado", origem: "WhatsApp", origemIcon: "message-circle", data: "23/04/2024, 11:35" },
+                                    { nome: "Leandro Xavier", email: "leandro@xavierlog.com", empresa: "Xavier Logística", valor: 82000, status: "Perdido", origem: "LinkedIn", origemIcon: "linkedin", data: "22/04/2024, 16:45" },
+                                    { nome: "Débora Amaral", email: "debora@amaralphoto.com", empresa: "Amaral Fotografia", valor: 9200, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "21/04/2024, 09:10" },
+                                    { nome: "Matheus Carvalho", email: "matheus@carvalhocivil.com", empresa: "Carvalho Civil", valor: 178000, status: "Em Contato", origem: "LinkedIn", origemIcon: "linkedin", data: "20/04/2024, 14:55" },
+                                    { nome: "Ana Paula Silva", email: "anapaula@silvaconsult.com", empresa: "Silva Consultoria", valor: 36400, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "19/04/2024, 10:25" },
+                                    { nome: "Sérgio Braga", email: "sergio@bragaconst.com", empresa: "Braga Construção", valor: 115000, status: "Proposta", origem: "Site", origemIcon: "globe", data: "18/04/2024, 15:30" },
+                                    { nome: "Viviane Costa", email: "viviane@costaflores.com", empresa: "Costa Flores", valor: 7800, status: "Perdido", origem: "WhatsApp", origemIcon: "message-circle", data: "17/04/2024, 08:40" },
+                                    { nome: "Márcio Tavares", email: "marcio@tavaresauto.com", empresa: "Tavares Automóveis", valor: 93000, status: "Novo", origem: "Google Ads", origemIcon: "megaphone", data: "16/04/2024, 13:50" },
+                                    { nome: "Cláudia Pires", email: "claudia@piresadv.com", empresa: "Pires Advocacia", valor: 44600, status: "Em Contato", origem: "LinkedIn", origemIcon: "linkedin", data: "15/04/2024, 09:05" },
+                                    { nome: "Giovanni Santos", email: "giovanni@santosgraf.com", empresa: "Santos Gráfica", valor: 26100, status: "Qualificado", origem: "Site", origemIcon: "globe", data: "14/04/2024, 16:20" },
+                                    { nome: "Luciana Medeiros", email: "luciana@medeiroslab.com", empresa: "Medeiros Lab", valor: 58700, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "13/04/2024, 11:00" },
+                                    { nome: "Carlos Eduardo", email: "carlos@eduardoeng.com", empresa: "Eduardo Engenharia", valor: 167000, status: "Qualificado", origem: "LinkedIn", origemIcon: "linkedin", data: "12/04/2024, 14:35" },
+                                    { nome: "Bianca Ferraz", email: "bianca@ferrazmoda.com", empresa: "Ferraz Moda", valor: 20300, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "11/04/2024, 08:25" },
+                                    { nome: "Otávio Leal", email: "otavio@lealimport.com", empresa: "Leal Importações", valor: 198000, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "10/04/2024, 15:10" },
+                                    { nome: "Kelly Andrade", email: "kelly@andradefarma.com", empresa: "Andrade Farma", valor: 31800, status: "Em Contato", origem: "Google Ads", origemIcon: "megaphone", data: "09/04/2024, 10:50" },
+                                    { nome: "Ronaldo Peixoto", email: "ronaldo@peixotoagro.com", empresa: "Peixoto Agro", valor: 142000, status: "Perdido", origem: "Site", origemIcon: "globe", data: "08/04/2024, 13:25" },
+                                    { nome: "Adriana Martins", email: "adriana@martinsclin.com", empresa: "Martins Clínica", valor: 48500, status: "Qualificado", origem: "WhatsApp", origemIcon: "message-circle", data: "07/04/2024, 09:40" },
+                                    { nome: "William Farias", email: "william@fariastech.com", empresa: "Farias Tecnologia", valor: 76000, status: "Novo", origem: "LinkedIn", origemIcon: "linkedin", data: "06/04/2024, 16:55" },
+                                    { nome: "Raquel Brito", email: "raquel@britocontabil.com", empresa: "Brito Contábil", valor: 17400, status: "Em Contato", origem: "Indicação", origemIcon: "phone", data: "05/04/2024, 08:30" },
+                                    { nome: "Cesar Guimarães", email: "cesar@guimaraesind.com", empresa: "Guimarães Indústria", valor: 225000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "04/04/2024, 14:00" },
+                                    { nome: "Tatiane Moraes", email: "tatiane@moraesevt.com", empresa: "Moraes Eventos", valor: 13100, status: "Perdido", origem: "Google Ads", origemIcon: "megaphone", data: "03/04/2024, 11:15" },
+                                    { nome: "Hugo Vasconcelos", email: "hugo@vasconceloseng.com", empresa: "Vasconcelos Eng.", valor: 99000, status: "Qualificado", origem: "Site", origemIcon: "globe", data: "02/04/2024, 15:45" },
+                                    { nome: "Fabiana Campos", email: "fabiana@camposdesign.com", empresa: "Campos Design", valor: 24700, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "01/04/2024, 09:55" },
+                                    { nome: "Alexandre Lima", email: "alexandre@limametal.com", empresa: "Lima Metalúrgica", valor: 134000, status: "Em Contato", origem: "Indicação", origemIcon: "phone", data: "31/03/2024, 13:30" },
+                                    { nome: "Jéssica Alencar", email: "jessica@alencarsaude.com", empresa: "Alencar Saúde", valor: 52300, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "30/03/2024, 10:05" },
+                                    { nome: "Danilo Reis", email: "danilo@reisauto.com", empresa: "Reis Automotivo", valor: 68000, status: "Qualificado", origem: "Google Ads", origemIcon: "megaphone", data: "29/03/2024, 16:40" },
+                                    { nome: "Mônica Santana", email: "monica@santanajur.com", empresa: "Santana Jurídico", valor: 43100, status: "Perdido", origem: "Site", origemIcon: "globe", data: "28/03/2024, 08:20" },
+                                    { nome: "Igor Fernandes", email: "igor@fernandestrans.com", empresa: "Fernandes Transportes", valor: 89000, status: "Novo", origem: "LinkedIn", origemIcon: "linkedin", data: "27/03/2024, 14:50" },
+                                    { nome: "Letícia Duarte", email: "leticia@duarteestil.com", empresa: "Duarte Estilo", valor: 11200, status: "Em Contato", origem: "WhatsApp", origemIcon: "message-circle", data: "26/03/2024, 09:30" },
+                                    { nome: "Rogério Mendes", email: "rogerio@mendespack.com", empresa: "Mendes Embalagens", valor: 57500, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "25/03/2024, 15:20" },
+                                    { nome: "Valéria Cruz", email: "valeria@cruzfood.com", empresa: "Cruz Alimentos", valor: 103000, status: "Qualificado", origem: "Google Ads", origemIcon: "megaphone", data: "24/03/2024, 10:45" },
+                                    { nome: "Caio Monteiro", email: "caio@monteirotec.com", empresa: "Monteiro Tecnologia", valor: 320000, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "23/03/2024, 13:10" },
+                                    { nome: "Helena Teixeira", email: "helena@teixeiravet.com", empresa: "Teixeira Pet", valor: 16800, status: "Perdido", origem: "WhatsApp", origemIcon: "message-circle", data: "22/03/2024, 08:55" },
+                                    { nome: "Renan Oliveira", email: "renan@oliveirasoft.com", empresa: "Oliveira Software", valor: 74500, status: "Novo", origem: "Site", origemIcon: "globe", data: "21/03/2024, 16:05" },
+                                    { nome: "Fernanda Lopes", email: "fernanda@lopescontab.com", empresa: "Lopes Contábil", valor: 25900, status: "Em Contato", origem: "LinkedIn", origemIcon: "linkedin", data: "20/03/2024, 09:15" },
+                                    { nome: "Luciano Paiva", email: "luciano@paivaeng.com", empresa: "Paiva Engenharia", valor: 189000, status: "Qualificado", origem: "Indicação", origemIcon: "phone", data: "19/03/2024, 14:30" },
+                                    { nome: "Suzana Rodrigues", email: "suzana@rodriguestur.com", empresa: "Rodrigues Turismo", valor: 19500, status: "Perdido", origem: "Google Ads", origemIcon: "megaphone", data: "18/03/2024, 11:40" },
+                                    { nome: "Douglas Pereira", email: "douglas@pereiracivil.com", empresa: "Pereira Civil", valor: 146000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "17/03/2024, 15:55" },
+                                    { nome: "Marina Assis", email: "marina@assismed.com", empresa: "Assis Medicina", valor: 37200, status: "Novo", origem: "WhatsApp", origemIcon: "message-circle", data: "16/03/2024, 08:10" },
+                                    { nome: "André Novaes", email: "andre@novaeslog.com", empresa: "Novaes Logística", valor: 61000, status: "Em Contato", origem: "Site", origemIcon: "globe", data: "15/03/2024, 13:45" },
+                                    { nome: "Patrícia Lima", email: "patricia@limaagencia.com", empresa: "Lima Agência", valor: 22800, status: "Qualificado", origem: "Google Ads", origemIcon: "megaphone", data: "14/03/2024, 10:20" },
+                                    { nome: "Samuel Gonçalves", email: "samuel@goncalvesind.com", empresa: "Gonçalves Indústria", valor: 175000, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "13/03/2024, 16:35" },
+                                    { nome: "Regiane Matos", email: "regiane@matosfarma.com", empresa: "Matos Farmácia", valor: 14800, status: "Perdido", origem: "WhatsApp", origemIcon: "message-circle", data: "12/03/2024, 09:50" },
+                                    { nome: "Antônio Bastos", email: "antonio@bastosagro.com", empresa: "Bastos Agropecuária", valor: 258000, status: "Qualificado", origem: "LinkedIn", origemIcon: "linkedin", data: "11/03/2024, 14:10" },
+                                    { nome: "Elisa Correia", email: "elisa@correiadecor.com", empresa: "Correia Decoração", valor: 18900, status: "Novo", origem: "Site", origemIcon: "globe", data: "10/03/2024, 08:35" },
+                                    { nome: "Flávio Marques", email: "flavio@marquestrans.com", empresa: "Marques Transportes", valor: 91000, status: "Em Contato", origem: "Google Ads", origemIcon: "megaphone", data: "09/03/2024, 15:00" },
+                                    { nome: "Cíntia Ramos", email: "cintia@ramosseg.com", empresa: "Ramos Seguros", valor: 49300, status: "Proposta", origem: "Indicação", origemIcon: "phone", data: "08/03/2024, 11:25" },
+                                    { nome: "Wagner Soares", email: "wagner@soareseng.com", empresa: "Soares Engenharia", valor: 203000, status: "Perdido", origem: "LinkedIn", origemIcon: "linkedin", data: "07/03/2024, 13:55" },
+                                    { nome: "Miriam Alves", email: "miriam@alvescosm.com", empresa: "Alves Cosméticos", valor: 32600, status: "Qualificado", origem: "WhatsApp", origemIcon: "message-circle", data: "06/03/2024, 09:05" },
+                                    { nome: "Nilton Franco", email: "nilton@francoauto.com", empresa: "Franco Automotivo", valor: 117000, status: "Novo", origem: "Indicação", origemIcon: "phone", data: "05/03/2024, 16:15" },
+                                    { nome: "Solange Bittencourt", email: "solange@bittconsult.com", empresa: "Bittencourt Consultoria", valor: 43900, status: "Em Contato", origem: "Google Ads", origemIcon: "megaphone", data: "04/03/2024, 10:30" },
+                                    { nome: "Everaldo Maia", email: "everaldo@maiaind.com.br", empresa: "Maia Industrial", valor: 162000, status: "Proposta", origem: "LinkedIn", origemIcon: "linkedin", data: "03/03/2024, 14:45" },
+                                ];
+
+                                const STATUS_MAP = {
+                                    'Novo':        { bg: 'feedback-info-bg', fg: 'feedback-info-fg', border: 'feedback-info-border' },
+                                    'Em Contato':  { bg: 'feedback-warning-bg', fg: 'feedback-warning-fg', border: 'feedback-warning-border' },
+                                    'Qualificado': { bg: 'feedback-success-bg', fg: 'feedback-success-fg', border: 'feedback-success-border' },
+                                    'Perdido':     { bg: 'feedback-danger-bg', fg: 'feedback-danger-fg', border: 'feedback-danger-border' },
+                                    'Proposta':    { bg: 'feedback-accent-bg', fg: 'feedback-accent-fg', border: 'feedback-accent-border' },
+                                };
+
+                                function getInitials(name) {
+                                    const parts = name.split(' ');
+                                    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                                }
+
+                                function formatCurrency(val) {
+                                    return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                }
+
+                                const tbody = document.getElementById('leads-tbody');
+                                LEADS_DATA.forEach(lead => {
+                                    const st = STATUS_MAP[lead.status];
+                                    const initials = getInitials(lead.nome);
+                                    const tr = document.createElement('tr');
+                                    tr.className = 'group hover:bg-surface-sunken/80 transition-colors';
+                                    tr.innerHTML = `
+                                        <td class="whitespace-nowrap py-4 pl-6 pr-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="size-10 flex-shrink-0 rounded-full bg-${st.bg} flex items-center justify-center text-${st.fg} font-bold text-sm border border-${st.border}">
+                                                    ${initials}
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold text-text-primary">${lead.nome}</div>
+                                                    <div class="text-xs text-text-secondary">${lead.email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-text-secondary">${lead.empresa}</td>
+                                        <td class="whitespace-nowrap px-3 py-4">
+                                            <span class="font-semibold text-text-primary">${formatCurrency(lead.valor)}</span>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4">
+                                            <span class="inline-flex items-center rounded-full bg-${st.bg} px-2.5 py-0.5 text-xs font-medium text-${st.fg} border border-${st.border}">${lead.status}</span>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4">
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-sunken text-text-secondary text-xs font-medium border border-border">
+                                                <i data-lucide="${lead.origemIcon}" class="size-3.5"></i> ${lead.origem}
+                                            </span>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-text-secondary">${lead.data}</td>
+                                        <td class="whitespace-nowrap py-4 pl-3 pr-6 text-right">
+                                            <div class="flex items-center justify-end gap-1">
+                                                <button class="rounded p-1.5 text-text-muted hover:bg-action-primary/10 hover:text-action-primary transition-colors" title="Visualizar">
+                                                    <i data-lucide="eye" class="size-4"></i>
+                                                </button>
+                                                <button class="rounded p-1.5 text-text-muted hover:bg-surface-sunken hover:text-text-primary transition-colors" title="Editar">
+                                                    <i data-lucide="pencil" class="size-4"></i>
+                                                </button>
+                                                <button class="rounded p-1.5 text-feedback-success-fg hover:bg-feedback-success-bg transition-colors" title="WhatsApp">
+                                                    <i data-lucide="message-circle" class="size-4"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    `;
+                                    tbody.appendChild(tr);
+                                });
+                            })();
+                            </script>
+                        </table>
+                    </div>
+
+                    <!-- ====================================================
+                         PAGINATION
+                         ==================================================== -->
+                    <div class="flex items-center justify-between border-t border-border-subtle px-6 py-3">
+                        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                            <div class="flex items-center gap-4">
+                                <p id="pagination-info" class="text-sm text-text-secondary"></p>
+                                <div class="flex items-center gap-2 border-l border-border-subtle pl-4">
+                                    <label for="page-size" class="text-sm text-text-secondary whitespace-nowrap">Exibir</label>
+                                    <select id="page-size" onchange="changePageSize()"
+                                        class="rounded-lg border border-field-border py-1 pl-2.5 pr-7 bg-field text-field-fg text-sm focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus">
+                                        <option value="10" selected>10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                    </select>
+                                    <span class="text-sm text-text-secondary">por página</span>
+                                </div>
+                            </div>
+                            <nav id="pagination-nav" aria-label="Paginação" class="isolate inline-flex -space-x-px rounded-md shadow-sm">
+                            </nav>
+                        </div>
+                        <!-- Mobile pagination -->
+                        <div class="flex flex-1 justify-between sm:hidden">
+                            <button onclick="goToPage(currentPage - 1)" class="relative inline-flex items-center rounded-md border border-border bg-surface-raised px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface-sunken transition-colors">Anterior</button>
+                            <button onclick="goToPage(currentPage + 1)" class="relative ml-3 inline-flex items-center rounded-md border border-border bg-surface-raised px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface-sunken transition-colors">Próximo</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Initialize Lucide icons -->
+    <script>lucide.createIcons();</script>
+
+    <!-- Sort engine -->
+    <script>
+        const COLUMN_LABELS = {
+            lead: 'Lead', empresa: 'Empresa', valor: 'Valor Estimado',
+            status: 'Status', origem: 'Origem', data: 'Data Entrada'
+        };
+
+        let sortRules = [];
+        let sortPanelOpen = false;
+
+        /* ── Toggle collapsible panel ── */
+        function toggleSortPanel() {
+            sortPanelOpen = !sortPanelOpen;
+            const body = document.getElementById('sort-body');
+            const chevron = document.getElementById('sort-chevron');
+            if (sortPanelOpen) {
+                body.classList.remove('hidden');
+                body.classList.add('flex');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                body.classList.add('hidden');
+                body.classList.remove('flex');
+                chevron.style.transform = '';
+            }
+            renderCollapsedPreview();
+        }
+
+        /* ── Extract sortable value from a cell ── */
+        function getCellValue(row, key) {
+            const cells = row.querySelectorAll('td');
+            switch (key) {
+                case 'lead':    return (cells[0].querySelector('.font-bold')?.textContent || '').trim().toLowerCase();
+                case 'empresa': return (cells[1].textContent || '').trim().toLowerCase();
+                case 'valor': {
+                    const raw = (cells[2].textContent || '').replace(/[^\d,]/g, '').replace(',', '.');
+                    return parseFloat(raw) || 0;
+                }
+                case 'status':  return (cells[3].querySelector('span')?.textContent || '').trim().toLowerCase();
+                case 'origem':  return (cells[4].textContent || '').trim().toLowerCase();
+                case 'data': {
+                    const txt = (cells[5].textContent || '').trim();
+                    const m = txt.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+                    return m ? `${m[3]}${m[2]}${m[1]}` : txt;
+                }
+                default: return '';
+            }
+        }
+
+        /* ── Multi-column comparator ── */
+        function compareRows(a, b) {
+            for (const rule of sortRules) {
+                const va = getCellValue(a, rule.key);
+                const vb = getCellValue(b, rule.key);
+                let cmp = 0;
+                if (typeof va === 'number' && typeof vb === 'number') {
+                    cmp = va - vb;
+                } else {
+                    cmp = String(va).localeCompare(String(vb), 'pt-BR');
+                }
+                if (cmp !== 0) return rule.dir === 'asc' ? cmp : -cmp;
+            }
+            return 0;
+        }
+
+        /* ── Apply sort to the DOM table ── */
+        function applySort() {
+            const tbody = document.querySelector('#leads-table tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            if (sortRules.length > 0) {
+                rows.sort(compareRows);
+            }
+            rows.forEach(r => tbody.appendChild(r));
+            renderPills();
+            renderHeaderIcons();
+            renderCollapsedPreview();
+        }
+
+        /* ── Toggle sort when clicking a column header ── */
+        function toggleColumnSort(key) {
+            const existing = sortRules.findIndex(r => r.key === key);
+            if (existing >= 0) {
+                if (sortRules[existing].dir === 'asc') {
+                    sortRules[existing].dir = 'desc';
+                } else {
+                    sortRules.splice(existing, 1);
+                }
+            } else {
+                sortRules.push({ key, dir: 'asc' });
+            }
+            applySort();
+        }
+
+        /* ── Add sort from the dropdown controls ── */
+        function addSortFromSelect() {
+            const colSel = document.getElementById('sort-col-select');
+            const dirSel = document.getElementById('sort-dir-select');
+            const key = colSel.value;
+            if (!key) return;
+            const existing = sortRules.findIndex(r => r.key === key);
+            if (existing >= 0) {
+                sortRules[existing].dir = dirSel.value;
+            } else {
+                sortRules.push({ key, dir: dirSel.value });
+            }
+            colSel.value = '';
+            applySort();
+        }
+
+        /* ── Remove a single sort rule ── */
+        function removeSortRule(key) {
+            sortRules = sortRules.filter(r => r.key !== key);
+            applySort();
+        }
+
+        /* ── Toggle direction of a pill ── */
+        function togglePillDir(key) {
+            const rule = sortRules.find(r => r.key === key);
+            if (rule) rule.dir = rule.dir === 'asc' ? 'desc' : 'asc';
+            applySort();
+        }
+
+        /* ── Clear all sorts ── */
+        function clearAllSorts() {
+            sortRules = [];
+            applySort();
+        }
+
+        /* ── Render sort pills (expanded body) ── */
+        function renderPills() {
+            const container = document.getElementById('sort-pills');
+            const emptyMsg = document.getElementById('sort-empty-msg');
+            const clearBtn = document.getElementById('sort-clear-btn');
+
+            container.querySelectorAll('.sort-pill').forEach(el => el.remove());
+
+            if (sortRules.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                clearBtn.classList.remove('inline-flex');
+                clearBtn.classList.add('hidden');
+                return;
+            }
+
+            emptyMsg.classList.add('hidden');
+            clearBtn.classList.remove('hidden');
+            clearBtn.classList.add('inline-flex');
+
+            sortRules.forEach((rule, idx) => {
+                const pill = document.createElement('span');
+                pill.className = 'sort-pill inline-flex items-center gap-1 rounded-full border border-action-primary/30 bg-action-primary/10 pl-3 pr-1 py-1 text-xs font-medium text-action-primary';
+                const orderNum = sortRules.length > 1 ? `<span class="text-[10px] font-bold bg-action-primary text-action-primary-fg rounded-full size-4 inline-flex items-center justify-center mr-0.5">${idx + 1}</span>` : '';
+                const dirIcon = rule.dir === 'asc' ? 'arrow-up' : 'arrow-down';
+                pill.innerHTML = `
+                    ${orderNum}${COLUMN_LABELS[rule.key]}
+                    <button onclick="event.stopPropagation(); togglePillDir('${rule.key}')" class="rounded p-0.5 hover:bg-action-primary/20 transition-colors" title="Inverter direção">
+                        <i data-lucide="${dirIcon}" class="size-3.5"></i>
+                    </button>
+                    <button onclick="event.stopPropagation(); removeSortRule('${rule.key}')" class="rounded p-0.5 hover:bg-feedback-danger-bg hover:text-feedback-danger-fg transition-colors" title="Remover">
+                        <i data-lucide="x" class="size-3.5"></i>
+                    </button>
+                `;
+                container.appendChild(pill);
+            });
+
+            lucide.createIcons();
+        }
+
+        /* ── Render collapsed preview (badge + mini pills in header) ── */
+        function renderCollapsedPreview() {
+            const badge = document.getElementById('sort-badge');
+            const preview = document.getElementById('sort-pills-preview');
+
+            // Badge count
+            if (sortRules.length > 0) {
+                badge.textContent = sortRules.length;
+                badge.classList.remove('hidden');
+                badge.classList.add('inline-flex');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('inline-flex');
+            }
+
+            // Mini pills (only when collapsed and has rules)
+            preview.innerHTML = '';
+            if (!sortPanelOpen && sortRules.length > 0) {
+                preview.classList.remove('hidden');
+                preview.classList.add('flex');
+                sortRules.forEach((rule) => {
+                    const dirIcon = rule.dir === 'asc' ? 'arrow-up' : 'arrow-down';
+                    const mini = document.createElement('span');
+                    mini.className = 'inline-flex items-center gap-1 rounded-full bg-action-primary/10 border border-action-primary/20 px-2 py-0.5 text-[11px] font-medium text-action-primary';
+                    mini.innerHTML = `${COLUMN_LABELS[rule.key]} <i data-lucide="${dirIcon}" class="size-3"></i>`;
+                    preview.appendChild(mini);
+                });
+                lucide.createIcons();
+            } else {
+                preview.classList.add('hidden');
+                preview.classList.remove('flex');
+            }
+        }
+
+        /* ── Update header icons to reflect sort state ── */
+        function renderHeaderIcons() {
+            document.querySelectorAll('.sort-icon').forEach(span => {
+                const col = span.dataset.col;
+                const rule = sortRules.find(r => r.key === col);
+                if (rule) {
+                    const iconName = rule.dir === 'asc' ? 'arrow-up' : 'arrow-down';
+                    span.innerHTML = `<i data-lucide="${iconName}" class="size-3.5"></i>`;
+                    span.classList.remove('opacity-0', 'text-text-muted');
+                    span.classList.add('opacity-100', 'text-action-primary');
+                } else {
+                    span.innerHTML = `<i data-lucide="arrow-up-down" class="size-3.5"></i>`;
+                    span.classList.remove('opacity-100', 'text-action-primary');
+                    span.classList.add('text-text-muted');
+                    if (!span.classList.contains('group-hover:opacity-100')) {
+                        span.classList.add('opacity-0', 'group-hover:opacity-100');
+                    }
+                }
+            });
+            lucide.createIcons();
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           PAGINATION ENGINE
+           ══════════════════════════════════════════════════════════ */
+        let currentPage = 1;
+        let pageSize = 10;
+
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('page-size').value, 10);
+            currentPage = 1;
+            renderPage();
+        }
+
+        function goToPage(page) {
+            const totalRows = document.querySelectorAll('#leads-tbody tr').length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderPage();
+        }
+
+        function renderPage() {
+            const rows = Array.from(document.querySelectorAll('#leads-tbody tr'));
+            const total = rows.length;
+            const totalPages = Math.ceil(total / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+
+            rows.forEach((row, i) => {
+                row.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            // Update info text
+            const info = document.getElementById('pagination-info');
+            const showStart = total === 0 ? 0 : start + 1;
+            const showEnd = Math.min(end, total);
+            info.innerHTML = `Mostrando <span class="font-medium text-text-primary">${showStart}</span> a <span class="font-medium text-text-primary">${showEnd}</span> de <span class="font-medium text-text-primary">${total}</span> resultados`;
+
+            // Build pagination nav
+            const nav = document.getElementById('pagination-nav');
+            nav.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            const btnBase = 'relative inline-flex items-center px-4 py-2 text-sm font-semibold transition-colors focus:z-20';
+            const btnNormal = btnBase + ' text-text-primary border border-border hover:bg-surface-sunken';
+            const btnActive = btnBase + ' bg-action-primary text-action-primary-fg z-10';
+            const btnDisabled = btnBase + ' text-text-muted border border-border cursor-not-allowed';
+
+            // Prev
+            const prev = document.createElement('button');
+            prev.className = (currentPage === 1 ? btnDisabled : btnNormal) + ' rounded-l-md !px-2';
+            prev.innerHTML = '<i data-lucide="chevron-left" class="size-5"></i>';
+            prev.disabled = currentPage === 1;
+            prev.onclick = () => goToPage(currentPage - 1);
+            nav.appendChild(prev);
+
+            // Page numbers with ellipsis
+            const pages = buildPageNumbers(currentPage, totalPages);
+            pages.forEach(p => {
+                if (p === '...') {
+                    const span = document.createElement('span');
+                    span.className = btnBase + ' text-text-secondary border border-border';
+                    span.textContent = '...';
+                    nav.appendChild(span);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = p === currentPage ? btnActive : btnNormal;
+                    btn.textContent = p;
+                    btn.onclick = () => goToPage(p);
+                    nav.appendChild(btn);
+                }
+            });
+
+            // Next
+            const next = document.createElement('button');
+            next.className = (currentPage === totalPages ? btnDisabled : btnNormal) + ' rounded-r-md !px-2';
+            next.innerHTML = '<i data-lucide="chevron-right" class="size-5"></i>';
+            next.disabled = currentPage === totalPages;
+            next.onclick = () => goToPage(currentPage + 1);
+            nav.appendChild(next);
+
+            lucide.createIcons();
+        }
+
+        function buildPageNumbers(current, total) {
+            if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+            const pages = [];
+            pages.push(1);
+            if (current > 3) pages.push('...');
+            for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+                pages.push(i);
+            }
+            if (current < total - 2) pages.push('...');
+            pages.push(total);
+            return pages;
+        }
+
+        /* Hook: re-paginate after sort */
+        const _origApplySort = applySort;
+        applySort = function() {
+            _origApplySort();
+            renderPage();
+        };
+
+        /* Initial render */
+        renderPage();
+    </script>
+
+</body>
+
+</html>
