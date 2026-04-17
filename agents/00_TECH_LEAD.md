@@ -41,7 +41,7 @@ view_file(docs/conventions/crud.md)          → Paths canônicos e padrões de 
 ```
 
 **REGRAS CRÍTICAS (convenções de caminho — aplicam quando `src/` existe):**
-- 🏭 **Reference Module antes de começar do zero:** Ao criar um novo CRUD, cheque se existe um módulo de referência em `src/app/`. Se sim, use o protocolo em `agents/skills/reference-module-copy/SKILL.md`. Se ainda não há referência (caso bootstrap), siga [`docs/conventions/crud.md`](../docs/conventions/crud.md) do zero.
+- 🏭 **Reference Module Copy:** Só invoque o protocolo em `agents/skills/reference-module-copy/SKILL.md` quando o sprint file nomear explicitamente um módulo de referência (ex: "use como referência o módulo categories"). Nesse caso, copie APENAS do módulo indicado. Se o sprint file não nomear nenhum módulo de referência, use os templates do design system (`design_system/components/recipes/` e `design_system/components/catalog/templates/`) como fonte de estrutura. **Nunca escolha um módulo de `src/app/` por conta própria.**
 - As regras invioláveis de código, paths canônicos e contratos estão em [`docs/conventions/standards.md`](../docs/conventions/standards.md) — fonte única.
 
 **Se você pular a leitura dos arquivos obrigatórios, VAI criar arquivos em locais errados.**
