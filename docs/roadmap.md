@@ -1,6 +1,6 @@
 # Roadmap — Alinhar o sistema ao banco existente
 
-**Última atualização:** 2026-04-16
+**Última atualização:** 2026-04-17
 **Status do banco:** 15 tabelas em `public` (multi-tenant por `organization_id`). Snapshot em [`schema_snapshot.json`](./schema_snapshot.json).
 **Status do app:** bootstrap + dashboard mockado. Zero auth, zero módulo de negócio real.
 
@@ -15,10 +15,10 @@ Sprint 03 → Auth & Tenancy          ← bloqueia tudo - Feito
 Sprint 04 → Profile & Org Settings  ← fecha auth - Feito
 Sprint 05 → Categories (catálogo)   ← warm-up CRUD - Feito
 Sprint 06 → Products + Storage      ← upload + galeria - Feito
-Sprint 07 → Lead Origins (settings)
-Sprint 08 → Loss Reasons (settings)
-Sprint 09 → Tags (settings)
-Sprint 10 → Leads — Lista (table)   ← core do produto
+Sprint 07 → Lead Origins (menu Leads > Origens)
+Sprint 08 → Loss Reasons (menu Leads > Motivos de Perda)
+Sprint 09 → Tags (menu Leads > Tags)
+Sprint 10 → Leads — Lista (menu Leads > Todos os Leads) ← core do produto
 Sprint 11 → Funnels
 Sprint 12 → Funnel Stages
 Sprint 13 → Pipeline — Kanban DnD
@@ -135,9 +135,11 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabela:** `lead_origins`.
 
-**Trabalho:** CRUD curto em `/settings/leads/origins`. Form com name, type, platform, active.
+**Menu:** Leads > Origens
 
-**Aceite:** admin consegue criar/editar/desativar origens; RLS bloqueia origem de outra org.
+**Trabalho:** CRUD curto em `/leads/origins`. Form com name, type, platform, active. Criar o menu lateral "Leads" com submenus: Todos os Leads, Origens, Tags, Motivos de Perda. Neste sprint, apenas "Origens" estará funcional — os demais links ficam visíveis mas apontam para páginas placeholder.
+
+**Aceite:** admin consegue criar/editar/desativar origens; RLS bloqueia origem de outra org; menu Leads aparece no sidebar com os 4 submenus.
 
 ---
 
@@ -145,7 +147,14 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabela:** `loss_reasons`.
 
-**Trabalho:** CRUD curto em `/settings/leads/loss-reasons`. Form com name, description, active.
+**Menu:** Leads > Motivos de Perda
+
+**Trabalho:** CRUD curto em `/leads/loss-reasons`. Form com name, description, active.
+
+**Telas Modelo**
+- Lista - Baseada em design_system/telas_protas/leads_lista.html
+- Inclusão  - Baseada em design_system/telas_protas/leads_criar.html
+- Alteralção - Baseada em design_system/telas_protas/leads_editar.html
 
 **Aceite:** admin consegue criar/editar/desativar motivos de perda; lista mostra apenas os da org.
 
@@ -155,7 +164,9 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabela:** `tags`.
 
-**Trabalho:** CRUD curto em `/settings/leads/tags`. Form com name, color (picker), active. Preview visual no listing.
+**Menu:** Leads > Tags
+
+**Trabalho:** CRUD curto em `/leads/tags`. Form com name, color (picker), active. Preview visual no listing.
 
 **Aceite:** admin cria tag colorida, edita cor, desativa; pronto para consumo pelo módulo de Leads (lead_tags M2M).
 
@@ -165,8 +176,10 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabelas:** `leads` (27 colunas), `lead_tags`, `lead_origins`, `loss_reasons`, `profiles` (assigned_to, created_by), `tags`.
 
+**Menu:** Leads > Todos os Leads
+
 **Trabalho:**
-- `/leads` tabela com colunas: nome, email, telefone, origem, status, score, value, assigned_to, created_at.
+- `/leads` (lista principal) tabela com colunas: nome, email, telefone, origem, status, score, value, assigned_to, created_at.
 - Filtros: status, origin_id, assigned_to, tag, busca por texto (nome/email/company).
 - Paginação server-side.
 - `/leads/new` e `/leads/[id]` — form com todos os 27 campos distribuídos em tabs (Dados · UTM · Comercial · Notas).
