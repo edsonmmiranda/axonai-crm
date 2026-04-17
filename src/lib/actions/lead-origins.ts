@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
+import { LEAD_ORIGIN_SORT_KEYS } from '@/lib/lead-origins/constants';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
 
@@ -67,12 +68,18 @@ const UpdateLeadOriginSchema = z.object({
   is_active: IsActiveSchema,
 });
 
+const SortRuleSchema = z.object({
+  key: z.enum(LEAD_ORIGIN_SORT_KEYS),
+  dir: z.enum(['asc', 'desc']),
+});
+
 const ListParamsSchema = z.object({
   search: z.string().trim().max(100).optional(),
   type: z.string().trim().max(50).optional(),
   isActive: z.boolean().optional(),
   page: z.number().int().min(1).optional().default(1),
   pageSize: z.number().int().min(1).max(100).optional().default(20),
+  sort: z.array(SortRuleSchema).max(6).optional().default([]),
 });
 
 export type CreateLeadOriginInput = z.infer<typeof CreateLeadOriginSchema>;
@@ -94,16 +101,24 @@ export async function getLeadOriginsAction(
     const ctx = await getSessionContext();
     const supabase = await createClient();
 
-    const { search, type, isActive, page, pageSize } = parsed.data;
+    const { search, type, isActive, page, pageSize, sort } = parsed.data;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
     let query = supabase
       .from('lead_origins')
       .select(LEAD_ORIGINS_COLUMNS, { count: 'exact' })
-      .eq('organization_id', ctx.organizationId)
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .eq('organization_id', ctx.organizationId);
+
+    if (sort.length > 0) {
+      for (const rule of sort) {
+        query = query.order(rule.key, { ascending: rule.dir === 'asc' });
+      }
+    } else {
+      query = query.order('created_at', { ascending: false });
+    }
+
+    query = query.range(from, to);
 
     if (typeof isActive === 'boolean') {
       query = query.eq('is_active', isActive);

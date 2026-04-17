@@ -2,8 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { Search } from 'lucide-react';
 
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -74,21 +74,26 @@ export function LeadOriginsToolbar() {
   }
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="w-full sm:max-w-xs">
-          <Label htmlFor="originsSearch" className="sr-only">
-            Buscar origem
-          </Label>
-          <Input
-            id="originsSearch"
-            type="search"
-            placeholder="Buscar por nome..."
-            value={value}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+    <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm xl:flex-row xl:items-center">
+      <div className="relative flex-1">
+        <Label htmlFor="originsSearch" className="sr-only">
+          Buscar origem
+        </Label>
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <Search className="size-5 text-text-secondary" aria-hidden="true" />
         </div>
-        <div className="w-full sm:w-40">
+        <input
+          id="originsSearch"
+          type="search"
+          placeholder="Buscar por nome..."
+          value={value}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="block w-full rounded-lg border border-field-border bg-field py-2.5 pl-10 pr-3 text-sm text-field-fg transition-all placeholder:text-field-placeholder hover:border-field-border-hover focus-visible:border-field-border-focus focus-visible:outline-none focus-visible:shadow-focus"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-row lg:items-center">
+        <div className="w-full lg:w-44">
           <Label htmlFor="originsType" className="sr-only">
             Filtrar por tipo
           </Label>
@@ -106,16 +111,17 @@ export function LeadOriginsToolbar() {
             </SelectContent>
           </Select>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Switch
-          id="showInactive"
-          checked={showInactive}
-          onCheckedChange={onToggleInactive}
-        />
-        <Label htmlFor="showInactive" className="text-sm text-text-secondary">
-          Mostrar inativas
-        </Label>
+
+        <div className="flex items-center gap-2">
+          <Switch
+            id="showInactive"
+            checked={showInactive}
+            onCheckedChange={onToggleInactive}
+          />
+          <Label htmlFor="showInactive" className="whitespace-nowrap text-sm text-text-secondary">
+            Mostrar inativas
+          </Label>
+        </div>
       </div>
     </div>
   );
