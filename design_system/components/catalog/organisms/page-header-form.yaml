@@ -1,6 +1,6 @@
 name: Page Header — Form
 level: organism
-description: Título da página com breadcrumb, badges de status (edit), metadados de datas (edit) e botões.
+description: Título da página, com badge de status e metadados de datas na variante edit. Não contém botões — ações ficam no Form Action Bar inferior.
 used_in:
   - form-create
   - form-edit
@@ -14,31 +14,19 @@ tokens_used:
 
 variants:
   - name: create
-    description: Título simples com botões Cancelar/Salvar.
+    description: Título simples, sem botões (ações vivem no Form Action Bar inferior).
     code: |
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">{title}</h2>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" href="leads.html">Cancelar</Button>
-          <Button variant="primary" icon={Check}>{submitLabel}</Button>
-        </div>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">{title}</h2>
       </div>
 
   - name: edit
-    description: Título com badge de status + metadados de datas + botões.
+    description: Título com badge de status + metadados de datas. Sem botões — Cancel/Save ficam no Form Action Bar inferior.
     code: |
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">{title}</h2>
-            <Badge intent="warning">{status}</Badge>
-          </div>
-          <EditPageMetadata />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">{title}</h2>
+          <Badge intent="warning">{status}</Badge>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" href="leads.html">Cancelar</Button>
-          <Button variant="primary" icon={Check}>{submitLabel}</Button>
-        </div>
+        <EditPageMetadata />
       </div>

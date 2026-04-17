@@ -1,0 +1,41 @@
+name: Danger Zone Card
+level: organism
+description: Card destacado para ações destrutivas irreversíveis (excluir recurso). Padrão obrigatório como ÚLTIMO bloco em telas de edição, abaixo do Form Action Bar.
+used_in:
+  - form-edit
+
+tokens_used:
+  - border-feedback-danger-border
+  - bg-feedback-danger-bg
+  - text-feedback-danger-fg
+  - bg-action-danger
+  - text-action-danger-fg
+
+variants:
+  - name: default
+    description: Card com borda/fundo danger, ícone de alerta, título, descrição da ação e botão Excluir.
+    code: |
+      <div className="mt-4 rounded-xl border border-feedback-danger-border bg-feedback-danger-bg p-6 shadow-sm">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="size-5 text-feedback-danger-fg flex-shrink-0 mt-0.5" />
+          <div className="flex flex-col gap-3">
+            <div>
+              <h3 className="text-base font-bold text-feedback-danger-fg">Zona de Perigo</h3>
+              <p className="text-sm text-feedback-danger-fg/90 mt-1">
+                Excluir este {resource} é uma ação permanente e não pode ser desfeita.
+                {collateralDescription}
+              </p>
+            </div>
+            <Button variant="danger" icon={Trash2} className="w-fit">
+              Excluir {Resource}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+usage_rules: |
+  - Colocar SEMPRE como último bloco da tela de edição, após o Form Action Bar inferior.
+  - Obrigatório em toda tela de edição que permita exclusão do recurso.
+  - Copy da descrição deve nomear colaterais (ex.: "Todo o histórico de atividades e anexos associados também serão excluídos.").
+  - NÃO embutir o botão de exclusão no Form Action Bar nem no Page Header — o Danger Zone Card é o único local canônico.
+  - Botão de exclusão deve abrir um Dialog de confirmação (ver dialog.yaml) antes de executar.

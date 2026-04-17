@@ -1,6 +1,6 @@
 name: Form Page (Edit)
 level: template
-description: Template de formulário de edição. Mesmo layout do Create, com status badge, metadados, activity timeline e botão delete.
+description: Template de formulário de edição. Mesmo layout do Create, com status badge, metadados, activity timeline, action bar inferior (Cancel/Save) e card dedicado de Danger Zone para exclusão.
 used_in:
   - form-edit
 
@@ -17,6 +17,8 @@ organisms:
     file: catalog/organisms/activity-timeline.yaml
   - name: Form Action Bar
     file: catalog/organisms/form-action-bar.yaml
+  - name: Danger Zone Card
+    file: catalog/organisms/danger-zone-card.yaml
 
 molecules:
   - name: Breadcrumb
@@ -25,12 +27,12 @@ molecules:
     file: catalog/molecules/edit-page-metadata.yaml
 
 layout: |
-  Mesmo do Form Create, com adições:
-  - Status badge no título (Page Header — Form variante edit)
-  - Metadados de datas (criação + última atualização)
-  - Form Card Section adicional: Activity Timeline (read-only)
-  - Form Action Bar com layout split: Delete à esquerda, Cancel/Save à direita
-  - Campos pré-preenchidos com dados existentes
+  Mesmo do Form Create, com adições/diferenças:
+  - Page Header — Form variante edit: título + status badge + metadados de datas (criação + última atualização). SEM botões no header.
+  - Campos pré-preenchidos com dados existentes.
+  - Form Card Section adicional: Activity Timeline (read-only).
+  - Form Action Bar ao final do form: Cancelar + Salvar Alterações, alinhados à direita (mesmo layout do Create).
+  - Danger Zone Card como ÚLTIMO bloco da tela, abaixo do Action Bar: card dedicado com borda/fundo feedback-danger, ícone de alerta, título "Zona de Perigo", descrição da ação destrutiva e botão Excluir.
 
 container: |
   Mesmo do Form Create: max-w-4xl mr-auto flex flex-col gap-6 pb-10
