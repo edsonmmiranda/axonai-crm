@@ -123,10 +123,10 @@ O roadmap menciona "Form com name, description, active", mas a tabela `loss_reas
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
-| Banco de dados | `@db-admin` | ⬜ Pendente | — |
-| Server Actions | `@backend` | ⬜ Pendente | — |
-| Frontend | `@frontend+` | ⬜ Pendente | — |
-| Guardian | `@guardian` | ⬜ Pendente | — |
+| Banco de dados | `@db-admin` | ✅ Concluído | Tabela + RLS já existem, sem migration |
+| Server Actions | `@backend` | ✅ Concluído | `src/lib/actions/loss-reasons.ts`, `src/lib/loss-reasons/constants.ts` |
+| Frontend | `@frontend+` | ✅ Concluído | `src/app/(app)/leads/loss-reasons/page.tsx`, `new/page.tsx`, `[id]/page.tsx`, `src/components/loss-reasons/*` |
+| Guardian | `@guardian` | ✅ Concluído | APPROVED — sem violações |
 | Git | `@git-master` | ⬜ Pendente | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review
