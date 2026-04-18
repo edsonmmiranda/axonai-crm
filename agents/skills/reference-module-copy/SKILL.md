@@ -36,6 +36,7 @@ Two cases:
 **Case A (real module):** Read ALL files listed in PRD's "Files to Copy" section:
 
 ```
+0. Read `src/app/[reference]/layout.tsx`              ← layout do módulo (DashboardShell)
 1. Read `src/app/[reference]/page.tsx`
 2. Read `src/app/[reference]/new/page.tsx`
 3. Read `src/app/[reference]/[id]/edit/page.tsx`
@@ -186,6 +187,7 @@ export function ProductList({ products, onEdit }: ProductListProps) { // ✅ Nam
 
 After copying, verify:
 
+- [ ] Module `layout.tsx` exists and imports `DashboardShell`
 - [ ] All files from reference module have been copied
 - [ ] File names follow naming pattern (kebab-case)
 - [ ] Component names follow naming pattern (PascalCase)

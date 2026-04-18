@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>SalesPro CRM - Dashboard</title>
+    <title>SalesPro CRM</title>
 
     <!-- Design System: variables.css is the generated output (layer 3) -->
     <link href="../generated/variables.css" rel="stylesheet" />
@@ -63,6 +63,7 @@
                             },
                             danger: {
                                 DEFAULT: "rgb(var(--ds-action-danger-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-danger-bg-hover) / <alpha-value>)",
                                 fg:      "rgb(var(--ds-action-danger-fg) / <alpha-value>)",
                             },
                         },
@@ -73,6 +74,7 @@
                             border:        "rgb(var(--ds-field-border) / <alpha-value>)",
                             "border-hover":"rgb(var(--ds-field-border-hover) / <alpha-value>)",
                             "border-focus":"rgb(var(--ds-field-border-focus) / <alpha-value>)",
+                            "border-error":"rgb(var(--ds-field-border-error) / <alpha-value>)",
                         },
                         feedback: {
                             success: {
@@ -146,7 +148,7 @@
 <body class="bg-surface-base text-text-primary font-sans h-screen flex overflow-hidden selection:bg-action-primary selection:text-action-primary-fg">
 
     <!-- ================================================================
-         SIDEBAR
+         SIDEBAR (shared across all pages)
          ================================================================ -->
     <aside class="hidden md:flex flex-col w-64 h-full border-r border-border bg-surface-raised flex-shrink-0 z-30 shadow-sm">
         <!-- Logo -->
@@ -163,26 +165,24 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 flex flex-col gap-2 px-4 py-6 overflow-y-auto">
-            <!-- Active item -->
-            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-action-primary/10 border border-action-primary/20 group transition-all hover:bg-action-primary/20"
-                href="#">
-                <i data-lucide="layout-dashboard" class="size-5 text-action-primary"></i>
-                <p class="text-action-primary text-sm font-medium">Dashboard</p>
+        <nav id="sidebar-nav" class="flex-1 flex flex-col gap-2 px-4 py-6 overflow-y-auto">
+            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="#" data-nav="dashboard_home" data-icon="layout-dashboard">
+                <i data-lucide="layout-dashboard" class="size-5"></i>
+                <p class="text-sm font-medium">Dashboard</p>
             </a>
-            <!-- Inactive items -->
-            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
-                href="#">
+            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="#" data-nav="entidade_lista" data-icon="users">
                 <i data-lucide="users" class="size-5"></i>
                 <p class="text-sm font-medium">Leads</p>
             </a>
-            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
-                href="#">
+            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="#" data-nav="pipeline" data-icon="kanban">
                 <i data-lucide="kanban" class="size-5"></i>
                 <p class="text-sm font-medium">Pipeline</p>
             </a>
-            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
-                href="#">
+            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                href="#" data-nav="" data-icon="message-circle">
                 <i data-lucide="message-circle" class="size-5"></i>
                 <div class="flex flex-1 justify-between items-center">
                     <p class="text-sm font-medium">WhatsApp</p>
@@ -193,8 +193,8 @@
             <!-- Section divider -->
             <div class="mt-4 pt-4 border-t border-border">
                 <p class="px-3 text-xs font-semibold text-text-muted uppercase tracking-wide mb-2">Relatórios</p>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
-                    href="#">
+                <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors"
+                    href="#" data-nav="" data-icon="bar-chart-3">
                     <i data-lucide="bar-chart-3" class="size-5"></i>
                     <p class="text-sm font-medium">Desempenho</p>
                 </a>
@@ -211,14 +211,14 @@
     </aside>
 
     <!-- ================================================================
-         MAIN CONTENT
+         MAIN CONTENT AREA
          ================================================================ -->
     <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-surface-base">
 
         <!-- ============================================================
-             HEADER
+             GLOBAL HEADER (hidden when pipeline is loaded)
              ============================================================ -->
-        <header class="h-16 flex items-center justify-between px-6 border-b border-border bg-surface-raised/80 backdrop-blur-md sticky top-0 z-20">
+        <header id="global-header" class="h-16 flex items-center justify-between px-6 border-b border-border bg-surface-raised/80 backdrop-blur-md sticky top-0 z-20">
             <!-- Mobile menu toggle -->
             <button class="md:hidden text-text-primary mr-4">
                 <i data-lucide="menu" class="size-6"></i>
@@ -259,370 +259,83 @@
         </header>
 
         <!-- ============================================================
-             SCROLLABLE CONTENT
+             CONTENT SLOT — loaded via iframe (works on file:// protocol)
              ============================================================ -->
-        <div class="flex-1 overflow-y-auto p-6">
-            <div class="max-w-[1400px] mr-auto flex flex-col gap-6 pb-10">
+        <iframe id="content-frame" class="flex-1 w-full border-none" src="_conteudo/dashboard_home.html"></iframe>
 
-                <!-- ========================================================
-                     GREETING + QUICK ACTIONS
-                     ======================================================== -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                    <div>
-                        <h2 class="text-3xl font-bold text-text-primary tracking-tight">Bom dia, Roberto!</h2>
-                        <p class="text-text-secondary mt-1">Aqui está o resumo das suas atividades de hoje, <span class="text-action-ghost-fg font-medium">24 de Outubro</span>.</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="flex flex-col items-center justify-center size-[72px] rounded-xl bg-surface-raised hover:bg-action-primary/5 border border-border hover:border-action-primary/50 transition-all group gap-1 shadow-sm hover:shadow-md">
-                            <i data-lucide="user-plus" class="size-5 text-action-primary group-hover:scale-110 transition-transform"></i>
-                            <span class="text-[10px] font-medium text-text-secondary group-hover:text-action-ghost-fg">Lead</span>
-                        </button>
-                        <button class="flex flex-col items-center justify-center size-[72px] rounded-xl bg-surface-raised hover:bg-action-primary/5 border border-border hover:border-action-primary/50 transition-all group gap-1 shadow-sm hover:shadow-md">
-                            <i data-lucide="file-text" class="size-5 text-action-primary group-hover:scale-110 transition-transform"></i>
-                            <span class="text-[10px] font-medium text-text-secondary group-hover:text-action-ghost-fg">Proposta</span>
-                        </button>
-                        <button class="flex flex-col items-center justify-center size-[72px] rounded-xl bg-surface-raised hover:bg-action-primary/5 border border-border hover:border-action-primary/50 transition-all group gap-1 shadow-sm hover:shadow-md">
-                            <i data-lucide="circle-check" class="size-5 text-action-primary group-hover:scale-110 transition-transform"></i>
-                            <span class="text-[10px] font-medium text-text-secondary group-hover:text-action-ghost-fg text-center leading-none">Nova<br />Tarefa</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ========================================================
-                     STAT CARDS (KPIs)
-                     ======================================================== -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Card: Novos Leads -->
-                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <i data-lucide="user-plus" class="size-16 text-action-primary"></i>
-                        </div>
-                        <div class="flex flex-col gap-1 relative z-10">
-                            <p class="text-text-secondary text-sm font-medium">Novos Leads (Hoje)</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-text-primary">12</h3>
-                                <span class="text-feedback-success-fg text-xs font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                                    <i data-lucide="trending-up" class="size-3.5"></i> 30%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card: Em Negociação -->
-                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <i data-lucide="dollar-sign" class="size-16 text-feedback-info-fg"></i>
-                        </div>
-                        <div class="flex flex-col gap-1 relative z-10">
-                            <p class="text-text-secondary text-sm font-medium">Em Negociação</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-text-primary">R$ 2.4M</h3>
-                                <span class="text-feedback-success-fg text-xs font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                                    <i data-lucide="trending-up" class="size-3.5"></i> 12%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card: Contatos Realizados -->
-                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <i data-lucide="phone" class="size-16 text-feedback-accent-fg"></i>
-                        </div>
-                        <div class="flex flex-col gap-1 relative z-10">
-                            <p class="text-text-secondary text-sm font-medium">Contatos Realizados</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-text-primary">18</h3>
-                                <span class="text-text-secondary text-xs font-normal">Hoje</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card: WhatsApp -->
-                    <div class="bg-surface-raised rounded-xl p-5 border border-border shadow-sm hover:border-action-primary/30 transition-all relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <i data-lucide="message-circle" class="size-16 text-feedback-success-fg"></i>
-                        </div>
-                        <div class="flex flex-col gap-1 relative z-10">
-                            <p class="text-text-secondary text-sm font-medium">WhatsApp</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-3xl font-bold text-text-primary">8</h3>
-                                <span class="text-action-primary text-xs font-bold bg-action-primary/10 px-1.5 py-0.5 rounded">Não lidas</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ========================================================
-                     MAIN GRID: table + sidebar panels
-                     ======================================================== -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                    <!-- LEFT COLUMN (2/3) -->
-                    <div class="lg:col-span-2 flex flex-col gap-6">
-
-                        <!-- ================================================
-                             LEADS TABLE
-                             ================================================ -->
-                        <div class="bg-surface-raised rounded-xl border border-border shadow-sm flex flex-col overflow-hidden">
-                            <div class="p-5 border-b border-border-subtle flex justify-between items-center bg-surface-sunken/50">
-                                <h3 class="text-lg font-bold text-text-primary">Leads Recentes</h3>
-                                <a class="text-sm text-text-link font-medium hover:underline flex items-center gap-1" href="#">
-                                    Ver todos <i data-lucide="arrow-right" class="size-4"></i>
-                                </a>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm text-left">
-                                    <thead class="text-xs text-text-secondary uppercase bg-surface-sunken border-b border-border-subtle">
-                                        <tr>
-                                            <th class="px-6 py-3 font-semibold">Nome</th>
-                                            <th class="px-6 py-3 font-semibold">Interesse</th>
-                                            <th class="px-6 py-3 font-semibold">Origem</th>
-                                            <th class="px-6 py-3 font-semibold">Status</th>
-                                            <th class="px-6 py-3 font-semibold text-right">Ação</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-border-subtle">
-                                        <!-- Row 1 -->
-                                        <tr class="group hover:bg-surface-sunken/80 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-text-primary flex items-center gap-3">
-                                                <div class="size-8 rounded-full bg-feedback-info-bg flex items-center justify-center text-feedback-info-fg font-bold text-xs">AM</div>
-                                                Ana Maria
-                                            </td>
-                                            <td class="px-6 py-4 text-text-secondary">Consultoria Premium</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-feedback-success-bg text-feedback-success-fg text-xs font-medium border border-feedback-success-border">
-                                                    <i data-lucide="message-circle" class="size-3.5"></i> WhatsApp
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="px-2 py-1 rounded-full bg-feedback-info-bg text-feedback-info-fg text-xs font-medium border border-feedback-info-border">Novo</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <button class="text-text-muted hover:text-action-ghost-fg p-1 rounded hover:bg-action-ghost-hover/50">
-                                                    <i data-lucide="more-vertical" class="size-5"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <!-- Row 2 -->
-                                        <tr class="group hover:bg-surface-sunken/80 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-text-primary flex items-center gap-3">
-                                                <div class="size-8 rounded-full bg-feedback-accent-bg flex items-center justify-center text-feedback-accent-fg font-bold text-xs">CS</div>
-                                                Carlos Souza
-                                            </td>
-                                            <td class="px-6 py-4 text-text-secondary">Plano SaaS Enterprise</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-sunken text-text-secondary text-xs font-medium border border-border">
-                                                    <i data-lucide="globe" class="size-3.5"></i> Website
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="px-2 py-1 rounded-full bg-feedback-warning-bg text-feedback-warning-fg text-xs font-medium border border-feedback-warning-border">Reunião</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <button class="text-text-muted hover:text-action-ghost-fg p-1 rounded hover:bg-action-ghost-hover/50">
-                                                    <i data-lucide="more-vertical" class="size-5"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <!-- Row 3 -->
-                                        <tr class="group hover:bg-surface-sunken/80 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-text-primary flex items-center gap-3">
-                                                <div class="size-8 rounded-full bg-feedback-danger-bg flex items-center justify-center text-feedback-danger-fg font-bold text-xs">MJ</div>
-                                                Mariana Jones
-                                            </td>
-                                            <td class="px-6 py-4 text-text-secondary">Licença Corporativa</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-feedback-success-bg text-feedback-success-fg text-xs font-medium border border-feedback-success-border">
-                                                    <i data-lucide="message-circle" class="size-3.5"></i> WhatsApp
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="px-2 py-1 rounded-full bg-feedback-accent-bg text-feedback-accent-fg text-xs font-medium border border-feedback-accent-border">Proposta</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <button class="text-text-muted hover:text-action-ghost-fg p-1 rounded hover:bg-action-ghost-hover/50">
-                                                    <i data-lucide="more-vertical" class="size-5"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <!-- Row 4 -->
-                                        <tr class="group hover:bg-surface-sunken/80 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-text-primary flex items-center gap-3">
-                                                <div class="size-8 rounded-full bg-feedback-warning-bg flex items-center justify-center text-feedback-warning-fg font-bold text-xs">PR</div>
-                                                Paulo Ricardo
-                                            </td>
-                                            <td class="px-6 py-4 text-text-secondary">Mentoria Executiva</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-sunken text-text-secondary text-xs font-medium border border-border">
-                                                    <i data-lucide="phone" class="size-3.5"></i> Indicação
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="px-2 py-1 rounded-full bg-feedback-info-bg text-feedback-info-fg text-xs font-medium border border-feedback-info-border">Novo</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <button class="text-text-muted hover:text-action-ghost-fg p-1 rounded hover:bg-action-ghost-hover/50">
-                                                    <i data-lucide="more-vertical" class="size-5"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- ================================================
-                             BOTTOM CARDS: Meta + Goals
-                             ================================================ -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Card: Meta de Vendas (accent gradient) -->
-                            <div class="bg-gradient-to-br from-action-primary-hover to-action-primary-active rounded-xl p-6 relative overflow-hidden text-text-inverse flex flex-col justify-between min-h-[160px] shadow-lg">
-                                <div class="absolute right-0 top-0 size-32 bg-surface-raised/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                                <div>
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <i data-lucide="rocket" class="size-5"></i>
-                                        <span class="text-sm font-bold uppercase tracking-wide opacity-90">Meta de Vendas</span>
-                                    </div>
-                                    <h4 class="text-xl font-bold max-w-[90%]">Campanha Q4: Fechamento Anual</h4>
-                                </div>
-                                <div class="flex items-center justify-between mt-4">
-                                    <div class="flex -space-x-2">
-                                        <div class="size-8 rounded-full bg-surface-raised/20 border border-surface-raised/30 backdrop-blur-sm"></div>
-                                        <div class="size-8 rounded-full bg-surface-raised/20 border border-surface-raised/30 backdrop-blur-sm"></div>
-                                        <div class="size-8 rounded-full bg-surface-raised/20 border border-surface-raised/30 flex items-center justify-center text-[10px] font-bold backdrop-blur-sm">+15</div>
-                                    </div>
-                                    <button class="bg-surface-raised text-action-primary px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-surface-sunken transition-colors">Ver Detalhes</button>
-                                </div>
-                            </div>
-
-                            <!-- Card: Metas do Mês -->
-                            <div class="bg-surface-raised border border-border rounded-xl p-6 flex flex-col justify-between shadow-sm">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-text-secondary text-sm font-medium">Metas do Mês</p>
-                                        <h4 class="text-2xl font-bold text-text-primary mt-1">82% Concluído</h4>
-                                    </div>
-                                    <div class="p-2 bg-feedback-success-bg rounded-lg">
-                                        <i data-lucide="flag" class="size-5 text-feedback-success-fg"></i>
-                                    </div>
-                                </div>
-                                <div class="w-full bg-surface-sunken rounded-full h-2.5 mt-4">
-                                    <div class="bg-action-primary h-2.5 rounded-full" style="width: 82%"></div>
-                                </div>
-                                <p class="text-xs text-text-secondary mt-2">Faltam R$ 180k para atingir o bônus.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- RIGHT COLUMN (1/3) -->
-                    <div class="flex flex-col gap-6">
-
-                        <!-- ================================================
-                             PIPELINE
-                             ================================================ -->
-                        <div class="bg-surface-raised rounded-xl border border-border p-5 shadow-sm">
-                            <h3 class="text-lg font-bold text-text-primary mb-4">Pipeline de Vendas</h3>
-                            <div class="flex flex-col gap-4">
-                                <!-- Prospecção -->
-                                <div class="group">
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-text-secondary group-hover:text-action-ghost-fg transition-colors">Prospecção</span>
-                                        <span class="text-text-primary font-medium">14</span>
-                                    </div>
-                                    <div class="w-full bg-surface-sunken rounded-full h-2">
-                                        <div class="bg-feedback-info-solid-bg h-2 rounded-full" style="width: 45%"></div>
-                                    </div>
-                                </div>
-                                <!-- Demonstração -->
-                                <div class="group">
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-text-secondary group-hover:text-action-ghost-fg transition-colors">Demonstração</span>
-                                        <span class="text-text-primary font-medium">8</span>
-                                    </div>
-                                    <div class="w-full bg-surface-sunken rounded-full h-2">
-                                        <div class="bg-feedback-warning-solid-bg h-2 rounded-full" style="width: 30%"></div>
-                                    </div>
-                                </div>
-                                <!-- Proposta -->
-                                <div class="group">
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-text-secondary group-hover:text-action-ghost-fg transition-colors">Proposta</span>
-                                        <span class="text-text-primary font-medium">5</span>
-                                    </div>
-                                    <div class="w-full bg-surface-sunken rounded-full h-2">
-                                        <div class="bg-feedback-accent-solid-bg h-2 rounded-full" style="width: 15%"></div>
-                                    </div>
-                                </div>
-                                <!-- Fechamento -->
-                                <div class="group">
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-text-secondary group-hover:text-action-ghost-fg transition-colors">Fechamento</span>
-                                        <span class="text-text-primary font-medium">2</span>
-                                    </div>
-                                    <div class="w-full bg-surface-sunken rounded-full h-2">
-                                        <div class="bg-feedback-success-solid-bg h-2 rounded-full" style="width: 10%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ================================================
-                             TASKS
-                             ================================================ -->
-                        <div class="bg-surface-raised rounded-xl border border-border flex flex-col flex-1 shadow-sm">
-                            <div class="p-5 border-b border-border-subtle flex justify-between items-center bg-surface-sunken/50">
-                                <h3 class="text-lg font-bold text-text-primary">Próximas Tarefas</h3>
-                                <button class="text-action-ghost-fg hover:bg-action-primary/10 rounded p-1 transition-colors">
-                                    <i data-lucide="plus" class="size-5"></i>
-                                </button>
-                            </div>
-                            <div class="flex flex-col divide-y divide-border-subtle">
-                                <!-- Task 1 -->
-                                <div class="p-4 hover:bg-surface-sunken transition-colors cursor-pointer flex gap-3 items-start">
-                                    <div class="mt-1 size-2 rounded-full bg-feedback-warning-solid-bg shadow-sm"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-text-primary line-clamp-1">Reunião: Demo Produto (Carlos)</p>
-                                        <p class="text-xs text-text-secondary mt-0.5 flex items-center gap-1">
-                                            <i data-lucide="clock" class="size-3"></i> 14:00 - Hoje
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- Task 2 -->
-                                <div class="p-4 hover:bg-surface-sunken transition-colors cursor-pointer flex gap-3 items-start">
-                                    <div class="mt-1 size-2 rounded-full bg-feedback-danger-solid-bg shadow-sm"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-text-primary line-clamp-1">Ligar: Follow-up Proposta</p>
-                                        <p class="text-xs text-text-secondary mt-0.5 flex items-center gap-1">
-                                            <i data-lucide="clock" class="size-3"></i> 15:30 - Hoje
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- Task 3 -->
-                                <div class="p-4 hover:bg-surface-sunken transition-colors cursor-pointer flex gap-3 items-start">
-                                    <div class="mt-1 size-2 rounded-full bg-feedback-info-solid-bg shadow-sm"></div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-text-primary line-clamp-1">Enviar contrato: Ana Maria</p>
-                                        <p class="text-xs text-text-secondary mt-0.5 flex items-center gap-1">
-                                            <i data-lucide="clock" class="size-3"></i> 09:00 - Amanhã
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-4 mt-auto border-t border-border-subtle">
-                                <button class="w-full py-2 rounded-lg border border-border text-text-secondary text-sm font-medium hover:bg-surface-sunken hover:text-text-primary transition-colors">
-                                    Ver Todas as Tarefas
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <!-- Initialize Lucide icons -->
-    <script>lucide.createIcons();</script>
+    <!-- ================================================================
+         NAVIGATION ENGINE
+         ================================================================ -->
+    <script>
+        // Pages that have their own header (global header should be hidden)
+        const PAGES_WITH_OWN_HEADER = ['pipeline'];
+
+        let currentPage = null;
+
+        function loadPage(pageName) {
+            if (!pageName) return;
+
+            const frame = document.getElementById('content-frame');
+            const globalHeader = document.getElementById('global-header');
+
+            frame.src = `_conteudo/${pageName}.html`;
+
+            // Toggle global header visibility
+            if (PAGES_WITH_OWN_HEADER.includes(pageName)) {
+                globalHeader.style.display = 'none';
+            } else {
+                globalHeader.style.display = '';
+            }
+
+            // Update active state in sidebar
+            updateActiveNav(pageName);
+
+            currentPage = pageName;
+        }
+
+        function updateActiveNav(pageName) {
+            const INACTIVE = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg transition-colors';
+            const ACTIVE = 'flex items-center gap-3 px-3 py-2.5 rounded-lg bg-action-primary/10 border border-action-primary/20 group transition-all hover:bg-action-primary/20';
+
+            document.querySelectorAll('#sidebar-nav .nav-link').forEach(link => {
+                const navTarget = link.getAttribute('data-nav');
+                const icon = link.querySelector('[data-lucide]');
+                const label = link.querySelector('p');
+
+                if (navTarget === pageName) {
+                    link.className = 'nav-link ' + ACTIVE;
+                    if (icon) icon.classList.add('text-action-primary');
+                    if (label) {
+                        label.classList.add('text-action-primary');
+                        label.classList.remove('text-text-secondary');
+                    }
+                } else {
+                    link.className = 'nav-link ' + INACTIVE;
+                    if (icon) icon.classList.remove('text-action-primary');
+                    if (label) {
+                        label.classList.remove('text-action-primary');
+                    }
+                }
+            });
+        }
+
+        // Wire up sidebar nav clicks
+        document.querySelectorAll('#sidebar-nav .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-nav');
+                if (target) loadPage(target);
+            });
+        });
+
+        // Initialize Lucide icons for the shell
+        lucide.createIcons();
+
+        // Set initial active state for dashboard_home
+        updateActiveNav('dashboard_home');
+    </script>
 
 </body>
 

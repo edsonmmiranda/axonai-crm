@@ -37,4 +37,4 @@ layout: |
 container: |
   Mesmo do Form Create: max-w-4xl mr-auto flex flex-col gap-6 pb-10
 
-prototype: telas_prontas/leads_editar.html
+prototype: telas_prontas/_conteudo/entidade_editar.html

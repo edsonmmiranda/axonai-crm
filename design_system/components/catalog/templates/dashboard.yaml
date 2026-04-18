@@ -51,7 +51,7 @@ molecules:
   - path: molecules/task-item.yaml
     notes: Usado dentro do task-list
 
-prototype: telas_prontas/dashboard.html
+prototype: telas_prontas/_conteudo/dashboard_home.html
 
 layout_exceptions:
   - value: "max-w-[1400px]"

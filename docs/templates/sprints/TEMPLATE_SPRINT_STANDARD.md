@@ -52,6 +52,8 @@
 
 ### Frontend
 
+- [ ] **Layout:** `src/app/dashboard/[module]/layout.tsx` com `DashboardShell` (obrigatório — ver [`docs/conventions/crud.md`](../../conventions/crud.md))
+
 - [ ] **Rotas:**
   - `/dashboard/[module]` — listagem
   - `/dashboard/[module]/new` — criação

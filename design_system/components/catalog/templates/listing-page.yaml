@@ -40,4 +40,4 @@ container: |
   Main: flex-1 flex flex-col overflow-hidden
   Content area: flex-1 overflow-y-auto p-6 → max-w-7xl mr-auto flex flex-col gap-6
 
-prototype: telas_prontas/leads_lista.html
+prototype: telas_prontas/_conteudo/entidade_lista.html

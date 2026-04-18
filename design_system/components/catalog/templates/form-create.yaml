@@ -34,4 +34,4 @@ container: |
   Wrapper: flex h-screen bg-surface-base
   Main content: flex-1 overflow-y-auto p-6 → max-w-4xl mr-auto flex flex-col gap-6 pb-10
 
-prototype: telas_prontas/leads_criar.html
+prototype: telas_prontas/_conteudo/entidade_criar.html

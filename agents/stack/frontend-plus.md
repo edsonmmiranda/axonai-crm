@@ -34,13 +34,16 @@ Antes de escrever qualquer `page.tsx`, resolva qual é sua **fonte de verdade vi
 
 | Tipo de página | Tela pronta | Identificadores |
 |---|---|---|
-| Listagem / tabela | [`entidade_lista.html`](../../design_system/telas_prontas/entidade_lista.html) | "lista", "listagem", "tabela", "index" |
-| Formulário de criação | [`entidade_criar.html`](../../design_system/telas_prontas/entidade_criar.html) | "criar", "novo", "cadastro", "adicionar" |
-| Formulário de edição | [`entidade_editar.html`](../../design_system/telas_prontas/entidade_editar.html) | "editar", "alterar", "modificar" |
+| Listagem / tabela | [`entidade_lista.html`](../../design_system/telas_prontas/_conteudo/entidade_lista.html) | "lista", "listagem", "tabela", "index" |
+| Formulário de criação | [`entidade_criar.html`](../../design_system/telas_prontas/_conteudo/entidade_criar.html) | "criar", "novo", "cadastro", "adicionar" |
+| Formulário de edição | [`entidade_editar.html`](../../design_system/telas_prontas/_conteudo/entidade_editar.html) | "editar", "alterar", "modificar" |
 | Relatório / impressão | [`entidade_imprimir.html`](../../design_system/telas_prontas/entidade_imprimir.html) | "imprimir", "relatório", "print", "PDF" |
-| Dashboard | [`dashboard.html`](../../design_system/telas_prontas/dashboard.html) | "dashboard", "painel", "home", "visão geral" |
+| Dashboard | [`dashboard_home.html`](../../design_system/telas_prontas/_conteudo/dashboard_home.html) | "dashboard", "painel", "home", "visão geral" |
 | Login / autenticação | [`login.html`](../../design_system/telas_prontas/login.html) | "login", "autenticação", "sign in" |
-| Pipeline / kanban | [`pipeline.html`](../../design_system/telas_prontas/pipeline.html) | "pipeline", "kanban", "board", "funil" |
+| Pipeline / kanban | [`pipeline.html`](../../design_system/telas_prontas/_conteudo/pipeline.html) | "pipeline", "kanban", "board", "funil" |
+
+> **Nota:** Os arquivos em `_conteudo/` contêm **apenas o conteúdo do `<main>`** (sem sidebar, sem header global). Cada arquivo é uma página HTML completa e pode ser aberto diretamente no browser. O shell completo (sidebar + header + navegação) está em [`dashboard.html`](../../design_system/telas_prontas/dashboard.html) — ele carrega os conteúdos via iframe. Para traduzir para TSX, leia **apenas o arquivo de conteúdo** correspondente (já é só o que vai no `page.tsx`).
+> **Exceção:** `pipeline.html` inclui seu próprio header específico (não usa o header global). Quando o shell carrega pipeline, ele esconde o header global automaticamente.
 
 **Ação:** Leia **apenas** a tela pronta correspondente. Siga o Protocolo de Tradução Mecânica abaixo.  
 **Não leia:** recipes, exemplos TSX, catálogo YAMLs. A tela pronta já contém a composição validada.
@@ -80,9 +83,80 @@ Antes de escrever qualquer `page.tsx`, resolva qual é sua **fonte de verdade vi
 - Ícones: `data-lucide="nome-do-icone"`
 - Estrutura de dados (colunas de tabela, campos de form, stat cards)
 
-## Passo 2 — Traduza seção por seção, de cima para baixo
+## Passo 2 — Determine o escopo: layout vs page
 
-**Regras de preservação:**
+**ANTES de traduzir qualquer coisa**, verifique se o layout compartilhado já existe:
+
+```bash
+ls src/components/layout/dashboard-shell.tsx 2>/dev/null
+ls src/app/dashboard/layout.tsx 2>/dev/null
+```
+
+### Cenário A — `DashboardShell` já existe (módulo subsequente)
+
+O `page.tsx` contém **apenas o conteúdo da área `<main>`** do HTML:
+- **Não traduza:** `<aside>` (sidebar), `<header>`, nem a estrutura `<body>` envolvente
+- **Localize no HTML** onde a área de conteúdo principal começa — o div scrollável após o header (geralmente `<div class="flex-1 overflow-y-auto p-6">`)
+- **Traduza** tudo dentro desse div para o `page.tsx`
+
+Se o módulo ainda não tem `layout.tsx`, crie-o:
+```tsx
+// src/app/dashboard/[module]/layout.tsx
+import { DashboardShell } from '@/components/layout/dashboard-shell'
+export default function ModuleLayout({ children }: { children: React.ReactNode }) {
+  return <DashboardShell>{children}</DashboardShell>
+}
+```
+
+**Registre o módulo na navegação** — veja seção "Registro de item na navegação" abaixo.
+
+### Cenário B — `DashboardShell` não existe (primeiro módulo do projeto)
+
+1. Extraia `<aside>` + `<header>` do HTML → crie `src/components/layout/dashboard-shell.tsx` com slot `{children}` no lugar do `<main>`
+2. Crie `src/app/dashboard/layout.tsx` importando `DashboardShell`
+3. Crie o `layout.tsx` do módulo importando `DashboardShell`
+4. Traduza o conteúdo do `<main>` para `page.tsx`
+5. **Registre o módulo na navegação** — veja seção "Registro de item na navegação" abaixo
+
+> **Regra:** sidebar e header **nunca** vão dentro de `page.tsx`. Eles vivem no `DashboardShell`, que é renderizado pelo `layout.tsx` do Next.js App Router. Quando o usuário navega entre módulos, o layout não re-renderiza — só o `page.tsx` troca.
+
+---
+
+### Registro de item na navegação
+
+Todo novo módulo **deve** ser adicionado à sidebar do `DashboardShell`. Não basta criar a rota — se o item não aparece no menu, o usuário não navega até ele.
+
+**1. Localize a configuração de navegação:**
+
+```bash
+grep -rn "nav" src/components/layout/dashboard-shell.tsx 2>/dev/null
+# ou, se o projeto usa um arquivo separado:
+ls src/components/layout/nav-config.ts 2>/dev/null
+ls src/config/navigation.ts 2>/dev/null
+```
+
+**2. Se a navegação é um array de configuração** (padrão recomendado), adicione uma entrada:
+
+```tsx
+// Estrutura esperada de cada item:
+{
+  label: "Nome do Módulo",    // texto visível no menu
+  href: "/dashboard/modulo",  // rota real do Next.js
+  icon: NomeDoIcone,          // import de lucide-react (PascalCase)
+}
+```
+
+**3. Se a navegação está hardcoded no JSX** (sidebar inline), adicione um `<Link>` seguindo o padrão exato dos itens existentes — mesmas classes, mesma estrutura, mesma ordem de atributos.
+
+**Regras:**
+- **Ícone:** use um ícone Lucide que represente o domínio da entidade (ex: `Building` para empresas, `Package` para produtos, `FileText` para contratos). Consulte o sprint/PRD se houver indicação de ícone.
+- **Ordem:** insira o item na posição que faz sentido na hierarquia do menu. Se o sprint/PRD não especifica, coloque após o último item do grupo principal (antes de separadores como "Relatórios").
+- **Item ativo:** o `DashboardShell` já deve destacar o item ativo baseado na rota atual (`usePathname()`). Verifique que o `href` do novo item corresponde ao path do módulo para que o destaque funcione.
+- **Não crie seções/grupos novos** sem instrução explícita do sprint/PRD.
+
+## Passo 3 — Traduza o conteúdo da página, seção por seção
+
+**Regras de preservação** (aplicam ao conteúdo dentro do `<main>`):
 1. **Hierarquia idêntica** — mesma profundidade de nesting, mesma ordem de filhos
 2. **Classes idênticas** — copie todo `className` exatamente como está no HTML
 3. **Sem wrappers extras** — não adicione divs ou fragments que não existem no HTML
@@ -104,20 +178,16 @@ Antes de escrever qualquer `page.tsx`, resolva qual é sua **fonte de verdade vi
 | Rows mock em `<script>` | `.map()` sobre dados de server action / props |
 | `<!-- SEÇÃO -->` | `{/* SEÇÃO */}` |
 
-## Passo 3 — Componentes compartilhados do projeto
-
-Antes de traduzir sidebar e header inline, verifique:
+## Passo 4 — Componentes UI do projeto
 
 ```bash
-ls src/components/layout/ 2>/dev/null
 ls src/components/ui/ 2>/dev/null
 ```
 
-- **Layout existente** (`AppLayout`, `Sidebar`, `AppHeader`): importe-os. Não reimplemente.
-- **Layout inexistente**: implemente inline conforme o HTML.
-- **UI** (`Button`, `Input`, `Select`): use-os se existirem em `src/components/ui/` — mas abra o componente e compare as classes. Se diferirem do HTML, use elemento nativo com as classes do HTML.
+- **Se existem** (`Button`, `Input`, `Select`): use-os — mas abra o componente e compare as classes. Se diferirem do HTML, use elemento nativo com as classes do HTML.
+- **Se não existem**: use elementos nativos com as classes do HTML.
 
-## Passo 4 — O que adaptar (lista exclusiva)
+## Passo 5 — O que adaptar (lista exclusiva)
 
 Adapte **somente** os itens abaixo. Tudo fora desta lista permanece idêntico ao HTML:
 
@@ -155,7 +225,8 @@ Adapte **somente** os itens abaixo. Tudo fora desta lista permanece idêntico ao
 # ✅ CHECKLIST DE ENTREGA
 
 **Nível 1 / 2 (com referência):**
-- [ ] Cada seção do HTML tem correspondência exata no TSX — nada omitido, nada reordenado
+- [ ] `layout.tsx` do módulo existe e importa `DashboardShell`
+- [ ] Cada seção do conteúdo principal do HTML tem correspondência exata no TSX — nada omitido, nada reordenado
 - [ ] `className` dos elementos estruturais são cópia literal do HTML
 - [ ] Somente itens da lista "O que adaptar" foram modificados
 - [ ] `npm run build` passa sem erros

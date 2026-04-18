@@ -35,4 +35,4 @@ container: |
   Inner flex: flex h-full gap-5 min-w-max
   Cada coluna: largura fixa w-kanban-col (ver exceções de layout)
 
-prototype: telas_prontas/pipeline.html
+prototype: telas_prontas/_conteudo/pipeline.html

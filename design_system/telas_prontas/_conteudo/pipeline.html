@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pipeline de Vendas — SalesPro CRM</title>
+
+    <!-- Design System: variables.css is the generated output (layer 3) -->
+    <link href="../../generated/variables.css" rel="stylesheet" />
+
+    <!-- Font: loaded from the primitive font.family.sans token (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons: Lucide (per CONTRACT.md — Lucide only) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CDN configured with semantic token names -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        surface: {
+                            base:    "rgb(var(--ds-surface-base) / <alpha-value>)",
+                            raised:  "rgb(var(--ds-surface-raised) / <alpha-value>)",
+                            sunken:  "rgb(var(--ds-surface-sunken) / <alpha-value>)",
+                            overlay: "rgb(var(--ds-surface-overlay) / <alpha-value>)",
+                            inverse: "rgb(var(--ds-surface-inverse) / <alpha-value>)",
+                        },
+                        text: {
+                            primary:   "rgb(var(--ds-text-primary) / <alpha-value>)",
+                            secondary: "rgb(var(--ds-text-secondary) / <alpha-value>)",
+                            muted:     "rgb(var(--ds-text-muted) / <alpha-value>)",
+                            inverse:   "rgb(var(--ds-text-inverse) / <alpha-value>)",
+                            link:      "rgb(var(--ds-text-link) / <alpha-value>)",
+                            disabled:  "rgb(var(--ds-text-disabled) / <alpha-value>)",
+                        },
+                        border: {
+                            DEFAULT: "rgb(var(--ds-border-default) / <alpha-value>)",
+                            strong:  "rgb(var(--ds-border-strong) / <alpha-value>)",
+                            subtle:  "rgb(var(--ds-border-subtle) / <alpha-value>)",
+                            focus:   "rgb(var(--ds-border-focus) / <alpha-value>)",
+                        },
+                        action: {
+                            primary: {
+                                DEFAULT: "rgb(var(--ds-action-primary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-primary-bg-hover) / <alpha-value>)",
+                                active:  "rgb(var(--ds-action-primary-bg-active) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-primary-fg) / <alpha-value>)",
+                            },
+                            secondary: {
+                                DEFAULT: "rgb(var(--ds-action-secondary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-secondary-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-secondary-fg) / <alpha-value>)",
+                                border:  "rgb(var(--ds-action-secondary-border) / <alpha-value>)",
+                            },
+                            ghost: {
+                                hover:  "rgb(var(--ds-action-ghost-bg-hover) / <alpha-value>)",
+                                active: "rgb(var(--ds-action-ghost-bg-active) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-action-ghost-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                DEFAULT: "rgb(var(--ds-action-danger-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-danger-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-danger-fg) / <alpha-value>)",
+                            },
+                        },
+                        field: {
+                            DEFAULT:       "rgb(var(--ds-field-bg) / <alpha-value>)",
+                            fg:            "rgb(var(--ds-field-fg) / <alpha-value>)",
+                            placeholder:   "rgb(var(--ds-field-placeholder) / <alpha-value>)",
+                            border:        "rgb(var(--ds-field-border) / <alpha-value>)",
+                            "border-hover":"rgb(var(--ds-field-border-hover) / <alpha-value>)",
+                            "border-focus":"rgb(var(--ds-field-border-focus) / <alpha-value>)",
+                            "border-error":"rgb(var(--ds-field-border-error) / <alpha-value>)",
+                        },
+                        feedback: {
+                            success: {
+                                bg:         "rgb(var(--ds-feedback-success-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-success-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-success-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-success-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-success-solid-fg) / <alpha-value>)",
+                            },
+                            warning: {
+                                bg:         "rgb(var(--ds-feedback-warning-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-warning-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-warning-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-warning-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-warning-solid-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                bg:         "rgb(var(--ds-feedback-danger-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-danger-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-danger-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-danger-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-danger-solid-fg) / <alpha-value>)",
+                            },
+                            info: {
+                                bg:         "rgb(var(--ds-feedback-info-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-info-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-info-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-info-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-info-solid-fg) / <alpha-value>)",
+                            },
+                            accent: {
+                                bg:         "rgb(var(--ds-feedback-accent-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-accent-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-accent-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-accent-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-accent-solid-fg) / <alpha-value>)",
+                            },
+                        },
+                    },
+                    fontFamily: {
+                        sans: ["var(--ds-font-family-sans)"],
+                        mono: ["var(--ds-font-family-mono)"],
+                    },
+                    borderRadius: {
+                        none: "var(--ds-radius-none)",
+                        sm:   "var(--ds-radius-sm)",
+                        md:   "var(--ds-radius-md)",
+                        lg:   "var(--ds-radius-lg)",
+                        xl:   "var(--ds-radius-xl)",
+                        full: "var(--ds-radius-full)",
+                    },
+                    boxShadow: {
+                        sm:    "var(--ds-shadow-sm)",
+                        md:    "var(--ds-shadow-md)",
+                        lg:    "var(--ds-shadow-lg)",
+                        xl:    "var(--ds-shadow-xl)",
+                        focus: "var(--ds-shadow-focus)",
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--ds-surface-sunken)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--ds-border-strong)); border-radius: var(--ds-radius-sm); }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--ds-text-muted)); }
+        .kanban-scroll::-webkit-scrollbar { width: 6px; height: 8px; }
+        .kanban-scroll::-webkit-scrollbar-track { background: transparent; }
+        .kanban-scroll::-webkit-scrollbar-thumb { background: rgb(var(--ds-border-strong)); border-radius: var(--ds-radius-full); }
+        .kanban-scroll::-webkit-scrollbar-thumb:hover { background: rgb(var(--ds-text-muted)); }
+        .kanban-card { transition: box-shadow 200ms, opacity 200ms, transform 200ms; }
+        .kanban-card.is-dragging { opacity: 0.5; transform: rotate(2deg); }
+        .kanban-column.is-drag-over { outline: 2px solid rgb(var(--ds-border-focus)); outline-offset: -2px; border-radius: var(--ds-radius-xl); }
+        .kanban-column .drop-indicator { display: none; }
+        .kanban-column.is-drag-over .drop-indicator { display: block; }
+    </style>
+</head>
+
+<body class="bg-surface-base text-text-primary font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- ============================================================
+         CONTENT: Pipeline de Vendas (Kanban)
+         SPECIAL: This page has its own header (not the global app header).
+         When loaded via dashboard.html, the shell hides #global-header.
+         Also viewable standalone.
+         ============================================================ -->
+
+    <!-- ============================================================
+         PIPELINE HEADER (replaces global header for this page)
+         ============================================================ -->
+    <header class="flex flex-col gap-4 px-6 py-5 bg-surface-raised border-b border-border z-20 shadow-sm">
+        <!-- Top row: title + actions -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="kanban" class="size-6 text-action-primary"></i>
+                    <h1 class="text-text-primary text-2xl font-bold tracking-tight">Pipeline de Vendas</h1>
+                </div>
+                <button class="flex items-center gap-1 px-2 py-1 rounded-md text-text-secondary hover:bg-surface-sunken transition-colors">
+                    <i data-lucide="chevron-down" class="size-4"></i>
+                </button>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="hidden sm:flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-border bg-surface-raised text-text-secondary text-sm font-medium hover:bg-surface-sunken hover:text-text-primary transition-colors shadow-sm">
+                    <i data-lucide="settings-2" class="size-4"></i>
+                    <span>Configurar Colunas</span>
+                </button>
+                <button class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-4 text-sm font-semibold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover active:bg-action-primary-active">
+                    <i data-lucide="plus" class="size-4"></i>
+                    <span>Novo Negócio</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom row: search + filters + team avatars -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-1 min-w-[300px]">
+                <div class="relative flex-1 max-w-md">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-muted pointer-events-none"></i>
+                    <input class="h-10 w-full bg-field border border-field-border rounded-lg pl-10 pr-4 text-sm text-field-fg placeholder:text-field-placeholder focus:outline-none focus:border-field-border-focus focus:shadow-focus transition-colors"
+                        placeholder="Buscar por nome, empresa ou valor..." type="text" />
+                </div>
+                <div class="hidden md:flex items-center gap-2 border-l border-border pl-3">
+                    <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-sunken text-sm font-medium transition-colors">
+                        <i data-lucide="user" class="size-4"></i>
+                        <span>Responsável</span>
+                        <i data-lucide="chevron-down" class="size-3 text-text-muted"></i>
+                    </button>
+                    <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-text-secondary hover:bg-surface-sunken text-sm font-medium transition-colors">
+                        <i data-lucide="flag" class="size-4"></i>
+                        <span>Prioridade</span>
+                        <i data-lucide="chevron-down" class="size-3 text-text-muted"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="flex -space-x-2">
+                    <div class="size-8 rounded-full border-2 border-surface-raised bg-surface-sunken flex items-center justify-center text-[10px] font-bold text-text-secondary" title="João">JS</div>
+                    <div class="size-8 rounded-full border-2 border-surface-raised bg-feedback-info-bg flex items-center justify-center text-[10px] font-bold text-feedback-info-fg" title="Maria">MA</div>
+                    <div class="size-8 rounded-full border-2 border-surface-raised bg-feedback-success-bg flex items-center justify-center text-[10px] font-bold text-feedback-success-fg" title="Carlos">CP</div>
+                    <div class="size-8 rounded-full border-2 border-surface-raised bg-surface-sunken flex items-center justify-center text-[10px] font-bold text-text-muted hover:bg-surface-base cursor-pointer transition-colors">+2</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         KANBAN BOARD
+         ============================================================ -->
+    <div id="kanban-board" class="flex-1 overflow-x-auto overflow-y-hidden kanban-scroll bg-surface-base p-6">
+        <div class="flex h-full gap-5 min-w-max pb-2">
+
+            <!-- Column: Prospecção -->
+            <div class="kanban-column flex flex-col w-[300px] 2xl:w-[340px] h-full rounded-xl bg-surface-sunken/50 flex-shrink-0" data-stage="prospeccao">
+                <div class="px-4 py-3 flex justify-between items-center rounded-t-xl">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-text-primary font-bold text-sm uppercase tracking-wide">Prospecção</h2>
+                        <span class="bg-surface-sunken text-text-secondary text-xs px-2 py-0.5 rounded-full font-bold">4</span>
+                    </div>
+                    <span class="text-text-muted text-xs font-semibold">R$ 175k</span>
+                </div>
+                <div class="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-3 kanban-scroll card-list">
+                    <div class="drop-indicator h-1 bg-action-primary rounded-full mx-2"></div>
+
+                    <div class="kanban-card group relative bg-surface-raised p-3.5 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-action-primary/50 cursor-grab active:cursor-grabbing" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-feedback-accent-bg text-feedback-accent-fg text-[10px] font-bold px-2.5 py-1 rounded-md border border-feedback-accent-border uppercase tracking-wide">Novo</span>
+                            <span class="text-[10px] font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded">Ontem</span>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Licença Enterprise</h3>
+                            <p class="text-text-secondary text-xs font-medium flex items-center gap-1">
+                                <i data-lucide="building" class="size-3.5 text-text-muted"></i> Tech Solutions Ltda
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-surface-sunken ring-2 ring-surface-raised text-[10px] flex items-center justify-center font-bold text-text-secondary shadow-sm">JS</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 45k</span>
+                            </div>
+                            <button class="size-6 flex items-center justify-center rounded-full hover:bg-action-ghost-hover text-text-muted hover:text-action-primary transition-colors opacity-0 group-hover:opacity-100">
+                                <i data-lucide="arrow-right" class="size-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card group relative bg-surface-raised p-3.5 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-action-primary/50 cursor-grab active:cursor-grabbing" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-feedback-info-bg text-feedback-info-fg text-[10px] font-bold px-2.5 py-1 rounded-md border border-feedback-info-border uppercase tracking-wide">Indicação</span>
+                            <span class="text-[10px] font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded">2d</span>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Upgrade Plano Anual</h3>
+                            <p class="text-text-secondary text-xs font-medium flex items-center gap-1">
+                                <i data-lucide="truck" class="size-3.5 text-text-muted"></i> Logística Express
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-feedback-info-bg ring-2 ring-surface-raised text-[10px] flex items-center justify-center font-bold text-feedback-info-fg shadow-sm">MA</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 20k</span>
+                            </div>
+                            <button class="size-6 flex items-center justify-center rounded-full hover:bg-action-ghost-hover text-text-muted hover:text-action-primary transition-colors opacity-0 group-hover:opacity-100">
+                                <i data-lucide="arrow-right" class="size-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button class="mx-3 mb-3 py-2 rounded-lg border border-dashed border-border text-text-muted text-xs font-bold hover:bg-surface-raised hover:text-action-primary hover:border-action-primary/30 transition-colors flex items-center justify-center gap-1 bg-transparent">
+                    <i data-lucide="plus" class="size-4"></i> Adicionar
+                </button>
+            </div>
+
+            <!-- Column: Qualificação -->
+            <div class="kanban-column flex flex-col w-[300px] 2xl:w-[340px] h-full rounded-xl bg-surface-sunken/50 flex-shrink-0" data-stage="qualificacao">
+                <div class="px-4 py-3 flex justify-between items-center rounded-t-xl">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-text-primary font-bold text-sm uppercase tracking-wide">Qualificação</h2>
+                        <span class="bg-feedback-info-bg text-feedback-info-fg text-xs px-2 py-0.5 rounded-full font-bold">2</span>
+                    </div>
+                    <span class="text-text-muted text-xs font-semibold">R$ 95k</span>
+                </div>
+                <div class="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-3 kanban-scroll card-list">
+                    <div class="drop-indicator h-1 bg-action-primary rounded-full mx-2"></div>
+
+                    <div class="kanban-card group relative bg-surface-raised p-3.5 rounded-xl border-l-4 border-l-feedback-warning-fg border-y border-r border-border shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-feedback-warning-bg text-feedback-warning-fg text-[10px] font-bold px-2.5 py-1 rounded-md border border-feedback-warning-border uppercase tracking-wide">Atenção</span>
+                            <span class="text-feedback-warning-fg text-xs font-bold flex items-center gap-1">
+                                <i data-lucide="alert-triangle" class="size-3.5"></i> 2d sem contato
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Consultoria Financeira</h3>
+                            <p class="text-text-secondary text-xs font-medium">Invest Corp</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-surface-sunken text-[10px] flex items-center justify-center font-bold text-text-secondary">JS</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 15k</span>
+                            </div>
+                            <button class="size-6 flex items-center justify-center rounded-full hover:bg-action-ghost-hover text-text-muted hover:text-action-primary transition-colors opacity-0 group-hover:opacity-100">
+                                <i data-lucide="arrow-right" class="size-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card group relative bg-surface-raised p-3.5 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-action-primary/50 cursor-grab active:cursor-grabbing" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-surface-sunken text-text-secondary text-[10px] font-bold px-2.5 py-1 rounded-md border border-border uppercase tracking-wide">Inbound</span>
+                            <span class="text-[10px] font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded">Hoje</span>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Projeto Marketplace</h3>
+                            <p class="text-text-secondary text-xs font-medium">StartUp Hub</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-feedback-success-bg text-[10px] flex items-center justify-center font-bold text-feedback-success-fg">CP</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 80k</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-feedback-success-fg text-[10px] font-bold bg-feedback-success-bg px-1.5 py-0.5 rounded">
+                                <i data-lucide="phone" class="size-3"></i> Agendado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="mx-3 mb-3 py-2 rounded-lg border border-dashed border-border text-text-muted text-xs font-bold hover:bg-surface-raised hover:text-action-primary hover:border-action-primary/30 transition-colors flex items-center justify-center gap-1 bg-transparent">
+                    <i data-lucide="plus" class="size-4"></i> Adicionar
+                </button>
+            </div>
+
+            <!-- Column: Proposta -->
+            <div class="kanban-column flex flex-col w-[300px] 2xl:w-[340px] h-full rounded-xl bg-surface-sunken/50 flex-shrink-0" data-stage="proposta">
+                <div class="px-4 py-3 flex justify-between items-center rounded-t-xl">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-text-primary font-bold text-sm uppercase tracking-wide">Proposta</h2>
+                        <span class="bg-feedback-warning-bg text-feedback-warning-fg text-xs px-2 py-0.5 rounded-full font-bold">2</span>
+                    </div>
+                    <span class="text-text-muted text-xs font-semibold">R$ 170k</span>
+                </div>
+                <div class="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-3 kanban-scroll card-list">
+                    <div class="drop-indicator h-1 bg-action-primary rounded-full mx-2"></div>
+
+                    <div class="kanban-card group relative bg-surface-raised p-3.5 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-action-primary/50 cursor-grab active:cursor-grabbing" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-surface-sunken text-text-secondary text-[10px] font-bold px-2.5 py-1 rounded-md border border-border uppercase tracking-wide">Recorrente</span>
+                            <span class="text-[10px] font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded">3d</span>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Renovação Contrato</h3>
+                            <p class="text-text-secondary text-xs font-medium">Banco Nacional</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-feedback-info-bg text-[10px] flex items-center justify-center font-bold text-feedback-info-fg">MA</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 120k</span>
+                            </div>
+                            <button class="size-6 flex items-center justify-center rounded-full hover:bg-action-ghost-hover text-text-muted hover:text-action-primary transition-colors opacity-0 group-hover:opacity-100">
+                                <i data-lucide="arrow-right" class="size-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card group relative bg-surface-raised p-3.5 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-action-primary/50 cursor-grab active:cursor-grabbing" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-feedback-accent-bg text-feedback-accent-fg text-[10px] font-bold px-2.5 py-1 rounded-md border border-feedback-accent-border uppercase tracking-wide">Novo</span>
+                            <span class="text-[10px] font-semibold text-text-muted bg-surface-sunken px-1.5 py-0.5 rounded">1d</span>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Automação de Marketing</h3>
+                            <p class="text-text-secondary text-xs font-medium">Agência Criativa</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-surface-sunken text-[10px] flex items-center justify-center font-bold text-text-secondary">JS</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 50k</span>
+                            </div>
+                            <button class="size-6 flex items-center justify-center rounded-full hover:bg-action-ghost-hover text-text-muted hover:text-action-primary transition-colors opacity-0 group-hover:opacity-100">
+                                <i data-lucide="arrow-right" class="size-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button class="mx-3 mb-3 py-2 rounded-lg border border-dashed border-border text-text-muted text-xs font-bold hover:bg-surface-raised hover:text-action-primary hover:border-action-primary/30 transition-colors flex items-center justify-center gap-1 bg-transparent">
+                    <i data-lucide="plus" class="size-4"></i> Adicionar
+                </button>
+            </div>
+
+            <!-- Column: Fechamento (success-tinted) -->
+            <div class="kanban-column flex flex-col w-[300px] 2xl:w-[340px] h-full rounded-xl bg-feedback-success-bg/30 border border-feedback-success-border/30 flex-shrink-0" data-stage="fechamento">
+                <div class="px-4 py-3 flex justify-between items-center rounded-t-xl">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-feedback-success-fg font-bold text-sm uppercase tracking-wide">Fechamento</h2>
+                        <span class="bg-feedback-success-bg text-feedback-success-fg text-xs px-2 py-0.5 rounded-full font-bold">2</span>
+                    </div>
+                    <span class="text-feedback-success-fg text-xs font-semibold">R$ 80k</span>
+                </div>
+                <div class="flex-1 overflow-y-auto px-3 pb-3 flex flex-col gap-3 kanban-scroll card-list">
+                    <div class="drop-indicator h-1 bg-action-primary rounded-full mx-2"></div>
+
+                    <div class="kanban-card group relative bg-surface-raised/80 p-3.5 rounded-xl border border-feedback-success-border shadow-sm opacity-90 hover:opacity-100 cursor-grab active:cursor-grabbing transition-opacity" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-feedback-success-bg text-feedback-success-fg text-[10px] font-bold px-2.5 py-1 rounded-md border border-feedback-success-border uppercase tracking-wide">Assinado</span>
+                            <i data-lucide="check-circle-2" class="size-4 text-feedback-success-fg"></i>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Software RH</h3>
+                            <p class="text-text-secondary text-xs font-medium">Talent Hunter</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-feedback-success-border/50">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-surface-sunken text-[10px] flex items-center justify-center font-bold text-text-secondary">JS</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 30k</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-card group relative bg-surface-raised/80 p-3.5 rounded-xl border border-feedback-success-border shadow-sm opacity-90 hover:opacity-100 cursor-grab active:cursor-grabbing transition-opacity" draggable="true">
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="bg-feedback-success-bg text-feedback-success-fg text-[10px] font-bold px-2.5 py-1 rounded-md border border-feedback-success-border uppercase tracking-wide">Assinado</span>
+                            <i data-lucide="check-circle-2" class="size-4 text-feedback-success-fg"></i>
+                        </div>
+                        <div class="mb-3">
+                            <h3 class="text-text-primary font-bold text-sm leading-snug mb-1">Plataforma E-learning</h3>
+                            <p class="text-text-secondary text-xs font-medium">Educa Mais</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-feedback-success-border/50">
+                            <div class="flex items-center gap-2">
+                                <div class="size-6 rounded-full bg-feedback-info-bg text-[10px] flex items-center justify-center font-bold text-feedback-info-fg">MA</div>
+                                <span class="text-text-primary font-bold text-sm">R$ 50k</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Column button -->
+            <button class="w-[300px] h-12 flex-shrink-0 rounded-xl border-2 border-dashed border-border flex items-center justify-center gap-2 text-text-secondary hover:text-action-primary hover:border-action-primary/50 hover:bg-surface-raised transition-colors bg-transparent self-start mt-2">
+                <i data-lucide="columns-3" class="size-5"></i>
+                <span class="font-medium text-sm">Adicionar Coluna</span>
+            </button>
+
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

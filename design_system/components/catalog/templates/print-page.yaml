@@ -29,7 +29,7 @@ container: |
   Container: max-w-print mr-auto (ver exceções de layout no CONTRACT.md)
   Screen toolbar: padding 24px via @media screen
 
-prototype: telas_prontas/leads_imprimir.html
+prototype: telas_prontas/entidade_imprimir.html
 
 notes: |
   A toolbar com botões Voltar e Imprimir usa classe .no-print para ser ocultada na impressão.

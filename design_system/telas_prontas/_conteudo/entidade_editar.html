@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Editar Lead — SalesPro CRM</title>
+
+    <!-- Design System: variables.css is the generated output (layer 3) -->
+    <link href="../../generated/variables.css" rel="stylesheet" />
+
+    <!-- Font: loaded from the primitive font.family.sans token (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons: Lucide (per CONTRACT.md — Lucide only) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CDN configured with semantic token names -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        surface: {
+                            base:    "rgb(var(--ds-surface-base) / <alpha-value>)",
+                            raised:  "rgb(var(--ds-surface-raised) / <alpha-value>)",
+                            sunken:  "rgb(var(--ds-surface-sunken) / <alpha-value>)",
+                            overlay: "rgb(var(--ds-surface-overlay) / <alpha-value>)",
+                            inverse: "rgb(var(--ds-surface-inverse) / <alpha-value>)",
+                        },
+                        text: {
+                            primary:   "rgb(var(--ds-text-primary) / <alpha-value>)",
+                            secondary: "rgb(var(--ds-text-secondary) / <alpha-value>)",
+                            muted:     "rgb(var(--ds-text-muted) / <alpha-value>)",
+                            inverse:   "rgb(var(--ds-text-inverse) / <alpha-value>)",
+                            link:      "rgb(var(--ds-text-link) / <alpha-value>)",
+                            disabled:  "rgb(var(--ds-text-disabled) / <alpha-value>)",
+                        },
+                        border: {
+                            DEFAULT: "rgb(var(--ds-border-default) / <alpha-value>)",
+                            strong:  "rgb(var(--ds-border-strong) / <alpha-value>)",
+                            subtle:  "rgb(var(--ds-border-subtle) / <alpha-value>)",
+                            focus:   "rgb(var(--ds-border-focus) / <alpha-value>)",
+                        },
+                        action: {
+                            primary: {
+                                DEFAULT: "rgb(var(--ds-action-primary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-primary-bg-hover) / <alpha-value>)",
+                                active:  "rgb(var(--ds-action-primary-bg-active) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-primary-fg) / <alpha-value>)",
+                            },
+                            secondary: {
+                                DEFAULT: "rgb(var(--ds-action-secondary-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-secondary-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-secondary-fg) / <alpha-value>)",
+                                border:  "rgb(var(--ds-action-secondary-border) / <alpha-value>)",
+                            },
+                            ghost: {
+                                hover:  "rgb(var(--ds-action-ghost-bg-hover) / <alpha-value>)",
+                                active: "rgb(var(--ds-action-ghost-bg-active) / <alpha-value>)",
+                                fg:     "rgb(var(--ds-action-ghost-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                DEFAULT: "rgb(var(--ds-action-danger-bg) / <alpha-value>)",
+                                hover:   "rgb(var(--ds-action-danger-bg-hover) / <alpha-value>)",
+                                fg:      "rgb(var(--ds-action-danger-fg) / <alpha-value>)",
+                            },
+                        },
+                        field: {
+                            DEFAULT:       "rgb(var(--ds-field-bg) / <alpha-value>)",
+                            fg:            "rgb(var(--ds-field-fg) / <alpha-value>)",
+                            placeholder:   "rgb(var(--ds-field-placeholder) / <alpha-value>)",
+                            border:        "rgb(var(--ds-field-border) / <alpha-value>)",
+                            "border-hover":"rgb(var(--ds-field-border-hover) / <alpha-value>)",
+                            "border-focus":"rgb(var(--ds-field-border-focus) / <alpha-value>)",
+                            "border-error":"rgb(var(--ds-field-border-error) / <alpha-value>)",
+                        },
+                        feedback: {
+                            success: {
+                                bg:         "rgb(var(--ds-feedback-success-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-success-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-success-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-success-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-success-solid-fg) / <alpha-value>)",
+                            },
+                            warning: {
+                                bg:         "rgb(var(--ds-feedback-warning-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-warning-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-warning-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-warning-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-warning-solid-fg) / <alpha-value>)",
+                            },
+                            danger: {
+                                bg:         "rgb(var(--ds-feedback-danger-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-danger-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-danger-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-danger-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-danger-solid-fg) / <alpha-value>)",
+                            },
+                            info: {
+                                bg:         "rgb(var(--ds-feedback-info-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-info-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-info-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-info-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-info-solid-fg) / <alpha-value>)",
+                            },
+                            accent: {
+                                bg:         "rgb(var(--ds-feedback-accent-bg) / <alpha-value>)",
+                                border:     "rgb(var(--ds-feedback-accent-border) / <alpha-value>)",
+                                fg:         "rgb(var(--ds-feedback-accent-fg) / <alpha-value>)",
+                                "solid-bg": "rgb(var(--ds-feedback-accent-solid-bg) / <alpha-value>)",
+                                "solid-fg": "rgb(var(--ds-feedback-accent-solid-fg) / <alpha-value>)",
+                            },
+                        },
+                    },
+                    fontFamily: {
+                        sans: ["var(--ds-font-family-sans)"],
+                        mono: ["var(--ds-font-family-mono)"],
+                    },
+                    borderRadius: {
+                        none: "var(--ds-radius-none)",
+                        sm:   "var(--ds-radius-sm)",
+                        md:   "var(--ds-radius-md)",
+                        lg:   "var(--ds-radius-lg)",
+                        xl:   "var(--ds-radius-xl)",
+                        full: "var(--ds-radius-full)",
+                    },
+                    boxShadow: {
+                        sm:    "var(--ds-shadow-sm)",
+                        md:    "var(--ds-shadow-md)",
+                        lg:    "var(--ds-shadow-lg)",
+                        xl:    "var(--ds-shadow-xl)",
+                        focus: "var(--ds-shadow-focus)",
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgb(var(--ds-surface-sunken)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--ds-border-strong)); border-radius: var(--ds-radius-sm); }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--ds-text-muted)); }
+    </style>
+</head>
+
+<body class="bg-surface-base text-text-primary font-sans">
+
+    <!-- ============================================================
+         CONTENT: Formulário de Edição (Editar Lead)
+         Loaded by dashboard.html via iframe, or viewable standalone
+         ============================================================ -->
+    <div class="flex-1 overflow-y-auto p-6">
+        <div class="max-w-4xl mr-auto flex flex-col gap-6 pb-10">
+
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-sm text-text-secondary">
+                <a href="#" data-nav="dashboard_home" class="hover:text-action-ghost-fg transition-colors">Home</a>
+                <i data-lucide="chevron-right" class="size-4 text-text-muted"></i>
+                <a href="#" data-nav="entidade_lista" class="hover:text-action-ghost-fg transition-colors">Leads</a>
+                <i data-lucide="chevron-right" class="size-4 text-text-muted"></i>
+                <span class="text-text-primary font-semibold">Editar Lead</span>
+            </nav>
+
+            <!-- Page header -->
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h2 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">Editar Lead</h2>
+                    <span class="inline-flex items-center rounded-full bg-feedback-warning-bg px-2.5 py-0.5 text-xs font-medium text-feedback-warning-fg border border-feedback-warning-border">Em Contato</span>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-text-secondary">
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="calendar" class="size-3.5"></i>
+                        Criado em 28/03/2026
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="clock" class="size-3.5"></i>
+                        Última atualização há 2 dias
+                    </span>
+                </div>
+            </div>
+
+            <!-- ========== FORM ========== -->
+            <form class="flex flex-col gap-6">
+
+                <!-- Card: Informações Básicas -->
+                <div class="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+                    <div class="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+                        <div class="flex size-10 items-center justify-center rounded-lg bg-feedback-info-bg text-feedback-info-fg">
+                            <i data-lucide="user" class="size-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary">Informações Básicas</h3>
+                            <p class="text-sm text-text-secondary">Dados de contato e identificação do lead.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="full-name">
+                                Nome Completo <span class="text-feedback-danger-fg">*</span>
+                            </label>
+                            <input class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="full-name" name="full-name" value="Fernanda Costa" type="text" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="email">
+                                Email Corporativo <span class="text-feedback-danger-fg">*</span>
+                            </label>
+                            <input class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="email" name="email" value="fernanda@techsolutions.com.br" type="email" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="phone">
+                                Telefone / WhatsApp
+                            </label>
+                            <input class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="phone" name="phone" value="(11) 98765-4321" type="tel" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="company">
+                                Empresa
+                            </label>
+                            <input class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="company" name="company" value="Tech Solutions Ltda" type="text" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="job-title">
+                                Cargo
+                            </label>
+                            <input class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="job-title" name="job-title" value="Diretora de Operações" type="text" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card: Detalhes do Deal -->
+                <div class="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+                    <div class="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+                        <div class="flex size-10 items-center justify-center rounded-lg bg-feedback-success-bg text-feedback-success-fg">
+                            <i data-lucide="circle-dollar-sign" class="size-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary">Detalhes do Deal</h3>
+                            <p class="text-sm text-text-secondary">Informações sobre a oportunidade de venda.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="deal-value">
+                                Valor Estimado (R$)
+                            </label>
+                            <div class="relative">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-text-secondary text-sm">R$</span>
+                                </div>
+                                <input class="block w-full rounded-lg border border-field-border bg-field py-2.5 pl-10 pr-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                    id="deal-value" name="deal-value" value="45.000,00" type="text" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="lead-source">
+                                Origem do Lead
+                            </label>
+                            <select class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="lead-source" name="lead-source">
+                                <option value="">Selecione uma origem</option>
+                                <option value="google">Google Ads</option>
+                                <option value="site">Site Institucional</option>
+                                <option value="linkedin" selected>LinkedIn</option>
+                                <option value="referral">Indicação</option>
+                                <option value="outbound">Outbound / Prospecção</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="status">
+                                Status
+                            </label>
+                            <select class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="status" name="status">
+                                <option value="new">Novo</option>
+                                <option value="contacting" selected>Em Contato</option>
+                                <option value="qualified">Qualificado</option>
+                                <option value="proposal">Proposta Enviada</option>
+                                <option value="lost">Perdido</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2" for="owner">
+                                Responsável
+                            </label>
+                            <select class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                                id="owner" name="owner">
+                                <option value="roberto" selected>Roberto Silva (Você)</option>
+                                <option value="ana">Ana Clara</option>
+                                <option value="marcos">Marcos Paulo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card: Observações -->
+                <div class="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+                    <div class="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+                        <div class="flex size-10 items-center justify-center rounded-lg bg-feedback-accent-bg text-feedback-accent-fg">
+                            <i data-lucide="notebook-pen" class="size-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary">Observações</h3>
+                            <p class="text-sm text-text-secondary">Notas adicionais e contexto sobre o cliente.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2" for="notes">
+                            Notas do Lead
+                        </label>
+                        <textarea class="block w-full rounded-lg border border-field-border bg-field py-2.5 px-3 text-field-fg placeholder:text-field-placeholder focus:outline-none focus:ring-1 focus:ring-field-border-focus focus:border-field-border-focus text-sm transition-all shadow-sm"
+                            id="notes" name="notes"
+                            rows="5">Fernanda demonstrou interesse na solução de CRM durante webinar sobre automação de vendas. Empresa está em fase de crescimento e busca ferramenta para organizar o pipeline comercial. Agendar demonstração para a próxima semana.</textarea>
+                    </div>
+                </div>
+
+                <!-- Card: Histórico de Atividades (read-only, exclusive to edit) -->
+                <div class="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+                    <div class="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+                        <div class="flex size-10 items-center justify-center rounded-lg bg-feedback-warning-bg text-feedback-warning-fg">
+                            <i data-lucide="history" class="size-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary">Histórico de Atividades</h3>
+                            <p class="text-sm text-text-secondary">Registro das interações com este lead.</p>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute left-[15px] top-2 bottom-2 w-px bg-border"></div>
+                        <div class="flex flex-col gap-6">
+                            <div class="flex gap-4 relative">
+                                <div class="flex-shrink-0 size-8 rounded-full bg-feedback-info-bg border-2 border-surface-raised flex items-center justify-center z-10">
+                                    <i data-lucide="mail" class="size-3.5 text-feedback-info-fg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <p class="text-sm font-medium text-text-primary">Email de apresentação enviado</p>
+                                        <span class="text-xs text-text-muted whitespace-nowrap">11/04/2026</span>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mt-0.5">Enviado catálogo de soluções e proposta de reunião inicial.</p>
+                                    <p class="text-xs text-text-muted mt-1">por Roberto Silva</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 relative">
+                                <div class="flex-shrink-0 size-8 rounded-full bg-feedback-success-bg border-2 border-surface-raised flex items-center justify-center z-10">
+                                    <i data-lucide="phone" class="size-3.5 text-feedback-success-fg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <p class="text-sm font-medium text-text-primary">Ligação realizada</p>
+                                        <span class="text-xs text-text-muted whitespace-nowrap">05/04/2026</span>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mt-0.5">Conversa de 15 min. Fernanda confirmou interesse e pediu mais detalhes sobre integração com ERP.</p>
+                                    <p class="text-xs text-text-muted mt-1">por Roberto Silva</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 relative">
+                                <div class="flex-shrink-0 size-8 rounded-full bg-feedback-accent-bg border-2 border-surface-raised flex items-center justify-center z-10">
+                                    <i data-lucide="user-plus" class="size-3.5 text-feedback-accent-fg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <p class="text-sm font-medium text-text-primary">Lead cadastrado</p>
+                                        <span class="text-xs text-text-muted whitespace-nowrap">28/03/2026</span>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mt-0.5">Lead capturado via formulário do LinkedIn Ads.</p>
+                                    <p class="text-xs text-text-muted mt-1">por Sistema</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom action bar -->
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <a href="#" data-nav="entidade_lista"
+                        class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                        class="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover">
+                        <i data-lucide="check" class="size-4"></i>
+                        Salvar Alterações
+                    </button>
+                </div>
+
+                <!-- Card: Zona de Perigo -->
+                <div class="mt-4 rounded-xl border border-feedback-danger-border bg-feedback-danger-bg p-6 shadow-sm">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="alert-triangle" class="size-5 text-feedback-danger-fg flex-shrink-0 mt-0.5"></i>
+                        <div class="flex flex-col gap-3">
+                            <div>
+                                <h3 class="text-base font-bold text-feedback-danger-fg">Zona de Perigo</h3>
+                                <p class="text-sm text-feedback-danger-fg/90 mt-1">Excluir este lead é uma ação permanente e não pode ser desfeita. Todo o histórico de atividades e anexos associados também serão excluídos.</p>
+                            </div>
+                            <button type="button"
+                                class="inline-flex h-10 w-fit items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-5 text-sm font-semibold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover">
+                                <i data-lucide="trash-2" class="size-4"></i>
+                                Excluir Lead
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>
