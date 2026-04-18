@@ -53,7 +53,7 @@ Re-delegue ao agente com:
 
 **Exemplo:**
 ```
-@frontend, refaça a criação do [Entity]Form com estas restrições:
+@frontend+, refaça a criação do [Entity]Form com estas restrições:
 
 ESCOPO: Criar apenas src/components/[module]/[Entity]Form.tsx
 REQUISITOS:

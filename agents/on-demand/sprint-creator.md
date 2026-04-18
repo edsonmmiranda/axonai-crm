@@ -54,7 +54,7 @@ Antes de começar, preciso saber qual nível de sprint se encaixa:
 
 LIGHT (sprint rápida)
   - Para: bugfix, ajuste de UI, pequena feature em um único módulo
-  - Execução: sempre sem PRD (Opção 1 forçada) — direto para @frontend/@backend
+  - Execução: sempre sem PRD (Opção 1 forçada) — direto para @frontend+/@backend
   - Setup: ~2 minutos
   - Template: docs/templates/sprints/TEMPLATE_SPRINT_LIGHT.md
 
@@ -270,7 +270,7 @@ Status: pronta para execução
 Próximos passos:
 1. Revise o arquivo (opcional)
 2. Execute: "Tech Lead, execute sprint_[number]_[name].md"
-   O Tech Lead pulará PRD e sanity check e delegará direto para @frontend/@backend.
+   O Tech Lead pulará PRD e sanity check e delegará direto para @frontend+/@backend.
 ```
 
 **Para sprints STANDARD:**

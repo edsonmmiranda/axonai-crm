@@ -58,6 +58,7 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 # Checklist antes de entregar
 
 - [ ] Todas as 10 regras invioláveis de [`standards.md`](../../docs/conventions/standards.md) atendidas
+- [ ] Linha `@backend` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + paths das Server Actions criadas)
 - [ ] **Aprendizados** *(apenas se algo inesperado aconteceu)* — registrar em `docs/APRENDIZADOS.md`. Se foi rotina, ignore
 
 ---

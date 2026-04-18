@@ -24,7 +24,7 @@ Quando dois documentos dizem coisas diferentes, o mais alto na lista vence:
 
 ## Modelo de execução: delegação entre agentes
 
-Este framework descreve agentes como personas (`@frontend`, `@backend`, `@guardian`, etc.), mas **todos são executados pela mesma LLM em single-thread**. Não existem processos paralelos.
+Este framework descreve agentes como personas (`@frontend+`, `@backend`, `@guardian`, etc.), mas **todos são executados pela mesma LLM em single-thread**. Não existem processos paralelos.
 
 **"Delegar ao @agente X"** significa:
 1. Adotar a persona descrita no arquivo do agente X.
@@ -40,7 +40,7 @@ Este framework descreve agentes como personas (`@frontend`, `@backend`, `@guardi
 Consequências práticas:
 - Não leia todos os arquivos de todos os agentes no boot. Leia o arquivo de cada agente **quando for adotar aquela persona**.
 - Ao trocar de persona, descarte mentalmente o contexto do agente anterior — cada agente tem seu escopo de arquivos tocados.
-- Se um agente (ex: `@guardian`) encontra um problema que outro agente (ex: `@frontend`) deveria corrigir, **não corrija inline**. Volte ao Tech Lead, delegue ao agente correto com o contexto do erro.
+- Se um agente (ex: `@guardian`) encontra um problema que outro agente (ex: `@frontend+`) deveria corrigir, **não corrija inline**. Volte ao Tech Lead, delegue ao agente correto com o contexto do erro.
 
 ---
 
@@ -136,12 +136,12 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 4. `agents/skills/error-handling/SKILL.md` (se necessário)
 5. `agents/skills/reference-module-copy/SKILL.md` (se Reference Module especificado)
 
-### Ao adotar `@frontend`
-1. `agents/stack/frontend.md`
-2. `design_system/components/CONTRACT.md`
-3. `design_system/enforcement/rules.md`
-4. `docs/conventions/crud.md` (se o sprint envolve CRUD)
-5. `agents/skills/reference-module-copy/SKILL.md` (se Reference Module especificado)
+### Ao adotar `@frontend+`
+1. `agents/stack/frontend-plus.md` — leia primeiro, contém o protocolo de resolução de referência (3 níveis)
+2. A referência visual resolvida pelo protocolo (tela pronta HTML, módulo de referência, ou design system)
+3. `design_system/components/CONTRACT.md` — **apenas no Nível 3** (quando não existe tela pronta)
+4. `design_system/enforcement/rules.md` — apenas se precisar confirmar regra de lint
+5. `docs/conventions/crud.md` (se o sprint envolve CRUD)
 
 ### Ao adotar `@guardian`
 1. `agents/quality/guardian.md`

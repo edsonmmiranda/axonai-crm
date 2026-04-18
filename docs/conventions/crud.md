@@ -6,7 +6,7 @@ Se um Reference Module existe em `src/app/`, ele é a fonte autoritativa operaci
 
 Quando ainda **não** existe Reference Module real no projeto (bootstrap, primeiro CRUD), use o template canônico em [`docs/templates/reference_module/`](../templates/reference_module/) como fonte. Ele codifica as mesmas regras em forma copiável; o protocolo de cópia está em [`agents/skills/reference-module-copy/SKILL.md`](../../agents/skills/reference-module-copy/SKILL.md) (Case B).
 
-**Leitores:** `@frontend`, `@backend`, `@spec-writer`, Tech Lead.
+**Leitores:** `@frontend+`, `@backend`, `@spec-writer`, Tech Lead.
 
 ---
 

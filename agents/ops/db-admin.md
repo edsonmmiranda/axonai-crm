@@ -267,6 +267,14 @@ Pare e siga [`escalation-protocol.md`](../workflows/escalation-protocol.md) se:
 
 ---
 
+# Checklist antes de entregar
+
+- [ ] Migração testada com `supabase db push --dry-run`
+- [ ] `docs/schema_snapshot.json` atualizado
+- [ ] Linha `@db-admin` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + path da migration criada)
+
+---
+
 # Contrato
 
 **Inputs:**

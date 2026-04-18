@@ -40,7 +40,7 @@ Estas são as checagens que o lint **não** cobre. Exigem que você leia o PR e 
 - [ ] **O significado do token bate com o uso.** `bg-feedback-danger-bg` em um modal de confirmação é lint-clean mas semanticamente errado — tokens de danger são para estados destrutivos/erro, não para modais genéricos. `bg-action-primary` em um botão desabilitado é errado — estado desabilitado deve usar `bg-action-disabled`. Pergunte: o nome do token descreve o que este elemento **realmente é** no modelo mental do usuário?
 - [ ] **Composição antes de reinvenção.** Esse componente poderia ter sido composto a partir de componentes DS existentes? Uma barra de filtros é `Stack` + `Input` + `Select` + `Button`, não um novo componente leaf `FilterBar` com estilização bespoke. Um modal de confirmação é `Dialog` + `Text` + dois `Button`, não um novo `ConfirmDialog`. Se o PR introduz um novo leaf, pergunte se composição foi tentada antes.
 - [ ] **Estados de interação cobertos.** Todo componente interativo deve tratar: `default`, `hover`, `active`, `focus-visible`, `disabled`, e quando aplicável `loading`, `error`. Classes `disabled:` faltando, `focus-visible:` faltando, estado de loading faltando em botão async — todos rejeitáveis.
-- [ ] **Paridade de dark mode verificada.** O autor realmente togglou `data-theme="dark"` no `<html>` e checou o resultado? Você consegue farejar a falha: se o componente mistura tokens semânticos com qualquer primitivo ou hex, dark mode está quebrado. Se a descrição do PR do `@frontend` não menciona verificação de dark mode e o componente introduz combinações novas de cor, pergunte.
+- [ ] **Paridade de dark mode verificada.** O autor realmente togglou `data-theme="dark"` no `<html>` e checou o resultado? Você consegue farejar a falha: se o componente mistura tokens semânticos com qualquer primitivo ou hex, dark mode está quebrado. Se a descrição do PR do `@frontend+` não menciona verificação de dark mode e o componente introduz combinações novas de cor, pergunte.
 - [ ] **Nenhum token novo inventado inline.** Se o autor escreve uma combinação de classes que "parece" um papel novo (ex.: um cinza suave de sidebar que não é nem `surface.base` nem `surface.sunken`), a ação correta seria adicionar `surface.sidebar` na camada semântica em um DS PR separado. Inlinar a combinação com valores arbitrários é violação mesmo quando o valor arbitrário foi evitado.
 - [ ] **Sem `// TODO: dark mode` ou `// TODO: theme later`.** Dark mode não é fase 2. Qualquer TODO que posterga theming é auto-reject — veja [`design_system/docs/anti-patterns.md`](../../design_system/docs/anti-patterns.md) § 2.
 - [ ] **Sem componentes custom "temporários"** em pastas de feature (`TempButton`, `MyCard`, `EntityActionButton` que reimplementa Button). Veja § 8 do arquivo de anti-patterns. "Temporário" é o adjetivo de vida mais longa em software.
@@ -139,7 +139,7 @@ Se encontrar bloqueio (regra do design system exige mudança de token, novo prim
 # Contrato
 
 **Inputs:**
-- PR/conjunto de arquivos produzidos por `@frontend`, `@backend`, `@db-admin`, `@api-integrator`
+- PR/conjunto de arquivos produzidos por `@frontend+`, `@backend`, `@db-admin`, `@api-integrator`
 - Estado atual de `design_system/` como fonte normativa
 
 **Outputs:**
@@ -148,4 +148,4 @@ Se encontrar bloqueio (regra do design system exige mudança de token, novo prim
 
 **Arquivos tocados:** **nenhum**. Guardian só **lê** e emite relatório. Nunca modifica código, migrations, ou qualquer arquivo do projeto. Se o fix exigir mudança do design system, instrui o autor a landar como PR separado — Guardian não implementa o fix.
 
-> **Nota sobre modelo de execução:** Como todos os agentes rodam na mesma LLM (ver [`docs/conventions/standards.md`](../../docs/conventions/standards.md) § Modelo de execução), ao encontrar uma violação, **não corrija inline** enquanto estiver na persona do Guardian. Emita o relatório REJECTED, retorne ao Tech Lead, e delegue a correção ao agente apropriado (`@frontend` ou `@backend`) com o contexto da violação. Isso preserva a separação de responsabilidades e evita que o Guardian "aprove a si mesmo".
+> **Nota sobre modelo de execução:** Como todos os agentes rodam na mesma LLM (ver [`docs/conventions/standards.md`](../../docs/conventions/standards.md) § Modelo de execução), ao encontrar uma violação, **não corrija inline** enquanto estiver na persona do Guardian. Emita o relatório REJECTED, retorne ao Tech Lead, e delegue a correção ao agente apropriado (`@frontend+` ou `@backend`) com o contexto da violação. Isso preserva a separação de responsabilidades e evita que o Guardian "aprove a si mesmo".

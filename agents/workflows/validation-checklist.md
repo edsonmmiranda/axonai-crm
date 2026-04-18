@@ -44,7 +44,7 @@ O sprint é LIGHT. Sprints LIGHT rodam Opção 1 (sem PRD) por design.
 O sanity-checker não deveria ter sido invocado.
 
 AÇÃO: Tech Lead deve abortar o fluxo, descartar o PRD, e retomar execução na Opção 1
-(delegação direta para @frontend/@backend).
+(delegação direta para @frontend+/@backend).
 ```
 
 ### Resposta para template de PRD inválido

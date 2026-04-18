@@ -1,6 +1,6 @@
 # Contrato de authoring de componentes
 
-Este arquivo define as regras que todo componente no framework deve seguir para permanecer alinhado com o design system. É lido por `@frontend` (que escreve componentes) e `@guardian` (que os revisa). Se você está escrevendo ou revisando um componente, esta é leitura obrigatória.
+Este arquivo define as regras que todo componente no framework deve seguir para permanecer alinhado com o design system. É lido por `@frontend+` (que escreve componentes) e `@guardian` (que os revisa). Se você está escrevendo ou revisando um componente, esta é leitura obrigatória.
 
 A filosofia: **componentes são finas camadas de estilo sobre primitivos headless, montadas a partir de tokens semânticos**. Não reinventamos padrões de interação; nós os herdamos de uma biblioteca headless comprovada e os pintamos com nossos tokens.
 

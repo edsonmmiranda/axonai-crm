@@ -6,7 +6,7 @@
 
 ## 🎯 Propósito
 
-- **Writers:** qualquer agente (`@backend`, `@frontend`, `@db-admin`, `@api-integrator`, etc.) que descobriu algo surpreendente durante a execução de uma sprint.
+- **Writers:** qualquer agente (`@backend`, `@frontend+`, `@db-admin`, `@api-integrator`, etc.) que descobriu algo surpreendente durante a execução de uma sprint.
 - **Readers:** todos os agentes na fase de análise/planejamento, para evitar repetir o mesmo erro.
 - **Writer autoritativo em caso de dúvida:** Tech Lead, ao final de cada sprint (Opção 2, Step 7).
 
@@ -19,7 +19,7 @@
 - Uma biblioteca tem quirk ou breaking change não documentado que fez você perder horas.
 - Você descobriu um padrão novo ou uma armadilha de segurança/performance que qualquer agente futuro deveria saber antes de mexer na mesma área.
 - Um comportamento do Supabase, Next.js, Zod, ShadcnUI ou similar contradisse o que a documentação sugeria.
-- **[AGENT-DRIFT] O orquestrador (Tech Lead ou usuário) teve que pedir 2+ correções ao mesmo agente sobre a mesma categoria de problema na mesma sprint** (ex: `@frontend` usou hex hard-coded 3 vezes, `@backend` esqueceu `revalidatePath` em múltiplas actions). Registre o padrão que o agente está repetindo — isso revela lacuna no prompt/contract, não só um bug pontual.
+- **[AGENT-DRIFT] O orquestrador (Tech Lead ou usuário) teve que pedir 2+ correções ao mesmo agente sobre a mesma categoria de problema na mesma sprint** (ex: `@frontend+` usou hex hard-coded 3 vezes, `@backend` esqueceu `revalidatePath` em múltiplas actions). Registre o padrão que o agente está repetindo — isso revela lacuna no prompt/contract, não só um bug pontual.
 
 ### ❌ NÃO registre
 - "Sprint X completa com sucesso" — isso é git history, não aprendizado.
@@ -34,7 +34,7 @@
 | Zod 4 usa `.issues` em vez de `.errors` | ✅ SIM | Breaking change não óbvio da biblioteca |
 | `npm install some-dep` rodou normal | ❌ NÃO | Trivial |
 | Instalei react-hook-form, tudo certo | ❌ NÃO | Sem surpresa |
-| `@frontend` usou `bg-blue-500` duas vezes em sprints diferentes, mesmo o CONTRACT proibindo | ✅ SIM | [AGENT-DRIFT] — prompt do `@frontend` precisa de reforço |
+| `@frontend+` usou `bg-blue-500` duas vezes em sprints diferentes, mesmo o CONTRACT proibindo | ✅ SIM | [AGENT-DRIFT] — prompt do `@frontend+` precisa de reforço |
 | Supabase RLS bloqueou query onde eu esperava que passasse, causou debug de 40min | ✅ SIM | Comportamento contradiz expectativa |
 | Renomeei variável `cwd` para `currentWorkingDir` | ❌ NÃO | Refactor trivial, git diff já documenta |
 | Tive que pedir "use tokens semânticos, não hex" 3x pro mesmo agente na mesma sprint | ✅ SIM | [AGENT-DRIFT] canônico |
@@ -72,7 +72,7 @@ Novas entradas entram **no topo** da seção `## 📚 Entradas` em `APRENDIZADOS
 
 ```markdown
 ### YYYY-MM-DD · [AGENT-DRIFT] @agent repetiu <tipo de erro>
-**Agente/Sprint:** `@frontend` em sprint_XX_<nome>
+**Agente/Sprint:** `@frontend+` em sprint_XX_<nome>
 **Padrão:** <uma frase — o que o agente continuou fazendo errado> (N ocorrências)
 **Correção estrutural:** <mudança em agents/stack/*.md, design_system/, ou standards.md>
 ```

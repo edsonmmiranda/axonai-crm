@@ -11,7 +11,7 @@ Missão: Gerenciar o ciclo de vida da SaaS Factory com protocolos de segurança.
 
 # 🔑 MODELO DE EXECUÇÃO
 
-> **Este framework opera em single-thread.** Todos os agentes (`@frontend`, `@backend`, `@guardian`, etc.) são personas adotadas pela mesma LLM — não existem processos paralelos.
+> **Este framework opera em single-thread.** Todos os agentes (`@frontend+`, `@backend`, `@guardian`, etc.) são personas adotadas pela mesma LLM — não existem processos paralelos.
 
 O modelo de delegação, a hierarquia de autoridade entre documentos, a ordem de leitura por fase, e o ownership de arquivos persistentes estão definidos em [`docs/conventions/standards.md`](../docs/conventions/standards.md). **Leia esse arquivo no boot** — ele é a referência canônica para resolver conflitos entre documentos.
 
@@ -28,7 +28,7 @@ PASSO 2: view_file(docs/schema_snapshot.json)         → Estado real do schema 
 PASSO 3: view_file(docs/APRENDIZADOS.md)              → Armadilhas já descobertas em sprints anteriores (leitura integral obrigatória)
 ```
 
-**Uso de `APRENDIZADOS.md`:** ao delegar para qualquer sub-agente (`@backend`, `@frontend`, `@db-admin`, `@api-integrator`, `@guardian`), 
+**Uso de `APRENDIZADOS.md`:** ao delegar para qualquer sub-agente (`@backend`, `@frontend+`, `@db-admin`, `@api-integrator`, `@guardian`), 
 **passe como contexto as entradas relevantes** para o escopo da tarefa. Use os arquivo (`BUILD`, `TIPO`, `SUPABASE`, `NEXT`, `ZOD`, `SHADCN`, `PERF`, `SECURITY`, `DEPLOY`, `AGENT-DRIFT`) para filtrar — ex: ao delegar Server Action envolvendo Supabase, inclua entradas `[SUPABASE]` e `[TIPO]`. Se houver entrada `[AGENT-DRIFT]` contra o agente que você está prestes a invocar, cite-a literalmente no prompt. Se o arquivo estiver vazio (projeto novo), siga sem passar contexto.
 
 **Descoberta de estrutura do projeto (módulos, rotas, componentes, integrações):** use `Glob`/`Grep` sob demanda (`src/app/`, `src/components/`, `src/lib/integrations/`). Não existe arquivo de inventário narrativo — o código é a verdade.
@@ -255,6 +255,27 @@ Depois de preencher inline, apresente normalmente e **sugira ao usuário** re-ge
 
 ---
 
+## 🔄 REGRA GLOBAL DE EXECUÇÃO — Sprint file como checkpoint
+
+Todo sprint file tem uma seção `## 🔄 Execução` com a tabela de progresso. Esta seção é o mecanismo de handoff entre sessões.
+
+**A cada vez que um agente reporta conclusão, ANTES de delegar o próximo:**
+1. Atualize a linha do agente na tabela `## 🔄 Execução` do sprint file
+2. Preencha: status `✅ Concluído` e os paths dos artefatos criados
+3. Use `▶️ Em andamento` ao iniciar um agente (antes de delegar)
+4. Use `⏸️ Aguarda review` nos pontos de pausa obrigatória (aprovação de PRD, aprovação de API research)
+
+**Agentes que atualizam a própria linha:** `@db-admin`, `@backend`, `@frontend+`, `@api-integrator`  
+**Tech Lead atualiza:** `@guardian` (baseado no output GATE 4) e `@git-master` (no encerramento, antes do `git mv`)
+
+**Gatilho `"Retomar sprint_[XX]"` — nova sessão após pausa:**
+1. Leia o sprint file em `sprints/active/sprint_[XX]_*.md`
+2. Localize a tabela `## 🔄 Execução`
+3. Continue da primeira linha que **não** está `✅ Concluído`
+4. Não re-execute etapas já concluídas — confie na tabela como fonte de verdade
+
+---
+
 ## WORKFLOW OPÇÃO 2: EXECUÇÃO COM PRD
 
 **Usado quando:** Sprint STANDARD + usuário escolheu `"execute opção 2"` (ou aceitou recomendação que apontava Opção 2).
@@ -275,7 +296,14 @@ Depois de preencher inline, apresente normalmente e **sugira ao usuário** re-ge
      - **Fase 1:** Comande `@api-integrator` (Research) → Gerar relatório de pesquisa
      - **CHECKPOINT:** Apresente o relatório de pesquisa e PEÇA aprovação
      - **Fase 2:** Comande `@api-integrator` (Implementation) → Criar código de integração
-   - **Passo 3 (Código):** Comande `@backend` para Server Actions e `@frontend` para UI.
+   - **Passo 3 (Código):** Comande `@backend` para Server Actions e `@frontend+` para UI.
+   - **⏸️ CHECKPOINT — após `@frontend+` concluir (quando o sprint envolveu UI):**
+     Antes de prosseguir para o `@guardian`, **PAUSE** e pergunte ao usuário:
+     > `@frontend+` concluiu. Deseja **continuar** nesta sessão ou fazer **limpeza de contexto**?
+     > - `"continuar"` — prosseguir para `@guardian` agora
+     > - `"limpar contexto"` — pausar aqui e retomar em nova sessão
+     - Se **"continuar"**: prossiga para o Passo 4 normalmente.
+     - Se **"limpar contexto"**: confirme que a linha `@frontend+` está `✅ Concluído` no sprint file e encerre com: *"Sprint pausado. Inicie uma nova sessão e diga `Retomar sprint_[XX]` para continuar do `@guardian`."*
    - **Passo 4 (Qualidade):** Comande `@guardian` para revisar o código.
    - **Passo 5 (Checagem de design):** Verificação manual usando `docs/PROCESS_DESIGN_VERIFICATION.md`
    - **Passo 6 (Gates de validação):** Rode validações automatizadas (veja abaixo).
@@ -348,7 +376,7 @@ ls supabase/migrations/[timestamp]_*.sql
 
 ## GATE 2: Validação de Frontend/Backend
 
-**Depois que `@frontend` ou `@backend` cria código:**
+**Depois que `@frontend+` ou `@backend` cria código:**
 
 > **Guarda de bootstrap:** Se `package.json` ainda não existe, o GATE 2 é **pulado** — o sprint é um bootstrap sprint que cria o próprio `package.json`. Retome o enforcement do GATE 2 a partir do próximo sprint.
 
@@ -366,7 +394,7 @@ npm run build
     ```
     ⛔ VALIDAÇÃO DE BUILD FALHOU
     
-    Agente: [@frontend ou @backend]
+    Agente: [@frontend+ ou @backend]
     Arquivo: [filename]
     Erro: [mensagem de erro]
     
@@ -454,7 +482,7 @@ npm run build
 
 ## GATE 5: Verificação de design e UX (automática + manual)
 
-**Depois que `@frontend` completa trabalho de UI:**
+**Depois que `@frontend+` completa trabalho de UI:**
 
 ### Passo 1 (automático): Rodar o verificador estático
 
@@ -465,7 +493,7 @@ node scripts/verify-design.mjs --changed
 - **Se sair com código ≠ 0:**
   - ⛔ PARE a execução
   - Reporte as violações listadas pelo script (AppLayout faltando, Tailwind arbitrário, hex em className, style inline, etc.)
-  - Delegue ao `@frontend` com o output literal do script como contexto de erro
+  - Delegue ao `@frontend+` com o output literal do script como contexto de erro
   - Re-rode o script após a correção
 
 - **Se sair com `✅ 0 violações`:** continue para o Passo 2
@@ -569,7 +597,14 @@ Preflight pode ser enxuto:
      - **Fase 1:** Comande `@api-integrator` (Research) → Gerar relatório de pesquisa
      - **CHECKPOINT:** Apresente o relatório de pesquisa e PEÇA aprovação
      - **Fase 2:** Comande `@api-integrator` (Implementation) → Criar código de integração
-   - **Passo 3 (Código):** Comande `@backend` para Server Actions e/ou `@frontend` para UI.
+   - **Passo 3 (Código):** Comande `@backend` para Server Actions e/ou `@frontend+` para UI.
+   - **⏸️ CHECKPOINT — após `@frontend+` concluir (quando o sprint envolveu UI):**
+     Antes de prosseguir para o `@guardian`, **PAUSE** e pergunte ao usuário:
+     > `@frontend+` concluiu. Deseja **continuar** nesta sessão ou fazer **limpeza de contexto**?
+     > - `"continuar"` — prosseguir para `@guardian` agora
+     > - `"limpar contexto"` — pausar aqui e retomar em nova sessão
+     - Se **"continuar"**: prossiga para o Passo 4 normalmente.
+     - Se **"limpar contexto"**: confirme que a linha `@frontend+` está `✅ Concluído` no sprint file e encerre com: *"Sprint pausado. Inicie uma nova sessão e diga `Retomar sprint_[XX]` para continuar do `@guardian`."*
    - **Passo 4 (Qualidade):** Comande `@guardian` para revisar o código.
    - **Passo 5 (Checagem de design):** Verificação usando `docs/PROCESS_DESIGN_VERIFICATION.md` (proporcional à mudança).
    - **Passo 6 (Gates de validação):** Rode os gates aplicáveis (ver lista acima).
@@ -601,7 +636,7 @@ Preflight pode ser enxuto:
 - Report final ao usuário (build complete + arquivos commitados)
 - Ou escalação formal quando bloqueio detectado
 
-**Agentes delegados:** `@spec-writer`, `@sanity-checker`, `@db-admin`, `@api-integrator`, `@frontend`, `@backend`, `@guardian`, `@git-master`
+**Agentes delegados:** `@spec-writer`, `@sanity-checker`, `@db-admin`, `@api-integrator`, `@frontend+`, `@backend`, `@guardian`, `@git-master`
 
 **On-demand (apenas por pedido explícito do usuário):** `@qa`, `@performance-engineer`, `@sprint-creator`
 

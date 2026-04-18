@@ -86,7 +86,11 @@ Valide com chamada real antes de marcar completo. Checklist em `docs/templates/a
 
 **⛔ PARE se o smoke test falhar.** Corrija antes de prosseguir. Cobertura de regressão = invocar `@qa` on-demand.
 
-## Step 8 — Reportar ao Tech Lead
+## Step 8 — Atualizar sprint file
+
+Antes de reportar ao Tech Lead, atualize a linha `@api-integrator` em `## 🔄 Execução` do sprint file: `✅ Concluído` + path `src/lib/integrations/[api-name]/`.
+
+## Step 9 — Reportar ao Tech Lead
 Reporte no output final:
 
 ```markdown
