@@ -142,7 +142,7 @@ O roadmap menciona "Form com name, color (picker), active", mas a tabela `tags` 
 | Banco de dados | `@db-admin` | ✅ Concluido | `supabase/migrations/20260420100000_add_is_active_to_tags.sql` |
 | Server Actions | `@backend` | ✅ Concluido | `src/lib/actions/tags.ts`, `src/lib/tags/constants.ts` |
 | Frontend | `@frontend+` | ✅ Concluido | pages: `tags/page.tsx`, `tags/new/page.tsx`, `tags/[id]/page.tsx`; components: `TagsList`, `TagForm`, `TagBadge`, `TagRowActions`, `TagsToolbar`, `TagsSortPanel`, `TagsSortableHeader`, `sort-utils` |
-| Guardian | `@guardian` | ⬜ Pendente | — |
-| Git | `@git-master` | ⬜ Pendente | — |
+| Guardian | `@guardian` | ✅ Concluido | CODE REVIEW: APPROVED (0 violações) |
+| Git | `@git-master` | ✅ Concluido | sprint file movido para `sprints/done/` |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluido · ⏸️ Aguarda review
