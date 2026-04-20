@@ -7,6 +7,7 @@ import {
   BarChart3,
   Building2,
   ChevronDown,
+  GitBranch,
   Kanban,
   LayoutDashboard,
   LogOut,
@@ -53,6 +54,7 @@ const primaryNav: NavItem[] = [
       { href: '/leads-loss-reasons', label: 'Motivos de Perda' },
     ],
   },
+  { href: '/funnels', label: 'Funis', icon: GitBranch },
   { href: '#', label: 'Pipeline', icon: Kanban },
   { href: '#', label: 'WhatsApp', icon: MessageCircle, badge: '3' },
 ];
