@@ -79,21 +79,17 @@ shared_organisms:
     - name: App Header
       note: Mesmo em listing, create e edit.
 
-examples:
-  description: Exemplos completos de páginas montadas (TSX). Use como referência antes de construir.
+prototypes:
+  description: Telas prontas HTML — fonte de verdade visual. Traduza mecanicamente para TSX.
   files:
     - name: Listing Page
-      file: recipes/examples/listing-page.tsx.example
-      note: Página de listagem completa com todos os organismos montados.
+      file: telas_prontas/_conteudo/entidade_lista.html
     - name: Form Create Page
-      file: recipes/examples/form-create-page.tsx.example
-      note: Formulário de criação com breadcrumb, form sections e action bar.
+      file: telas_prontas/_conteudo/entidade_criar.html
     - name: Form Edit Page
-      file: recipes/examples/form-edit-page.tsx.example
-      note: Formulário de edição com badge de status, metadados, activity timeline, dialog de exclusão e action bar split.
+      file: telas_prontas/_conteudo/entidade_editar.html
     - name: Print Page
-      file: recipes/examples/print-page.tsx.example
-      note: Relatório de impressão com toolbar screen-only, tabela compacta e summary footer.
+      file: telas_prontas/_conteudo/entidade_imprimir.html
 
 customization_points:
   - Data Table columns e row actions

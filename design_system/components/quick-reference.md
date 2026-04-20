@@ -15,20 +15,20 @@ Recipe (tipo de página)
       → Molecule/Atom YAMLs (code pattern de cada peça)
 ```
 
-**Atalho:** para listing, form e kanban, já existem **exemplos completos montados** em `recipes/examples/`. Leia o exemplo antes de começar — ele mostra todos os organismos compostos em uma única página TSX.
+**Fonte de verdade visual:** as telas prontas em `telas_prontas/_conteudo/`. Quando existir tela pronta para o tipo de página, traduza mecanicamente do HTML — não consulte este quick-reference para a estrutura visual (use-o apenas para tokens e code patterns de componentes individuais).
 
 ---
 
-## 2. Recipes disponíveis + exemplos
+## 2. Recipes disponíveis
 
-| Tipo de página | Recipe | Exemplo completo |
+| Tipo de página | Recipe | Tela pronta |
 |---|---|---|
-| CRUD listing | [`recipes/crud-completo.yaml`](recipes/crud-completo.yaml) | [`recipes/examples/listing-page.tsx.example`](recipes/examples/listing-page.tsx.example) |
-| Formulário de criação | [`recipes/crud-completo.yaml`](recipes/crud-completo.yaml) (step 2) | [`recipes/examples/form-create-page.tsx.example`](recipes/examples/form-create-page.tsx.example) |
-| Formulário de edição | [`recipes/crud-completo.yaml`](recipes/crud-completo.yaml) (step 3) | [`recipes/examples/form-edit-page.tsx.example`](recipes/examples/form-edit-page.tsx.example) |
-| Página de impressão | [`recipes/pagina-relatorio.yaml`](recipes/pagina-relatorio.yaml) | [`recipes/examples/print-page.tsx.example`](recipes/examples/print-page.tsx.example) |
-| Kanban / Pipeline | [`recipes/kanban-pipeline.yaml`](recipes/kanban-pipeline.yaml) | [`recipes/examples/kanban-page.tsx.example`](recipes/examples/kanban-page.tsx.example) |
-| Dashboard | [`recipes/dashboard.yaml`](recipes/dashboard.yaml) | [`recipes/examples/dashboard-page.tsx.example`](recipes/examples/dashboard-page.tsx.example) |
+| CRUD listing | [`recipes/crud-completo.yaml`](recipes/crud-completo.yaml) | [`telas_prontas/_conteudo/entidade_lista.html`](../../telas_prontas/_conteudo/entidade_lista.html) |
+| Formulário de criação | [`recipes/crud-completo.yaml`](recipes/crud-completo.yaml) (step 2) | [`telas_prontas/_conteudo/entidade_criar.html`](../../telas_prontas/_conteudo/entidade_criar.html) |
+| Formulário de edição | [`recipes/crud-completo.yaml`](recipes/crud-completo.yaml) (step 3) | [`telas_prontas/_conteudo/entidade_editar.html`](../../telas_prontas/_conteudo/entidade_editar.html) |
+| Página de impressão | [`recipes/pagina-relatorio.yaml`](recipes/pagina-relatorio.yaml) | [`telas_prontas/_conteudo/entidade_imprimir.html`](../../telas_prontas/_conteudo/entidade_imprimir.html) |
+| Kanban / Pipeline | [`recipes/kanban-pipeline.yaml`](recipes/kanban-pipeline.yaml) | [`telas_prontas/_conteudo/pipeline.html`](../../telas_prontas/_conteudo/pipeline.html) |
+| Dashboard | [`recipes/dashboard.yaml`](recipes/dashboard.yaml) | [`telas_prontas/_conteudo/dashboard_home.html`](../../telas_prontas/_conteudo/dashboard_home.html) |
 
 ---
 

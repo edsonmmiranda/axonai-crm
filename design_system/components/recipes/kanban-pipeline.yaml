@@ -66,12 +66,11 @@ steps:
       - Aplicar kanban-scroll nas listas de cards
       - Aplicar scrollbar padrão no board horizontal
 
-examples:
-  description: Exemplo completo de página montada (TSX). Use como referência antes de construir.
+prototypes:
+  description: Tela pronta HTML — fonte de verdade visual. Traduza mecanicamente para TSX.
   files:
     - name: Kanban Page
-      file: recipes/examples/kanban-page.tsx.example
-      note: Pipeline kanban completo com sidebar, header, colunas e cards.
+      file: telas_prontas/_conteudo/pipeline.html
 
 customization_points:
   - Estágios do pipeline (nomes, ordem, cores)

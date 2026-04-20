@@ -37,13 +37,14 @@ Antes de escrever qualquer `page.tsx`, resolva qual é sua **fonte de verdade vi
 | Listagem / tabela | [`entidade_lista.html`](../../design_system/telas_prontas/_conteudo/entidade_lista.html) | "lista", "listagem", "tabela", "index" |
 | Formulário de criação | [`entidade_criar.html`](../../design_system/telas_prontas/_conteudo/entidade_criar.html) | "criar", "novo", "cadastro", "adicionar" |
 | Formulário de edição | [`entidade_editar.html`](../../design_system/telas_prontas/_conteudo/entidade_editar.html) | "editar", "alterar", "modificar" |
-| Relatório / impressão | [`entidade_imprimir.html`](../../design_system/telas_prontas/entidade_imprimir.html) | "imprimir", "relatório", "print", "PDF" |
+| Relatório / impressão | [`entidade_imprimir.html`](../../design_system/telas_prontas/_conteudo/entidade_imprimir.html) | "imprimir", "relatório", "print", "PDF" |
 | Dashboard | [`dashboard_home.html`](../../design_system/telas_prontas/_conteudo/dashboard_home.html) | "dashboard", "painel", "home", "visão geral" |
 | Login / autenticação | [`login.html`](../../design_system/telas_prontas/login.html) | "login", "autenticação", "sign in" |
 | Pipeline / kanban | [`pipeline.html`](../../design_system/telas_prontas/_conteudo/pipeline.html) | "pipeline", "kanban", "board", "funil" |
 
 > **Nota:** Os arquivos em `_conteudo/` contêm **apenas o conteúdo do `<main>`** (sem sidebar, sem header global). Cada arquivo é uma página HTML completa e pode ser aberto diretamente no browser. O shell completo (sidebar + header + navegação) está em [`dashboard.html`](../../design_system/telas_prontas/dashboard.html) — ele carrega os conteúdos via iframe. Para traduzir para TSX, leia **apenas o arquivo de conteúdo** correspondente (já é só o que vai no `page.tsx`).
-> **Exceção:** `pipeline.html` inclui seu próprio header específico (não usa o header global). Quando o shell carrega pipeline, ele esconde o header global automaticamente.
+> **Exceção — pipeline:** `pipeline.html` inclui seu próprio header específico (não usa o header global). Quando o shell carrega pipeline, ele esconde o header global automaticamente.
+> **Exceção — impressão:** `entidade_imprimir.html` é uma página standalone (não é carregada pelo shell via iframe). Não tem sidebar nem header — só toolbar de tela (`.no-print`) + conteúdo imprimível. Para traduzir para TSX, trate como uma rota fora do `DashboardShell` (sem `layout.tsx` de módulo).
 
 **Ação:** Leia **apenas** a tela pronta correspondente. Siga o Protocolo de Tradução Mecânica abaixo.  
 **Não leia:** recipes, exemplos TSX, catálogo YAMLs. A tela pronta já contém a composição validada.
@@ -57,11 +58,15 @@ Antes de escrever qualquer `page.tsx`, resolva qual é sua **fonte de verdade vi
 **Ação — leia nesta ordem:**
 1. [`design_system/components/quick-reference.md`](../../design_system/components/quick-reference.md) — visão consolidada
 2. O recipe em [`design_system/components/recipes/`](../../design_system/components/recipes/)
-3. O exemplo TSX em [`design_system/components/recipes/examples/`](../../design_system/components/recipes/examples/)
-4. YAMLs em [`design_system/components/catalog/`](../../design_system/components/catalog/) conforme necessário
-5. [`design_system/components/CONTRACT.md`](../../design_system/components/CONTRACT.md) — regras de authoring
+3. YAMLs em [`design_system/components/catalog/`](../../design_system/components/catalog/) conforme necessário
+4. [`design_system/components/CONTRACT.md`](../../design_system/components/CONTRACT.md) — regras de authoring
 
 **Este é o único nível onde você compõe criativamente.** Nos Níveis 1 e 2 você traduz; aqui você monta.
+
+**Obrigações extras no Nível 3** (não se aplicam aos Níveis 1/2 porque as telas prontas já resolvem isso):
+- **Radix Primitives** para qualquer interação não-trivial (dialog, popover, tooltip, select, dropdown). Nunca reimplemente focus trap, portal ou tratamento de escape.
+- **`cva`** para qualquer componente com mais de uma variante visual (button, badge, alert). Nunca use condicionais ad-hoc para variantes.
+- **Composição antes de reinvenção** — antes de criar um componente novo, verifique se pode montá-lo a partir dos existentes em `src/components/ui/`.
 
 > Se o tipo de página não existe nem no Nível 2 nem no Nível 3: escale ao Tech Lead antes de inventar layout. Formato: *"Não existe referência visual para [tipo]. Preciso de uma tela pronta ou direção de layout."*
 
@@ -184,8 +189,39 @@ ls src/config/navigation.ts 2>/dev/null
 ls src/components/ui/ 2>/dev/null
 ```
 
-- **Se existem** (`Button`, `Input`, `Select`): use-os — mas abra o componente e compare as classes. Se diferirem do HTML, use elemento nativo com as classes do HTML.
-- **Se não existem**: use elementos nativos com as classes do HTML.
+**4a. Se o componente já existe em `src/components/ui/`:**
+Use-o — mas abra o componente e compare as classes com o HTML. Se diferirem, corrija o componente para bater com o HTML.
+
+**4b. Se o componente NÃO existe:**
+**Crie o componente** em `src/components/ui/` seguindo o [`CONTRACT.md`](../../design_system/components/CONTRACT.md) **antes** de usá-lo na página. Nunca use elementos nativos inline — todo bloco visual deve ser um componente reutilizável.
+
+Componentes que **devem** existir (lista mínima — crie na primeira página que precisar):
+
+| Componente | Quando criar | Referência de classes |
+|---|---|---|
+| `Button` | Qualquer página com botões de ação | CONTRACT.md — padrão cva com variantes primary/secondary/ghost/danger |
+| `Input` | Qualquer formulário | CONTRACT.md — padrão Input |
+| `Select` | Formulário com selects | Mesmas classes do Input, adaptado para `<select>` |
+| `Textarea` | Formulário com textarea | Mesmas classes do Input, adaptado para `<textarea>` |
+| `Badge` | Listagem ou edição com status | CONTRACT.md — padrão cva com intents |
+| `FormField` | Qualquer formulário | Label + Input + erro (CONTRACT.md — Campo de formulário) |
+| `FormCardSection` | Formulário com seções agrupadas | Card com header (ícone + título + descrição) + grid de campos |
+| `DangerZoneCard` | Página de edição com exclusão | Card feedback-danger com ícone alerta + descrição + botão danger |
+| `StatCard` | Listagem com KPIs | Card com ícone de fundo, label, valor e badge de tendência |
+| `FilterBar` | Listagem com filtros | Container com search + selects + botão de filtros |
+| `DataTable` | Listagem com tabela | Table com thead sunken + tbody com hover + pagination |
+| `Pagination` | Listagem com tabela paginada | Nav com botões de página + seletor de page size |
+| `PageHeader` | Qualquer página | Título + descrição + botões de ação |
+| `Breadcrumb` | Qualquer página interna | Nav com links + separadores ChevronRight |
+| `ActivityTimeline` | Página de edição com histórico | Timeline vertical com ícones coloridos por tipo |
+
+**Regras para criação de componente:**
+- Extraia as classes **exatamente** como aparecem no HTML de referência
+- Use `cva` se o componente tem variantes (Button, Badge)
+- Use `cn()` para composição de classes
+- Coloque em `src/components/ui/{nome}.tsx`
+- O componente deve ser genérico (sem lógica de entidade específica)
+- Registre no sprint file: `✅ Componente criado: src/components/ui/{nome}.tsx`
 
 ## Passo 5 — O que adaptar (lista exclusiva)
 
@@ -216,9 +252,9 @@ Adapte **somente** os itens abaixo. Tudo fora desta lista permanece idêntico ao
 | 4 | **Reordenar seções** do HTML | Muda a hierarquia visual que o usuário aprovou |
 | 5 | **Trocar classes por "equivalentes semânticos"** | `bg-surface-raised` não é substituível por outro token |
 | 6 | **Adicionar features não pedidas** — loading skeletons, transitions, tooltips | O HTML define o escopo. Menos é mais |
-| 7 | **Criar componentes abstratos prematuros** para blocos que aparecem uma vez | Inline é fiel. Abstrair é decisão futura |
+| 7 | **Usar elementos nativos inline em vez de componentes** | Todo bloco visual deve ser um componente em `src/components/ui/`. Se não existe, crie-o (Passo 4b). Nunca use `<button className="...">` quando deveria ser `<Button variant="primary">` |
 | 8 | **Mudar hover/transition/focus** | Se o HTML tem `hover:bg-surface-sunken`, o TSX tem `hover:bg-surface-sunken` |
-| 9 | **Usar `<Button variant="X">` quando as classes geradas diferem do HTML** | Use elemento nativo com as classes do HTML. Variante só quando as classes são idênticas |
+| 9 | **Usar um componente cujas classes divergem do HTML** | Se `<Button variant="primary">` gera classes diferentes das que estão no HTML, **corrija o componente** para bater com o HTML. Nunca ignore a divergência nem pule o componente |
 
 ---
 
@@ -228,13 +264,20 @@ Adapte **somente** os itens abaixo. Tudo fora desta lista permanece idêntico ao
 - [ ] `layout.tsx` do módulo existe e importa `DashboardShell`
 - [ ] Cada seção do conteúdo principal do HTML tem correspondência exata no TSX — nada omitido, nada reordenado
 - [ ] `className` dos elementos estruturais são cópia literal do HTML
+- [ ] Componentes criados em `src/components/ui/` para todo bloco visual (Passo 4b) — classes extraídas do HTML, nunca inline
 - [ ] Somente itens da lista "O que adaptar" foram modificados
+- [ ] Labels em português e placeholders com exemplos reais
+- [ ] Empty state com mensagem amigável quando não há dados ou resultados de busca
+- [ ] Responsividade verificada em 375px (mobile) e 1440px (desktop)
 - [ ] `npm run build` passa sem erros
-- [ ] Linha `@frontend+` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + paths das páginas criadas)
+- [ ] Linha `@frontend+` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + paths das páginas criadas + componentes criados)
 
 **Nível 3 (sem referência):**
 - [ ] Visualmente coerente com telas prontas existentes (mesma anatomia, mesmos tokens)
-- [ ] CONTRACT.md seguido (tokens semânticos, headless, cva)
+- [ ] CONTRACT.md seguido — em particular: tokens semânticos (regra 1), Radix para interação não-trivial (regra 2), variantes via `cva` (regra 3), composição antes de reinvenção (regra 4)
+- [ ] Labels em português e placeholders com exemplos reais
+- [ ] Empty state com mensagem amigável quando não há dados ou resultados de busca
+- [ ] Responsividade verificada em 375px (mobile) e 1440px (desktop)
 - [ ] Dark mode verificado (`data-theme="dark"` no `<html>`)
 - [ ] `npm run build` passa sem erros
 - [ ] Linha `@frontend+` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + paths das páginas criadas)

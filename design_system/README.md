@@ -52,7 +52,6 @@ Se uma única camada pudesse tratar todas as três responsabilidades, nós não 
 | [components/catalog/_index.yaml](components/catalog/_index.yaml) | **Índice master** de todos os componentes (atoms, molecules, organisms, utilities, templates) | `@frontend+` |
 | [components/catalog/](components/catalog/) | YAMLs individuais por componente — code pattern, tokens usados, variantes | `@frontend+` |
 | [components/recipes/](components/recipes/) | Guias passo a passo para montar páginas (CRUD, relatório, kanban) | `@frontend+` |
-| [components/recipes/examples/](components/recipes/examples/) | **Exemplos completos** de páginas montadas em TSX (listing, form, kanban) | `@frontend+` |
 | [enforcement/rules.md](enforcement/rules.md) | Regras concretas de ESLint / Stylelint / a11y que impedem o código de derivar do contrato | `@guardian` |
 | [docs/theming.md](docs/theming.md) | Como theming light/dark/multi-brand funciona de ponta a ponta | — |
 | [docs/anti-patterns.md](docs/anti-patterns.md) | Coisas que parecem tentadoras e nunca devem ser feitas | — |
@@ -118,21 +117,10 @@ Se você é um agente (`@frontend+`, `@guardian`, `@spec-writer`, `@sanity-check
 ### Para criar uma nova página
 
 1. Identifique o tipo de página (CRUD listing, formulário, relatório, kanban).
-2. Leia o **[`components/quick-reference.md`](components/quick-reference.md)** — contém layouts, code patterns e tokens em um único arquivo.
-3. Leia o **exemplo completo** em [`components/recipes/examples/`](components/recipes/examples/) para ver uma página inteira montada em TSX.
+2. Verifique se existe **tela pronta** em [`telas_prontas/_conteudo/`](telas_prontas/_conteudo/) — se existir, essa é a fonte de verdade visual. Traduza mecanicamente para TSX.
+3. Se não existir tela pronta, leia o **[`components/quick-reference.md`](components/quick-reference.md)** — contém layouts, code patterns e tokens em um único arquivo.
 4. Leia o recipe correspondente em [`components/recipes/`](components/recipes/) para os passos específicos de customização.
 5. Para componentes não cobertos no quick-reference, abra o YAML individual em [`components/catalog/`](components/catalog/) — os templates já incluem os paths completos dos YAMLs.
-
-### Exemplos completos de páginas (TSX)
-
-| Tipo | Exemplo |
-|---|---|
-| Listing Page | [`recipes/examples/listing-page.tsx.example`](components/recipes/examples/listing-page.tsx.example) |
-| Form Create | [`recipes/examples/form-create-page.tsx.example`](components/recipes/examples/form-create-page.tsx.example) |
-| Form Edit | [`recipes/examples/form-edit-page.tsx.example`](components/recipes/examples/form-edit-page.tsx.example) |
-| Print Page | [`recipes/examples/print-page.tsx.example`](components/recipes/examples/print-page.tsx.example) |
-| Kanban Board | [`recipes/examples/kanban-page.tsx.example`](components/recipes/examples/kanban-page.tsx.example) |
-| Dashboard | [`recipes/examples/dashboard-page.tsx.example`](components/recipes/examples/dashboard-page.tsx.example) |
 
 ### Referências rápidas
 
