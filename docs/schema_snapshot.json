@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-16T17:44:11.560Z",
+  "timestamp": "2026-04-20T10:00:00.000Z",
   "tables": [
     {
       "table_name": "categories",
@@ -1527,6 +1527,13 @@
           "data_type": "timestamp with time zone",
           "is_nullable": "YES",
           "column_default": "now()",
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "is_active",
+          "data_type": "boolean",
+          "is_nullable": "NO",
+          "column_default": "true",
           "character_maximum_length": null
         },
         {
