@@ -196,7 +196,7 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabela:** `funnels`.
 
-**Trabalho:** `/settings/pipeline/funnels` — CRUD de funis. Form com name, description, is_active, is_default. Regra: só um funil default por org.
+**Trabalho:** `/funnels` — CRUD de funis. Form com name, description, is_active, is_default. Regra: só um funil default por org.
 
 **Aceite:** admin cria funil, marca como default, desativa outro; default exclusivo é respeitado.
 
@@ -206,7 +206,7 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabela:** `funnel_stages` (FK → `funnels`).
 
-**Trabalho:** dentro da tela do funil (`/settings/pipeline/funnels/[id]/stages`), CRUD + reordenação de linhas (drag). Campos: name, position, color, is_won, is_lost.
+**Trabalho:** dentro da tela do funil (`/funnels/[id]/stages`), CRUD + reordenação de linhas (drag). Campos: name, position, color, is_won, is_lost.
 
 **Aceite:** admin adiciona 5 estágios, reordena, marca um como won e outro como lost; ordem persiste.
 
