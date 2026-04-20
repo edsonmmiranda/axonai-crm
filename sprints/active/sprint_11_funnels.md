@@ -170,8 +170,8 @@ Score 8 com Reference Module presente encaixa na regra 6 (Opcao 1 sugerida). O s
 |---|---|---|---|
 | Banco de dados | `@db-admin` | Concluido | Tabelas + RLS ja existem, sem migration |
 | Server Actions | `@backend` | Concluido | `src/lib/actions/funnels.ts`, `src/lib/actions/funnel-stages.ts`, `src/lib/funnels/constants.ts` |
-| Frontend | `@frontend+` | Pendente | — |
-| Guardian | `@guardian` | Pendente | — |
-| Git | `@git-master` | Pendente | — |
+| Frontend | `@frontend+` | Concluido | `src/app/(app)/funnels/page.tsx`, `src/app/(app)/funnels/new/page.tsx`, `src/app/(app)/funnels/[id]/page.tsx`, `src/components/funnels/FunnelsList.tsx`, `src/components/funnels/FunnelForm.tsx`, `src/components/funnels/FunnelStagesEditor.tsx`, `src/components/funnels/FunnelRowActions.tsx`, `src/components/funnels/FunnelsToolbar.tsx`, `src/components/funnels/FunnelsSortableHeader.tsx`, `src/components/funnels/sort-utils.ts`, `src/components/layout/Sidebar.tsx` |
+| Guardian | `@guardian` | Concluido | APPROVED — todas as regras automaticas e semanticas passam |
+| Git | `@git-master` | Concluido | commit `6554bf7` feat: add Funnels CRUD module (Sprint 11) |
 
 **Legenda:** Pendente - Em andamento - Concluido - Aguarda review
