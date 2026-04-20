@@ -13,10 +13,13 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 
 # Segurança em primeiro lugar
 
+**Fonte normativa:** [`docs/conventions/security.md`](../../docs/conventions/security.md). Resumo das regras críticas para Server Actions:
+
 - Sempre valide input com Zod na borda da Server Action
 - Sempre use Row Level Security (RLS) do Supabase
+- **Nunca** aceite `user_id`/`company_id` como parâmetro — extraia de `supabase.auth.getUser()`
 - Trate erros explicitamente (try/catch) em todas as actions
-- Nunca exponha erros internos ao usuário
+- Nunca exponha erros internos ao usuário (`error.message` proibido no response)
 
 # Qualidade de código
 

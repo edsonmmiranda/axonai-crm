@@ -12,11 +12,12 @@ Quando dois documentos dizem coisas diferentes, o mais alto na lista vence:
 
 1. **`CLAUDE.md`** (boot do harness — regras duras do ambiente)
 2. **`docs/conventions/standards.md`** (este arquivo — contratos e regras invioláveis)
-3. **`agents/00_TECH_LEAD.md`** (workflow, gates, orchestração)
-4. **`docs/conventions/crud.md`** (padrões de UI e paths canônicos para CRUDs)
-5. **`agents/stack/*.md`** e **`agents/ops/*.md`** (protocolos específicos de cada agente)
-6. **`agents/skills/*.md`** (templates e padrões de implementação — exemplos, não regras)
-7. **`docs/templates/*.md`** (skeletons de código — copie e adapte)
+3. **`docs/conventions/security.md`** (diretrizes de segurança — fonte autoritativa)
+4. **`agents/00_TECH_LEAD.md`** (workflow, gates, orchestração)
+5. **`docs/conventions/crud.md`** (padrões de UI e paths canônicos para CRUDs)
+6. **`agents/stack/*.md`** e **`agents/ops/*.md`** (protocolos específicos de cada agente)
+7. **`agents/skills/*.md`** (templates e padrões de implementação — exemplos, não regras)
+8. **`docs/templates/*.md`** (skeletons de código — copie e adapte)
 
 **Regra prática:** documentos de nível mais alto definem *o quê*; documentos de nível mais baixo definem *como*. Se um template contradiz uma regra deste arquivo, siga este arquivo.
 
@@ -145,8 +146,9 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 
 ### Ao adotar `@guardian`
 1. `agents/quality/guardian.md`
-2. `design_system/enforcement/rules.md`
-3. `design_system/components/CONTRACT.md`
+2. `docs/conventions/security.md` (fonte normativa para §3)
+3. `design_system/enforcement/rules.md`
+4. `design_system/components/CONTRACT.md`
 
 ### Ao adotar `@spec-writer`
 1. `agents/product/spec-writer.md`

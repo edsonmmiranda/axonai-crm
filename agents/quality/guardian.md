@@ -52,10 +52,28 @@ Estas são as checagens que o lint **não** cobre. Exigem que você leia o PR e 
 - [ ] Schemas Zod em todos os inputs de API?
 
 ## 3. Segurança
-- [ ] Sem segredos no código (API keys, passwords)?
-- [ ] Sem credenciais hardcoded?
-- [ ] Validação de input presente?
-- [ ] Auth checado em rotas privadas?
+
+**Fonte normativa:** [`docs/conventions/security.md`](../../docs/conventions/security.md). As checagens abaixo espelham esse arquivo — quando um PR for edge-case, o arquivo linkado vence.
+
+### 3a. Regras automáticas (grep/leitura)
+
+- [ ] **Sem segredos no código.** Regex: `/(?:api[_-]?key|secret|password|token|credential)\s*[:=]\s*['"][^'"]+['"]/i`. Scan em todos os arquivos do PR exceto `.env.example`.
+- [ ] **Sem credenciais hardcoded.** Buscar strings que pareçam JWTs (`eyJ`), chaves de API (prefixos como `sk-`, `pk_`), ou connection strings.
+- [ ] **`service_role_key` nunca exposta ao browser.** Regex: `/NEXT_PUBLIC_.*SERVICE_ROLE/i` ou import de `service_role_key` em arquivo com `'use client'`.
+- [ ] **Validação Zod na borda de toda Server Action.** Toda função `'use server'` que recebe input deve ter `Schema.safeParse()` antes de qualquer lógica.
+- [ ] **Auth check presente.** Toda Server Action com read/write deve ter `supabase.auth.getUser()` antes da query.
+- [ ] **user_id/company_id nunca aceitos como parâmetro.** Grep por parâmetros de função chamados `userId`, `user_id`, `companyId`, `company_id`, `tenantId`, `tenant_id` em Server Actions — se vierem do cliente, rejeitar.
+- [ ] **Sem `dangerouslySetInnerHTML`.** Regex: `/dangerouslySetInnerHTML/`. Exceção: se usado com `DOMPurify.sanitize()` no mesmo bloco.
+- [ ] **Sem `href` dinâmico inseguro.** Buscar `href={` com variáveis que possam vir do usuário sem validação de protocolo.
+- [ ] **RLS habilitado em toda nova tabela.** Toda migration com `CREATE TABLE` deve ter `ENABLE ROW LEVEL SECURITY` correspondente.
+- [ ] **Schemas Zod strict.** Sem `.passthrough()` ou `.catchall()` em schemas de input de Server Actions.
+
+### 3b. Correção semântica (leitura atenta)
+
+- [ ] **Erro exposto ao cliente?** Se o `catch` retorna `error.message` ou `err.toString()` no campo `error` do `ActionResponse`, é violação. Deve ser mensagem amigável fixa.
+- [ ] **Dados sensíveis em logs?** `console.log`/`console.error` que logam objetos inteiros de request, user data, ou tokens — rejeitar. Apenas action name + error são permitidos.
+- [ ] **Dados sensíveis em estado client-side?** Se um `useState`, `useContext`, ou `localStorage` armazena tokens, passwords, ou IDs de sessão — rejeitar.
+- [ ] **SECURITY DEFINER justificado?** Funções PostgreSQL com `SECURITY DEFINER` devem ser read-only e ter GRANTS restritos. Se aceita input do usuário, questionar.
 
 ## 4. Banco de Dados (se houver migrações)
 - [ ] Migração idempotente (usa `IF NOT EXISTS`)?
@@ -86,8 +104,15 @@ Rejeite imediatamente se qualquer uma das seguintes estiver presente:
 - Falha de paridade de chaves entre `semantic.light.json` e `semantic.dark.json`
 - Falha de contraste WCAG AA reportada por `npm run contrast`
 
+**Segurança** (ver [`docs/conventions/security.md`](../../docs/conventions/security.md))
+- Segredos detectados no código (API keys, passwords, tokens, JWTs hardcoded)
+- `service_role_key` exposta ao browser (`NEXT_PUBLIC_` ou import em `'use client'`)
+- Server Action que aceita `user_id`/`company_id` como parâmetro do cliente
+- Tabela sem RLS habilitado
+- `dangerouslySetInnerHTML` sem sanitização (`DOMPurify`)
+- `error.message` retornado diretamente ao cliente no `ActionResponse`
+
 **Outros**
-- Segredos detectados no código (API keys, passwords, tokens)
 - Erros de TypeScript
 - Uso extensivo de `any`
 - Migração não-idempotente

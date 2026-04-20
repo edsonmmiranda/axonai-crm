@@ -45,6 +45,7 @@ Mostre a saída do script e aguarde o usuário revisar com `git diff` antes de c
 | Precisa de | Leia |
 |---|---|
 | **Regras invioláveis, hierarquia de autoridade, modelo de delegação** | [`docs/conventions/standards.md`](docs/conventions/standards.md) ⭐ |
+| **Diretrizes de segurança (fonte única)** | [`docs/conventions/security.md`](docs/conventions/security.md) |
 | Workflow completo, gates, rollback | [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) |
 | Stack esperado do projeto | [`docs/stack.md`](docs/stack.md) |
 | Schema real do banco | [`docs/schema_snapshot.json`](docs/schema_snapshot.json) |
