@@ -111,6 +111,7 @@ export interface ProductFormProps {
   productId?: string;
   images?: ProductImageItem[];
   documents?: ProductDocumentItem[];
+  isAdmin?: boolean;
 }
 
 function toNumericOrUndefined(value: string | undefined): number | undefined {
@@ -202,6 +203,7 @@ export function ProductForm({
   productId,
   images,
   documents,
+  isAdmin = false,
 }: ProductFormProps) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
@@ -561,25 +563,27 @@ export function ProductForm({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-lg border border-border bg-surface-base px-4 py-3">
-                <div className="flex flex-col">
-                  <Label htmlFor="productActive">Produto ativo</Label>
-                  <p className="text-xs text-text-secondary">
-                    Produtos arquivados ficam ocultos da listagem padrão.
-                  </p>
+              {mode === 'edit' && isAdmin ? (
+                <div className="flex items-center justify-between rounded-lg border border-border bg-surface-base px-4 py-3">
+                  <div className="flex flex-col">
+                    <Label htmlFor="productActive">Produto ativo</Label>
+                    <p className="text-xs text-text-secondary">
+                      Produtos arquivados ficam ocultos da listagem padrão.
+                    </p>
+                  </div>
+                  <Controller
+                    control={control}
+                    name="active"
+                    render={({ field }) => (
+                      <Switch
+                        id="productActive"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
                 </div>
-                <Controller
-                  control={control}
-                  name="active"
-                  render={({ field }) => (
-                    <Switch
-                      id="productActive"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  )}
-                />
-              </div>
+              ) : null}
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col gap-1.5">

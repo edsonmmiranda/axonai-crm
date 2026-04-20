@@ -145,7 +145,6 @@ export function LossReasonsList({ reasons, hasFilter, metadata }: LossReasonsLis
                   <LossReasonRowActions
                     id={reason.id}
                     name={reason.name}
-                    isActive={reason.is_active}
                   />
                 </td>
               </tr>

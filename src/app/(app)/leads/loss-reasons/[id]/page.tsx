@@ -74,7 +74,7 @@ export default async function EditLossReasonPage(props: {
         </p>
       </div>
 
-      <LossReasonForm mode="edit" reason={reason} />
+      <LossReasonForm mode="edit" reason={reason} isAdmin />
     </div>
   );
 }

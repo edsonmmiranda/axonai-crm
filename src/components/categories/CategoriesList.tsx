@@ -100,7 +100,7 @@ export function CategoriesList({ categories, hasFilter }: CategoriesListProps) {
                 {formatDate(c.created_at)}
               </td>
               <td className="px-4 py-3">
-                <CategoryRowActions id={c.id} name={c.name} active={c.active} />
+                <CategoryRowActions id={c.id} name={c.name} />
               </td>
             </tr>
           ))}

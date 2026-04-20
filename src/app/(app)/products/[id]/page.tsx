@@ -105,6 +105,7 @@ export default async function EditProductPage(props: {
         productId={product.id}
         images={galleryItems}
         documents={documentItems}
+        isAdmin
       />
     </div>
   );

@@ -31,9 +31,10 @@ type FormValues = z.infer<typeof FormSchema>;
 export interface LossReasonFormProps {
   mode: 'create' | 'edit';
   reason?: LossReasonRow;
+  isAdmin?: boolean;
 }
 
-export function LossReasonForm({ mode, reason }: LossReasonFormProps) {
+export function LossReasonForm({ mode, reason, isAdmin = false }: LossReasonFormProps) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -107,25 +108,27 @@ export function LossReasonForm({ mode, reason }: LossReasonFormProps) {
         ) : null}
       </div>
 
-      <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
-        <div className="flex flex-col">
-          <Label htmlFor="reasonActive">Motivo ativo</Label>
-          <p className="text-xs text-text-secondary">
-            Motivos inativos ficam ocultos na listagem padrão.
-          </p>
+      {mode === 'edit' && isAdmin ? (
+        <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
+          <div className="flex flex-col">
+            <Label htmlFor="reasonActive">Motivo ativo</Label>
+            <p className="text-xs text-text-secondary">
+              Motivos inativos ficam ocultos na listagem padrão.
+            </p>
+          </div>
+          <Controller
+            control={control}
+            name="is_active"
+            render={({ field }) => (
+              <Switch
+                id="reasonActive"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
         </div>
-        <Controller
-          control={control}
-          name="is_active"
-          render={({ field }) => (
-            <Switch
-              id="reasonActive"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-          )}
-        />
-      </div>
+      ) : null}
 
       <div className="flex items-center justify-end gap-3">
         <Button

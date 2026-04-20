@@ -46,7 +46,7 @@ export default async function EditCategoryPage(props: {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <CategoryForm mode="edit" category={category} />
+          <CategoryForm mode="edit" category={category} isAdmin />
         </CardContent>
       </Card>
     </div>

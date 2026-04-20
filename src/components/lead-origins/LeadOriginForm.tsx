@@ -57,9 +57,10 @@ type FormValues = z.infer<typeof FormSchema>;
 export interface LeadOriginFormProps {
   mode: 'create' | 'edit';
   origin?: LeadOriginRow;
+  isAdmin?: boolean;
 }
 
-export function LeadOriginForm({ mode, origin }: LeadOriginFormProps) {
+export function LeadOriginForm({ mode, origin, isAdmin = false }: LeadOriginFormProps) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -185,25 +186,27 @@ export function LeadOriginForm({ mode, origin }: LeadOriginFormProps) {
         ) : null}
       </div>
 
-      <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
-        <div className="flex flex-col">
-          <Label htmlFor="originActive">Origem ativa</Label>
-          <p className="text-xs text-text-secondary">
-            Origens inativas ficam ocultas na listagem padrão.
-          </p>
+      {mode === 'edit' && isAdmin ? (
+        <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
+          <div className="flex flex-col">
+            <Label htmlFor="originActive">Origem ativa</Label>
+            <p className="text-xs text-text-secondary">
+              Origens inativas ficam ocultas na listagem padrão.
+            </p>
+          </div>
+          <Controller
+            control={control}
+            name="is_active"
+            render={({ field }) => (
+              <Switch
+                id="originActive"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
         </div>
-        <Controller
-          control={control}
-          name="is_active"
-          render={({ field }) => (
-            <Switch
-              id="originActive"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-          )}
-        />
-      </div>
+      ) : null}
 
       <div className="flex items-center justify-end gap-3">
         <Button

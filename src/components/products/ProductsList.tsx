@@ -180,7 +180,7 @@ export function ProductsList({ products, hasFilter, thumbnailUrls }: ProductsLis
                   {formatDate(p.created_at)}
                 </td>
                 <td className="whitespace-nowrap py-4 pl-3 pr-6 text-right">
-                  <ProductRowActions id={p.id} name={p.name} status={p.status} />
+                  <ProductRowActions id={p.id} name={p.name} />
                 </td>
               </tr>
             );

@@ -38,9 +38,10 @@ type FormValues = z.infer<typeof FormSchema>;
 export interface CategoryFormProps {
   mode: 'create' | 'edit';
   category?: CategoryRow;
+  isAdmin?: boolean;
 }
 
-export function CategoryForm({ mode, category }: CategoryFormProps) {
+export function CategoryForm({ mode, category, isAdmin = false }: CategoryFormProps) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -149,25 +150,27 @@ export function CategoryForm({ mode, category }: CategoryFormProps) {
         ) : null}
       </div>
 
-      <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
-        <div className="flex flex-col">
-          <Label htmlFor="categoryActive">Categoria ativa</Label>
-          <p className="text-xs text-text-secondary">
-            Categorias inativas ficam ocultas no catálogo por padrão.
-          </p>
+      {mode === 'edit' && isAdmin ? (
+        <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
+          <div className="flex flex-col">
+            <Label htmlFor="categoryActive">Categoria ativa</Label>
+            <p className="text-xs text-text-secondary">
+              Categorias inativas ficam ocultas no catálogo por padrão.
+            </p>
+          </div>
+          <Controller
+            control={control}
+            name="active"
+            render={({ field }) => (
+              <Switch
+                id="categoryActive"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
         </div>
-        <Controller
-          control={control}
-          name="active"
-          render={({ field }) => (
-            <Switch
-              id="categoryActive"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-          )}
-        />
-      </div>
+      ) : null}
 
       <div className="flex items-center justify-end gap-3">
         <Button

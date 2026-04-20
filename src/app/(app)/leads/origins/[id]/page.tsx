@@ -74,7 +74,7 @@ export default async function EditLeadOriginPage(props: {
         </p>
       </div>
 
-      <LeadOriginForm mode="edit" origin={origin} />
+      <LeadOriginForm mode="edit" origin={origin} isAdmin />
     </div>
   );
 }

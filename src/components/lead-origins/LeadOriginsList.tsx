@@ -153,7 +153,6 @@ export function LeadOriginsList({ origins, hasFilter, metadata }: LeadOriginsLis
                   <LeadOriginRowActions
                     id={origin.id}
                     name={origin.name}
-                    isActive={origin.is_active}
                   />
                 </td>
               </tr>
