@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { MoreHorizontal, Pencil, UserPlus, XCircle, PowerOff, RotateCcw } from 'lucide-react';
+import { MoreHorizontal, Pencil, UserPlus, XCircle, PowerOff, RotateCcw, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +17,7 @@ import { MarkAsLostDialog } from './MarkAsLostDialog';
 import { AssignLeadDialog } from './AssignLeadDialog';
 import { DeactivateLeadDialog } from './DeactivateLeadDialog';
 import { RestoreLeadDialog } from './RestoreLeadDialog';
+import { DeleteLeadDialog } from './DeleteLeadDialog';
 
 interface LeadRowActionsProps {
   lead: LeadRow;
@@ -30,6 +31,7 @@ export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRow
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
     <div className="flex items-center justify-end gap-1">
@@ -60,10 +62,7 @@ export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRow
             <>
               <DropdownMenuSeparator />
               {lead.is_active ? (
-                <DropdownMenuItem
-                  onSelect={() => setShowDeactivateDialog(true)}
-                  className="text-feedback-danger-fg focus:text-feedback-danger-fg"
-                >
+                <DropdownMenuItem onSelect={() => setShowDeactivateDialog(true)}>
                   <PowerOff className="size-4" aria-hidden="true" />
                   Inativar
                 </DropdownMenuItem>
@@ -73,6 +72,13 @@ export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRow
                   Reativar
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem
+                onSelect={() => setShowDeleteDialog(true)}
+                className="text-feedback-danger-fg focus:text-feedback-danger-fg"
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+                Excluir
+              </DropdownMenuItem>
             </>
           ) : null}
         </DropdownMenuContent>
@@ -110,6 +116,14 @@ export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRow
           leadId={lead.id}
           leadName={lead.name}
           onClose={() => setShowRestoreDialog(false)}
+        />
+      ) : null}
+
+      {showDeleteDialog ? (
+        <DeleteLeadDialog
+          leadId={lead.id}
+          leadName={lead.name}
+          onClose={() => setShowDeleteDialog(false)}
         />
       ) : null}
     </div>
