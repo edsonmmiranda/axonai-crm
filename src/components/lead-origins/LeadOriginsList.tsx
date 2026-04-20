@@ -33,7 +33,7 @@ function buildPageUrl(searchParams: URLSearchParams, page: number): string {
   if (page > 1) next.set('page', String(page));
   else next.delete('page');
   const qs = next.toString();
-  return qs ? `/leads/origins?${qs}` : '/leads/origins';
+  return qs ? `/leads-origins?${qs}` : '/leads-origins';
 }
 
 function buildPageItems(current: number, total: number): Array<number | 'ellipsis-l' | 'ellipsis-r'> {
@@ -74,7 +74,7 @@ export function LeadOriginsList({ origins, hasFilter, metadata }: LeadOriginsLis
           Crie sua primeira origem para começar a rastrear a captação de leads.
         </p>
         <Button asChild className="mt-2">
-          <Link href="/leads/origins/new">Criar primeira origem</Link>
+          <Link href="/leads-origins/new">Criar primeira origem</Link>
         </Button>
       </div>
     );
@@ -129,7 +129,7 @@ export function LeadOriginsList({ origins, hasFilter, metadata }: LeadOriginsLis
               >
                 <td className="whitespace-nowrap py-4 pl-6 pr-3">
                   <Link
-                    href={`/leads/origins/${origin.id}`}
+                    href={`/leads-origins/${origin.id}`}
                     className="rounded font-bold text-text-primary transition-colors hover:text-action-primary focus-visible:outline-none focus-visible:shadow-focus"
                   >
                     {origin.name}

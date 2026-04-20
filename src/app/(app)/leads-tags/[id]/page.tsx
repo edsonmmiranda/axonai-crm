@@ -1,15 +1,37 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
+import { notFound, redirect } from 'next/navigation';
+import { Calendar, ChevronRight } from 'lucide-react';
 
-import { LossReasonForm } from '@/components/loss-reasons/LossReasonForm';
+import { Badge } from '@/components/ui/badge';
+import { TagBadge } from '@/components/tags/TagBadge';
+import { TagForm } from '@/components/tags/TagForm';
+import { getTagByIdAction } from '@/lib/actions/tags';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
+import type { TagColor } from '@/lib/tags/constants';
 
-export default async function NewLossReasonPage() {
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
+export default async function EditTagPage(props: {
+  params: Promise<{ id: string }>;
+}) {
   const ctx = await getSessionContext();
   if (ctx.role === 'member') {
     redirect('/leads?notice=restricted');
   }
+
+  const { id } = await props.params;
+  const res = await getTagByIdAction(id);
+  if (!res.success || !res.data) {
+    notFound();
+  }
+
+  const tag = res.data;
 
   return (
     <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
@@ -39,46 +61,40 @@ export default async function NewLossReasonPage() {
           </li>
           <li>
             <Link
-              href="/leads/loss-reasons"
+              href="/leads-tags"
               className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
             >
-              Motivos de Perda
+              Tags
             </Link>
           </li>
           <li aria-hidden="true">
             <ChevronRight className="size-4 text-text-muted" />
           </li>
-          <li className="font-semibold text-text-primary">Novo motivo</li>
+          <li className="truncate font-semibold text-text-primary" title={tag.name}>
+            {tag.name}
+          </li>
         </ol>
       </nav>
 
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-3xl font-bold tracking-tight text-text-primary">
-            Novo motivo
+            {tag.name}
           </h2>
-          <p className="text-sm text-text-secondary">
-            Preencha os dados para criar um novo motivo de perda.
-          </p>
+          <TagBadge name={tag.name} color={tag.color as TagColor} />
+          <Badge variant={tag.is_active ? 'role-admin' : 'status-inactive'}>
+            {tag.is_active ? 'Ativa' : 'Inativa'}
+          </Badge>
         </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/leads/loss-reasons"
-            className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover focus-visible:outline-none focus-visible:shadow-focus"
-          >
-            Cancelar
-          </Link>
-          <button
-            type="submit"
-            form="loss-reason-form"
-            className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover focus-visible:outline-none focus-visible:shadow-focus"
-          >
-            Criar motivo
-          </button>
+        <div className="flex items-center gap-4 text-sm text-text-secondary">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="size-3.5" aria-hidden="true" />
+            Criado em {formatDate(tag.created_at)}
+          </span>
         </div>
       </div>
 
-      <LossReasonForm mode="create" />
+      <TagForm mode="edit" tag={tag} isAdmin />
     </div>
   );
 }

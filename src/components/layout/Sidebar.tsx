@@ -48,9 +48,9 @@ const primaryNav: NavItem[] = [
     icon: Users,
     children: [
       { href: '/leads', label: 'Todos os Leads' },
-      { href: '/leads/origins', label: 'Origens' },
-      { href: '/leads/tags', label: 'Tags' },
-      { href: '/leads/loss-reasons', label: 'Motivos de Perda' },
+      { href: '/leads-origins', label: 'Origens' },
+      { href: '/leads-tags', label: 'Tags' },
+      { href: '/leads-loss-reasons', label: 'Motivos de Perda' },
     ],
   },
   { href: '#', label: 'Pipeline', icon: Kanban },

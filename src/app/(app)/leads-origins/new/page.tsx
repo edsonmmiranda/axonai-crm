@@ -39,7 +39,7 @@ export default async function NewLeadOriginPage() {
           </li>
           <li>
             <Link
-              href="/leads/origins"
+              href="/leads-origins"
               className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
             >
               Origens
@@ -63,7 +63,7 @@ export default async function NewLeadOriginPage() {
         </div>
         <div className="flex items-center gap-3">
           <Link
-            href="/leads/origins"
+            href="/leads-origins"
             className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover focus-visible:outline-none focus-visible:shadow-focus"
           >
             Cancelar

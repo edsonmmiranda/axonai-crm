@@ -44,7 +44,7 @@ export function LeadOriginsToolbar() {
     next.delete('page');
     const qs = next.toString();
     startTransition(() => {
-      router.push(qs ? `/leads/origins?${qs}` : '/leads/origins');
+      router.push(qs ? `/leads-origins?${qs}` : '/leads-origins');
     });
   }
 

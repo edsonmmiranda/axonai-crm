@@ -33,7 +33,7 @@ function buildPageUrl(searchParams: URLSearchParams, page: number): string {
   if (page > 1) next.set('page', String(page));
   else next.delete('page');
   const qs = next.toString();
-  return qs ? `/leads/loss-reasons?${qs}` : '/leads/loss-reasons';
+  return qs ? `/leads-loss-reasons?${qs}` : '/leads-loss-reasons';
 }
 
 function buildPageItems(current: number, total: number): Array<number | 'ellipsis-l' | 'ellipsis-r'> {
@@ -74,7 +74,7 @@ export function LossReasonsList({ reasons, hasFilter, metadata }: LossReasonsLis
           Crie seu primeiro motivo para começar a categorizar leads perdidos.
         </p>
         <Button asChild className="mt-2">
-          <Link href="/leads/loss-reasons/new">Cadastrar primeiro motivo de perda</Link>
+          <Link href="/leads-loss-reasons/new">Cadastrar primeiro motivo de perda</Link>
         </Button>
       </div>
     );
@@ -127,7 +127,7 @@ export function LossReasonsList({ reasons, hasFilter, metadata }: LossReasonsLis
               >
                 <td className="whitespace-nowrap py-4 pl-6 pr-3">
                   <Link
-                    href={`/leads/loss-reasons/${reason.id}`}
+                    href={`/leads-loss-reasons/${reason.id}`}
                     className="rounded font-bold text-text-primary transition-colors hover:text-action-primary focus-visible:outline-none focus-visible:shadow-focus"
                   >
                     {reason.name}

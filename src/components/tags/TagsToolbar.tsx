@@ -27,7 +27,7 @@ export function TagsToolbar() {
     next.delete('page');
     const qs = next.toString();
     startTransition(() => {
-      router.push(qs ? `/leads/tags?${qs}` : '/leads/tags');
+      router.push(qs ? `/leads-tags?${qs}` : '/leads-tags');
     });
   }
 

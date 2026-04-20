@@ -206,7 +206,7 @@ export async function createTagAction(
       return { success: false, error: 'Não foi possível criar a tag.' };
     }
 
-    revalidatePath('/leads/tags');
+    revalidatePath('/leads-tags');
     return { success: true, data };
   } catch (error) {
     console.error('[tags:create] unexpected', error);
@@ -257,8 +257,8 @@ export async function updateTagAction(
       return { success: false, error: 'Não foi possível atualizar a tag.' };
     }
 
-    revalidatePath('/leads/tags');
-    revalidatePath(`/leads/tags/${idParsed.data}`);
+    revalidatePath('/leads-tags');
+    revalidatePath(`/leads-tags/${idParsed.data}`);
     return { success: true, data };
   } catch (error) {
     console.error('[tags:update] unexpected', error);
@@ -298,7 +298,7 @@ export async function deactivateTagAction(
       return { success: false, error: 'Tag não encontrada.' };
     }
 
-    revalidatePath('/leads/tags');
+    revalidatePath('/leads-tags');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[tags:deactivate] unexpected', error);
@@ -338,7 +338,7 @@ export async function restoreTagAction(
       return { success: false, error: 'Tag não encontrada.' };
     }
 
-    revalidatePath('/leads/tags');
+    revalidatePath('/leads-tags');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[tags:restore] unexpected', error);
@@ -397,7 +397,7 @@ export async function deleteTagAction(
       return { success: false, error: 'Tag não encontrada.' };
     }
 
-    revalidatePath('/leads/tags');
+    revalidatePath('/leads-tags');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[tags:delete] unexpected', error);

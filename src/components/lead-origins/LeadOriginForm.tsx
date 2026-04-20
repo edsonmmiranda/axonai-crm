@@ -124,7 +124,7 @@ export function LeadOriginForm({ mode, origin, isAdmin = false }: LeadOriginForm
       }
 
       toast.success(mode === 'create' ? 'Origem criada.' : 'Origem atualizada.');
-      router.push('/leads/origins');
+      router.push('/leads-origins');
     });
   });
 
@@ -137,7 +137,7 @@ export function LeadOriginForm({ mode, origin, isAdmin = false }: LeadOriginForm
         return;
       }
       toast.success('Origem excluída.');
-      router.push('/leads/origins');
+      router.push('/leads-origins');
     });
   }
 
@@ -258,7 +258,7 @@ export function LeadOriginForm({ mode, origin, isAdmin = false }: LeadOriginForm
           <Button
             type="button"
             variant="ghost"
-            onClick={() => router.push('/leads/origins')}
+            onClick={() => router.push('/leads-origins')}
             disabled={isPending}
           >
             Cancelar

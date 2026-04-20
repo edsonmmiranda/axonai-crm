@@ -113,7 +113,7 @@ export function TagForm({ mode, tag, isAdmin = false }: TagFormProps) {
       }
 
       toast.success(mode === 'create' ? 'Tag criada.' : 'Tag atualizada.');
-      router.push('/leads/tags');
+      router.push('/leads-tags');
     });
   });
 
@@ -126,7 +126,7 @@ export function TagForm({ mode, tag, isAdmin = false }: TagFormProps) {
         return;
       }
       toast.success('Tag excluída.');
-      router.push('/leads/tags');
+      router.push('/leads-tags');
     });
   }
 
@@ -251,7 +251,7 @@ export function TagForm({ mode, tag, isAdmin = false }: TagFormProps) {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => router.push('/leads/tags')}
+            onClick={() => router.push('/leads-tags')}
             disabled={isPending}
           >
             Cancelar

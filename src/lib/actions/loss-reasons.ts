@@ -196,7 +196,7 @@ export async function createLossReasonAction(
       return { success: false, error: 'Não foi possível criar o motivo de perda.' };
     }
 
-    revalidatePath('/leads/loss-reasons');
+    revalidatePath('/leads-loss-reasons');
     return { success: true, data };
   } catch (error) {
     console.error('[loss-reasons:create] unexpected', error);
@@ -243,8 +243,8 @@ export async function updateLossReasonAction(
       return { success: false, error: 'Não foi possível atualizar o motivo de perda.' };
     }
 
-    revalidatePath('/leads/loss-reasons');
-    revalidatePath(`/leads/loss-reasons/${idParsed.data}`);
+    revalidatePath('/leads-loss-reasons');
+    revalidatePath(`/leads-loss-reasons/${idParsed.data}`);
     return { success: true, data };
   } catch (error) {
     console.error('[loss-reasons:update] unexpected', error);
@@ -284,7 +284,7 @@ export async function deleteLossReasonAction(
       return { success: false, error: 'Motivo de perda não encontrado.' };
     }
 
-    revalidatePath('/leads/loss-reasons');
+    revalidatePath('/leads-loss-reasons');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[loss-reasons:delete] unexpected', error);
@@ -324,7 +324,7 @@ export async function restoreLossReasonAction(
       return { success: false, error: 'Motivo de perda não encontrado.' };
     }
 
-    revalidatePath('/leads/loss-reasons');
+    revalidatePath('/leads-loss-reasons');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[loss-reasons:restore] unexpected', error);

@@ -46,7 +46,7 @@ export function LossReasonsSortPanel() {
     params.delete('page');
     const qs = params.toString();
     startTransition(() => {
-      router.push(qs ? `/leads/loss-reasons?${qs}` : '/leads/loss-reasons');
+      router.push(qs ? `/leads-loss-reasons?${qs}` : '/leads-loss-reasons');
     });
   }
 

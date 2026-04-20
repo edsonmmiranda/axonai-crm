@@ -27,7 +27,7 @@ export function LossReasonsToolbar() {
     next.delete('page');
     const qs = next.toString();
     startTransition(() => {
-      router.push(qs ? `/leads/loss-reasons?${qs}` : '/leads/loss-reasons');
+      router.push(qs ? `/leads-loss-reasons?${qs}` : '/leads-loss-reasons');
     });
   }
 

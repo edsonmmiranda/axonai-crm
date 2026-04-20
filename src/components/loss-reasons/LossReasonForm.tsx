@@ -92,7 +92,7 @@ export function LossReasonForm({ mode, reason, isAdmin = false }: LossReasonForm
       }
 
       toast.success(mode === 'create' ? 'Motivo de perda criado.' : 'Motivo de perda atualizado.');
-      router.push('/leads/loss-reasons');
+      router.push('/leads-loss-reasons');
     });
   });
 
@@ -105,7 +105,7 @@ export function LossReasonForm({ mode, reason, isAdmin = false }: LossReasonForm
         return;
       }
       toast.success('Motivo de perda excluído.');
-      router.push('/leads/loss-reasons');
+      router.push('/leads-loss-reasons');
     });
   }
 
@@ -180,7 +180,7 @@ export function LossReasonForm({ mode, reason, isAdmin = false }: LossReasonForm
           <Button
             type="button"
             variant="ghost"
-            onClick={() => router.push('/leads/loss-reasons')}
+            onClick={() => router.push('/leads-loss-reasons')}
             disabled={isPending}
           >
             Cancelar

@@ -82,7 +82,7 @@ export default async function LossReasonsPage(props: {
         </div>
         <div className="flex items-center gap-3">
           <Button asChild>
-            <Link href="/leads/loss-reasons/new">
+            <Link href="/leads-loss-reasons/new">
               <Plus className="size-4" aria-hidden="true" />
               Novo motivo
             </Link>

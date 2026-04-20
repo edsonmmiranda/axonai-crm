@@ -225,7 +225,7 @@ export async function createLeadOriginAction(
       return { success: false, error: 'Não foi possível criar a origem.' };
     }
 
-    revalidatePath('/leads/origins');
+    revalidatePath('/leads-origins');
     return { success: true, data };
   } catch (error) {
     console.error('[lead-origins:create] unexpected', error);
@@ -278,8 +278,8 @@ export async function updateLeadOriginAction(
       return { success: false, error: 'Não foi possível atualizar a origem.' };
     }
 
-    revalidatePath('/leads/origins');
-    revalidatePath(`/leads/origins/${idParsed.data}`);
+    revalidatePath('/leads-origins');
+    revalidatePath(`/leads-origins/${idParsed.data}`);
     return { success: true, data };
   } catch (error) {
     console.error('[lead-origins:update] unexpected', error);
@@ -319,7 +319,7 @@ export async function deleteLeadOriginAction(
       return { success: false, error: 'Origem não encontrada.' };
     }
 
-    revalidatePath('/leads/origins');
+    revalidatePath('/leads-origins');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[lead-origins:delete] unexpected', error);
@@ -359,7 +359,7 @@ export async function restoreLeadOriginAction(
       return { success: false, error: 'Origem não encontrada.' };
     }
 
-    revalidatePath('/leads/origins');
+    revalidatePath('/leads-origins');
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[lead-origins:restore] unexpected', error);

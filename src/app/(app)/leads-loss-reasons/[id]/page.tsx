@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { Calendar, ChevronRight, Clock } from 'lucide-react';
+import { Calendar, ChevronRight } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { LeadOriginForm } from '@/components/lead-origins/LeadOriginForm';
-import { getLeadOriginByIdAction } from '@/lib/actions/lead-origins';
+import { LossReasonForm } from '@/components/loss-reasons/LossReasonForm';
+import { getLossReasonByIdAction } from '@/lib/actions/loss-reasons';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 
 function formatDate(iso: string): string {
@@ -15,7 +15,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export default async function EditLeadOriginPage(props: {
+export default async function EditLossReasonPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const ctx = await getSessionContext();
@@ -24,12 +24,12 @@ export default async function EditLeadOriginPage(props: {
   }
 
   const { id } = await props.params;
-  const res = await getLeadOriginByIdAction(id);
+  const res = await getLossReasonByIdAction(id);
   if (!res.success || !res.data) {
     notFound();
   }
 
-  const origin = res.data;
+  const reason = res.data;
 
   return (
     <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
@@ -59,17 +59,17 @@ export default async function EditLeadOriginPage(props: {
           </li>
           <li>
             <Link
-              href="/leads/origins"
+              href="/leads-loss-reasons"
               className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
             >
-              Origens
+              Motivos de Perda
             </Link>
           </li>
           <li aria-hidden="true">
             <ChevronRight className="size-4 text-text-muted" />
           </li>
-          <li className="truncate font-semibold text-text-primary" title={origin.name}>
-            {origin.name}
+          <li className="truncate font-semibold text-text-primary" title={reason.name}>
+            {reason.name}
           </li>
         </ol>
       </nav>
@@ -77,25 +77,21 @@ export default async function EditLeadOriginPage(props: {
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-3xl font-bold tracking-tight text-text-primary">
-            {origin.name}
+            {reason.name}
           </h2>
-          <Badge variant={origin.is_active ? 'role-admin' : 'status-inactive'}>
-            {origin.is_active ? 'Ativa' : 'Inativa'}
+          <Badge variant={reason.is_active ? 'role-admin' : 'status-inactive'}>
+            {reason.is_active ? 'Ativo' : 'Inativo'}
           </Badge>
         </div>
         <div className="flex items-center gap-4 text-sm text-text-secondary">
           <span className="flex items-center gap-1.5">
             <Calendar className="size-3.5" aria-hidden="true" />
-            Criado em {formatDate(origin.created_at)}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="size-3.5" aria-hidden="true" />
-            Atualizado em {formatDate(origin.updated_at)}
+            Criado em {formatDate(reason.created_at)}
           </span>
         </div>
       </div>
 
-      <LeadOriginForm mode="edit" origin={origin} isAdmin />
+      <LossReasonForm mode="edit" reason={reason} isAdmin />
     </div>
   );
 }

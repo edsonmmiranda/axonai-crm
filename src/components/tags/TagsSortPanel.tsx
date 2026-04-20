@@ -46,7 +46,7 @@ export function TagsSortPanel() {
     params.delete('page');
     const qs = params.toString();
     startTransition(() => {
-      router.push(qs ? `/leads/tags?${qs}` : '/leads/tags');
+      router.push(qs ? `/leads-tags?${qs}` : '/leads-tags');
     });
   }
 

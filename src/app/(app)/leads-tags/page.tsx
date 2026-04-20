@@ -3,22 +3,21 @@ import { redirect } from 'next/navigation';
 import { ChevronRight, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { LeadOriginsList } from '@/components/lead-origins/LeadOriginsList';
-import { LeadOriginsSortPanel } from '@/components/lead-origins/LeadOriginsSortPanel';
-import { LeadOriginsToolbar } from '@/components/lead-origins/LeadOriginsToolbar';
-import { parseSortParam } from '@/components/lead-origins/sort-utils';
-import { getLeadOriginsAction } from '@/lib/actions/lead-origins';
+import { TagsList } from '@/components/tags/TagsList';
+import { TagsSortPanel } from '@/components/tags/TagsSortPanel';
+import { TagsToolbar } from '@/components/tags/TagsToolbar';
+import { parseSortParam } from '@/components/tags/sort-utils';
+import { getTagsAction } from '@/lib/actions/tags';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 
 interface SearchParams {
   search?: string;
-  type?: string;
   showInactive?: string;
   page?: string;
   sort?: string;
 }
 
-export default async function LeadOriginsPage(props: {
+export default async function TagsPage(props: {
   searchParams: Promise<SearchParams>;
 }) {
   const ctx = await getSessionContext();
@@ -28,21 +27,19 @@ export default async function LeadOriginsPage(props: {
 
   const searchParams = await props.searchParams;
   const search = searchParams.search?.trim() || undefined;
-  const type = searchParams.type?.trim() || undefined;
   const showInactive = searchParams.showInactive === '1';
   const page = Math.max(1, Number(searchParams.page) || 1);
   const sort = parseSortParam(searchParams.sort);
 
-  const res = await getLeadOriginsAction({
+  const res = await getTagsAction({
     search,
-    type,
     isActive: showInactive ? undefined : true,
     page,
     pageSize: 20,
     sort,
   });
 
-  const hasFilter = Boolean(search) || Boolean(type) || showInactive;
+  const hasFilter = Boolean(search) || showInactive;
 
   return (
     <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
@@ -70,43 +67,43 @@ export default async function LeadOriginsPage(props: {
           <li aria-hidden="true">
             <ChevronRight className="size-4 text-text-muted" />
           </li>
-          <li className="font-semibold text-text-primary">Origens</li>
+          <li className="font-semibold text-text-primary">Tags</li>
         </ol>
       </nav>
 
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <div className="flex flex-col gap-2">
           <h2 className="text-3xl font-bold tracking-tight text-text-primary">
-            Origens de Leads
+            Tags
           </h2>
           <p className="max-w-2xl text-text-secondary">
-            Gerencie as origens de captação dos seus leads.
+            Gerencie as tags para classificar seus leads.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Button asChild>
-            <Link href="/leads/origins/new">
+            <Link href="/leads-tags/new">
               <Plus className="size-4" aria-hidden="true" />
-              Nova origem
+              Nova tag
             </Link>
           </Button>
         </div>
       </div>
 
-      <LeadOriginsToolbar />
+      <TagsToolbar />
 
-      <LeadOriginsSortPanel />
+      <TagsSortPanel />
 
       <div className="overflow-hidden rounded-xl border border-border bg-surface-raised shadow-sm">
         {res.success && res.data ? (
-          <LeadOriginsList
-            origins={res.data}
+          <TagsList
+            tags={res.data}
             hasFilter={hasFilter}
             metadata={res.metadata}
           />
         ) : (
           <p className="px-6 py-6 text-sm text-feedback-danger-fg">
-            {res.error ?? 'Erro ao carregar origens.'}
+            {res.error ?? 'Erro ao carregar tags.'}
           </p>
         )}
       </div>

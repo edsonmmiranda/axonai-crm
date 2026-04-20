@@ -46,7 +46,7 @@ export function LeadOriginsSortPanel() {
     params.delete('page');
     const qs = params.toString();
     startTransition(() => {
-      router.push(qs ? `/leads/origins?${qs}` : '/leads/origins');
+      router.push(qs ? `/leads-origins?${qs}` : '/leads-origins');
     });
   }
 

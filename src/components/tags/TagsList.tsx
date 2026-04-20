@@ -35,7 +35,7 @@ function buildPageUrl(searchParams: URLSearchParams, page: number): string {
   if (page > 1) next.set('page', String(page));
   else next.delete('page');
   const qs = next.toString();
-  return qs ? `/leads/tags?${qs}` : '/leads/tags';
+  return qs ? `/leads-tags?${qs}` : '/leads-tags';
 }
 
 function buildPageItems(current: number, total: number): Array<number | 'ellipsis-l' | 'ellipsis-r'> {
@@ -76,7 +76,7 @@ export function TagsList({ tags, hasFilter, metadata }: TagsListProps) {
           Crie sua primeira tag para começar a classificar seus leads.
         </p>
         <Button asChild className="mt-2">
-          <Link href="/leads/tags/new">Cadastrar primeira tag</Link>
+          <Link href="/leads-tags/new">Cadastrar primeira tag</Link>
         </Button>
       </div>
     );
@@ -134,7 +134,7 @@ export function TagsList({ tags, hasFilter, metadata }: TagsListProps) {
                 </td>
                 <td className="whitespace-nowrap px-3 py-4">
                   <Link
-                    href={`/leads/tags/${tag.id}`}
+                    href={`/leads-tags/${tag.id}`}
                     className="rounded font-bold text-text-primary transition-colors hover:text-action-primary focus-visible:outline-none focus-visible:shadow-focus"
                   >
                     {tag.name}
