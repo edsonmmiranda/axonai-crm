@@ -96,6 +96,20 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-20 — [AGENT-DRIFT] @frontend+ repetiu botões inline em vez de `<Button>`
+
+**Agente afetado:** `@frontend+`
+
+**Sprint:** sprint_10_leads_lista
+
+**Padrão repetido:** criou `<button className="...bg-action-danger...">` inline em 4 locais (MarkAsLostDialog, DeleteLeadDialog, LeadForm danger zone, new/page.tsx) em vez de usar `<Button variant="danger">` que já existe no DS.
+
+**Frequência nesta sprint:** 4 instâncias (agrupadas em 2 categorias: danger buttons, action buttons)
+
+**Gatilho provável:** o prompt do `@frontend+` não enfatiza que variantes existentes do Button (danger, secondary) devem ser reutilizadas; o agente copia styling do design system diretamente em vez de compor com o componente.
+
+**Correção estrutural recomendada:** adicionar regra explícita no `agents/stack/frontend-plus.md`: "Antes de escrever classes de botão inline, verifique se `src/components/ui/button.tsx` já tem a variante necessária. Usar `<Button variant=X>` é obrigatório quando a variante existe."
+
 ### 2026-04-16 · [SHADCN] Tokens aninhados Tailwind exigem prefixo do namespace
 
 **Regra:** com `colors.border = { DEFAULT, subtle, strong, focus }`, escreva `border-border`, `border-border-subtle`, `divide-border-subtle` — NUNCA `border-subtle`/`border-default`/`divide-subtle` (não geram CSS, fallback silencioso para `currentColor` ≈ borda preta). Mesma regra para qualquer namespace aninhado (`field-border`, `feedback-success-border`, etc.).
