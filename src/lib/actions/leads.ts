@@ -140,6 +140,7 @@ const CreateLeadSchema = z.object({
   utm_term: optionalString.pipe(z.string().max(200).optional()),
   origin_id: optionalUuid,
   assigned_to: optionalUuid,
+  is_active: z.boolean().optional().default(true),
   tagIds: z.array(z.string().uuid()).optional().default([]),
 });
 
@@ -450,6 +451,7 @@ export async function createLeadAction(
       status: leadData.status,
       score: leadData.score,
       value: leadData.value,
+      is_active: leadData.is_active ?? true,
     };
 
     // Only set optional fields if they have values
@@ -550,6 +552,7 @@ export async function updateLeadAction(
       utm_term: leadData.utm_term ?? null,
       origin_id: leadData.origin_id ?? null,
       assigned_to: leadData.assigned_to ?? null,
+      is_active: leadData.is_active ?? true,
       updated_at: new Date().toISOString(),
     };
 
