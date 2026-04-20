@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { MoreHorizontal, Pencil, UserPlus, XCircle, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, UserPlus, XCircle, PowerOff, RotateCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +15,8 @@ import {
 import type { LeadRow, LossReasonOption, ProfileOption } from '@/lib/actions/leads';
 import { MarkAsLostDialog } from './MarkAsLostDialog';
 import { AssignLeadDialog } from './AssignLeadDialog';
-import { DeleteLeadDialog } from './DeleteLeadDialog';
+import { DeactivateLeadDialog } from './DeactivateLeadDialog';
+import { RestoreLeadDialog } from './RestoreLeadDialog';
 
 interface LeadRowActionsProps {
   lead: LeadRow;
@@ -27,7 +28,8 @@ interface LeadRowActionsProps {
 export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRowActionsProps) {
   const [showLostDialog, setShowLostDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
 
   return (
     <div className="flex items-center justify-end gap-1">
@@ -57,13 +59,20 @@ export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRow
           {isAdmin ? (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() => setShowDeleteDialog(true)}
-                className="text-feedback-danger-fg focus:text-feedback-danger-fg"
-              >
-                <Trash2 className="size-4" aria-hidden="true" />
-                Excluir
-              </DropdownMenuItem>
+              {lead.is_active ? (
+                <DropdownMenuItem
+                  onSelect={() => setShowDeactivateDialog(true)}
+                  className="text-feedback-danger-fg focus:text-feedback-danger-fg"
+                >
+                  <PowerOff className="size-4" aria-hidden="true" />
+                  Inativar
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onSelect={() => setShowRestoreDialog(true)}>
+                  <RotateCcw className="size-4" aria-hidden="true" />
+                  Reativar
+                </DropdownMenuItem>
+              )}
             </>
           ) : null}
         </DropdownMenuContent>
@@ -88,11 +97,19 @@ export function LeadRowActions({ lead, lossReasons, profiles, isAdmin }: LeadRow
         />
       ) : null}
 
-      {showDeleteDialog ? (
-        <DeleteLeadDialog
+      {showDeactivateDialog ? (
+        <DeactivateLeadDialog
           leadId={lead.id}
           leadName={lead.name}
-          onClose={() => setShowDeleteDialog(false)}
+          onClose={() => setShowDeactivateDialog(false)}
+        />
+      ) : null}
+
+      {showRestoreDialog ? (
+        <RestoreLeadDialog
+          leadId={lead.id}
+          leadName={lead.name}
+          onClose={() => setShowRestoreDialog(false)}
         />
       ) : null}
     </div>

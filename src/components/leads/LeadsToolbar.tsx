@@ -60,6 +60,7 @@ export function LeadsToolbar({ origins, profiles, tags }: LeadsToolbarProps) {
   const currentOriginId = searchParams.get('originId') ?? '';
   const currentAssignedTo = searchParams.get('assignedTo') ?? '';
   const currentTagId = searchParams.get('tagId') ?? '';
+  const currentIsActive = searchParams.get('isActive') ?? '';
 
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm">
@@ -88,6 +89,7 @@ export function LeadsToolbar({ origins, profiles, tags }: LeadsToolbarProps) {
         currentOriginId={currentOriginId}
         currentAssignedTo={currentAssignedTo}
         currentTagId={currentTagId}
+        currentIsActive={currentIsActive}
         onFilterChange={onFilterChange}
       />
     </div>

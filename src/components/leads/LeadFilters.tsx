@@ -16,6 +16,7 @@ interface LeadFiltersProps {
   currentOriginId: string;
   currentAssignedTo: string;
   currentTagId: string;
+  currentIsActive: string;
   onFilterChange: (key: string, val: string) => void;
 }
 
@@ -30,10 +31,11 @@ export function LeadFilters({
   currentOriginId,
   currentAssignedTo,
   currentTagId,
+  currentIsActive,
   onFilterChange,
 }: LeadFiltersProps) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
       <div className="flex flex-col gap-1">
         <Label htmlFor="filterStatus" className="text-xs text-text-secondary">
           Status
@@ -107,6 +109,22 @@ export function LeadFilters({
               {t.name}
             </option>
           ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="filterIsActive" className="text-xs text-text-secondary">
+          Situação
+        </Label>
+        <select
+          id="filterIsActive"
+          value={currentIsActive}
+          onChange={(e) => onFilterChange('isActive', e.target.value)}
+          className={selectClasses}
+        >
+          <option value="">Ativos</option>
+          <option value="false">Inativos</option>
+          <option value="all">Todos</option>
         </select>
       </div>
     </div>

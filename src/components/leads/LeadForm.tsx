@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { AlertTriangle, Trash2, User, Globe, Briefcase, FileText } from 'lucide-react';
+import { AlertTriangle, PowerOff, RotateCcw, User, Globe, Briefcase, FileText } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LeadTagsSelect } from './LeadTagsSelect';
-import { DeleteLeadDialog } from './DeleteLeadDialog';
+import { DeactivateLeadDialog } from './DeactivateLeadDialog';
+import { RestoreLeadDialog } from './RestoreLeadDialog';
 import {
   createLeadAction,
   updateLeadAction,
@@ -80,7 +81,8 @@ export function LeadForm({ mode, lead, origins, profiles, tags, isAdmin = false 
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
 
   const {
     register,
@@ -487,27 +489,51 @@ export function LeadForm({ mode, lead, origins, profiles, tags, isAdmin = false 
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-bold text-text-primary">Zona de Perigo</h3>
-              <p className="mt-1 text-sm text-text-secondary">
-                Excluir este lead o remove permanentemente do sistema, incluindo todas as
-                tags vinculadas.
-              </p>
-              <div className="mt-4">
-                <Button type="button" variant="danger" onClick={() => setShowDeleteDialog(true)}>
-                  <Trash2 className="size-4" aria-hidden="true" />
-                  Excluir lead
-                </Button>
-              </div>
+              {lead.is_active ? (
+                <>
+                  <p className="mt-1 text-sm text-text-secondary">
+                    Inativar este lead o oculta das listagens padrão. Você poderá reativá-lo
+                    a qualquer momento.
+                  </p>
+                  <div className="mt-4">
+                    <Button type="button" variant="danger" onClick={() => setShowDeactivateDialog(true)}>
+                      <PowerOff className="size-4" aria-hidden="true" />
+                      Inativar lead
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="mt-1 text-sm text-text-secondary">
+                    Este lead está inativo. Reative-o para que volte a aparecer nas listagens.
+                  </p>
+                  <div className="mt-4">
+                    <Button type="button" onClick={() => setShowRestoreDialog(true)}>
+                      <RotateCcw className="size-4" aria-hidden="true" />
+                      Reativar lead
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       ) : null}
 
-      {showDeleteDialog && lead ? (
-        <DeleteLeadDialog
+      {showDeactivateDialog && lead ? (
+        <DeactivateLeadDialog
           leadId={lead.id}
           leadName={lead.name}
-          onClose={() => setShowDeleteDialog(false)}
+          onClose={() => setShowDeactivateDialog(false)}
           redirectAfter
+        />
+      ) : null}
+
+      {showRestoreDialog && lead ? (
+        <RestoreLeadDialog
+          leadId={lead.id}
+          leadName={lead.name}
+          onClose={() => setShowRestoreDialog(false)}
         />
       ) : null}
     </>

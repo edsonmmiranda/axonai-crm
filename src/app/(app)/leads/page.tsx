@@ -20,6 +20,7 @@ interface SearchParams {
   originId?: string;
   assignedTo?: string;
   tagId?: string;
+  isActive?: string;
   page?: string;
   sortBy?: string;
   sortOrder?: string;
@@ -36,12 +37,16 @@ export default async function LeadsPage(props: {
   const originId = searchParams.originId || undefined;
   const assignedTo = searchParams.assignedTo || undefined;
   const tagId = searchParams.tagId || undefined;
+  const isActiveParam = searchParams.isActive;
+  // '' or undefined = active only (default); 'false' = inactive only; 'all' = no filter
+  const isActive: boolean | undefined =
+    isActiveParam === 'all' ? undefined : isActiveParam === 'false' ? false : true;
   const page = Math.max(1, Number(searchParams.page) || 1);
   const sortBy = searchParams.sortBy || 'created_at';
   const sortOrder = (searchParams.sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc';
 
   const [leadsRes, originsRes, lossReasonsRes, profilesRes, tagsRes] = await Promise.all([
-    getLeadsAction({ search, status, originId, assignedTo, tagId, page, pageSize: 20, sortBy, sortOrder }),
+    getLeadsAction({ search, status, originId, assignedTo, tagId, isActive, page, pageSize: 20, sortBy, sortOrder }),
     getActiveOriginsAction(),
     getActiveLossReasonsAction(),
     getActiveProfilesAction(),
@@ -53,7 +58,7 @@ export default async function LeadsPage(props: {
   const profiles = profilesRes.success && profilesRes.data ? profilesRes.data : [];
   const tags = tagsRes.success && tagsRes.data ? tagsRes.data : [];
 
-  const hasFilter = Boolean(search || status || originId || assignedTo || tagId);
+  const hasFilter = Boolean(search || status || originId || assignedTo || tagId || isActiveParam);
   const isAdmin = ctx.role === 'owner' || ctx.role === 'admin';
 
   return (

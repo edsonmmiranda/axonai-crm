@@ -55,6 +55,7 @@ export interface LeadRow {
   created_by: string | null;
   assigned_to: string | null;
   origin_id: string | null;
+  is_active: boolean;
   loss_reason_id: string | null;
   loss_notes: string | null;
   origin_name: string | null;
@@ -102,7 +103,7 @@ const LEAD_STATUS_VALUES = [
 export type LeadStatus = (typeof LEAD_STATUS_VALUES)[number];
 
 const LEADS_BASE_COLUMNS =
-  'id, organization_id, name, email, phone, medium, campaign, utm_source, utm_medium, utm_campaign, utm_content, utm_term, company, position, notes, status, score, value, created_at, updated_at, created_by, assigned_to, origin_id, loss_reason_id, loss_notes' as const;
+  'id, organization_id, name, email, phone, medium, campaign, utm_source, utm_medium, utm_campaign, utm_content, utm_term, company, position, notes, status, score, value, created_at, updated_at, created_by, assigned_to, origin_id, loss_reason_id, loss_notes, is_active' as const;
 
 /* ------------------------------------------------------------------ */
 /*  Zod Schemas                                                        */
@@ -163,6 +164,7 @@ const ListLeadsSchema = z.object({
   originId: z.string().uuid().optional(),
   assignedTo: z.string().uuid().optional(),
   tagId: z.string().uuid().optional(),
+  isActive: z.boolean().optional(),
   page: z.number().int().min(1).optional().default(1),
   pageSize: z.number().int().min(1).max(100).optional().default(20),
   sortBy: z.string().optional().default('created_at'),
@@ -269,6 +271,7 @@ function enrichLeads(
     created_by: (lead.created_by as string | null) ?? null,
     assigned_to: (lead.assigned_to as string | null) ?? null,
     origin_id: (lead.origin_id as string | null) ?? null,
+    is_active: (lead.is_active as boolean) ?? true,
     loss_reason_id: (lead.loss_reason_id as string | null) ?? null,
     loss_notes: (lead.loss_notes as string | null) ?? null,
     origin_name: lead.origin_id ? originsMap.get(lead.origin_id as string) ?? null : null,
@@ -293,7 +296,7 @@ export async function getLeadsAction(
     const ctx = await getSessionContext();
     const supabase = await createClient();
 
-    const { search, status, originId, assignedTo, tagId, page, pageSize, sortBy, sortOrder } = parsed.data;
+    const { search, status, originId, assignedTo, tagId, isActive, page, pageSize, sortBy, sortOrder } = parsed.data;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
@@ -318,6 +321,11 @@ export async function getLeadsAction(
       .from('leads')
       .select(LEADS_BASE_COLUMNS, { count: 'exact' })
       .eq('organization_id', ctx.organizationId);
+
+    // Filter by is_active: true = active only, false = inactive only, undefined = all
+    if (typeof isActive === 'boolean') {
+      query = query.eq('is_active', isActive);
+    }
 
     if (status) {
       query = query.eq('status', status);
@@ -623,6 +631,90 @@ export async function deleteLeadAction(
     return { success: true, data: { ok: true } };
   } catch (error) {
     console.error('[leads:delete] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Soft Delete (Deactivate / Restore)                                 */
+/* ------------------------------------------------------------------ */
+
+export async function deactivateLeadAction(
+  id: string
+): Promise<ActionResponse<{ ok: true }>> {
+  const parsed = z.string().uuid('ID inválido').safeParse(id);
+  if (!parsed.success) {
+    return { success: false, error: 'Lead não encontrado.' };
+  }
+
+  try {
+    const ctx = await getSessionContext();
+    const gate = assertRole(ctx, ['owner', 'admin']);
+    if (!gate.ok) {
+      return { success: false, error: gate.error };
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('leads')
+      .update({ is_active: false, updated_at: new Date().toISOString() })
+      .eq('id', parsed.data)
+      .eq('organization_id', ctx.organizationId)
+      .select('id')
+      .maybeSingle();
+
+    if (error) {
+      console.error('[leads:deactivate]', error);
+      return { success: false, error: 'Não foi possível inativar o lead.' };
+    }
+    if (!data) {
+      return { success: false, error: 'Lead não encontrado.' };
+    }
+
+    revalidatePath('/leads');
+    return { success: true, data: { ok: true } };
+  } catch (error) {
+    console.error('[leads:deactivate] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}
+
+export async function restoreLeadAction(
+  id: string
+): Promise<ActionResponse<{ ok: true }>> {
+  const parsed = z.string().uuid('ID inválido').safeParse(id);
+  if (!parsed.success) {
+    return { success: false, error: 'Lead não encontrado.' };
+  }
+
+  try {
+    const ctx = await getSessionContext();
+    const gate = assertRole(ctx, ['owner', 'admin']);
+    if (!gate.ok) {
+      return { success: false, error: gate.error };
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('leads')
+      .update({ is_active: true, updated_at: new Date().toISOString() })
+      .eq('id', parsed.data)
+      .eq('organization_id', ctx.organizationId)
+      .select('id')
+      .maybeSingle();
+
+    if (error) {
+      console.error('[leads:restore]', error);
+      return { success: false, error: 'Não foi possível reativar o lead.' };
+    }
+    if (!data) {
+      return { success: false, error: 'Lead não encontrado.' };
+    }
+
+    revalidatePath('/leads');
+    return { success: true, data: { ok: true } };
+  } catch (error) {
+    console.error('[leads:restore] unexpected', error);
     return { success: false, error: 'Erro interno, tente novamente' };
   }
 }
