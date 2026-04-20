@@ -6,14 +6,24 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { AlertTriangle, FileX, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
   createLossReasonAction,
   updateLossReasonAction,
+  deleteLossReasonAction,
   type LossReasonRow,
 } from '@/lib/actions/loss-reasons';
 
@@ -38,6 +48,10 @@ export function LossReasonForm({ mode, reason, isAdmin = false }: LossReasonForm
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [isDeleting, startDeleteTransition] = useTransition();
 
   const {
     register,
@@ -82,71 +96,183 @@ export function LossReasonForm({ mode, reason, isAdmin = false }: LossReasonForm
     });
   });
 
+  function handleDelete() {
+    startDeleteTransition(async () => {
+      const res = await deleteLossReasonAction(reason!.id);
+      if (!res.success) {
+        toast.error(res.error ?? 'Não foi possível excluir o motivo de perda.');
+        setShowDeleteDialog(false);
+        return;
+      }
+      toast.success('Motivo de perda excluído.');
+      router.push('/leads/loss-reasons');
+    });
+  }
+
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
-      {formError ? (
-        <div
-          role="alert"
-          className="rounded-md border border-feedback-danger-border bg-feedback-danger-bg px-4 py-3 text-sm text-feedback-danger-fg"
-        >
-          {formError}
-        </div>
-      ) : null}
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="reasonName" required>
-          Nome
-        </Label>
-        <Input
-          id="reasonName"
-          aria-invalid={errors.name ? true : undefined}
-          placeholder="Ex.: Preço alto"
-          {...register('name')}
-        />
-        {errors.name ? (
-          <p className="text-xs text-feedback-danger-fg">{errors.name.message}</p>
-        ) : null}
-      </div>
-
-      {mode === 'edit' && isAdmin ? (
-        <div className="flex items-center justify-between rounded-md border border-border bg-surface-raised px-4 py-3">
-          <div className="flex flex-col">
-            <Label htmlFor="reasonActive">Motivo ativo</Label>
-            <p className="text-xs text-text-secondary">
-              Motivos inativos ficam ocultos na listagem padrão.
-            </p>
+    <>
+      <form id="loss-reason-form" onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
+        {formError ? (
+          <div
+            role="alert"
+            className="rounded-md border border-feedback-danger-border bg-feedback-danger-bg px-4 py-3 text-sm text-feedback-danger-fg"
+          >
+            {formError}
           </div>
-          <Controller
-            control={control}
-            name="is_active"
-            render={({ field }) => (
-              <Switch
-                id="reasonActive"
-                checked={field.value}
-                onCheckedChange={field.onChange}
+        ) : null}
+
+        {/* Form Card Section */}
+        <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm md:p-8">
+          <div className="mb-6 flex items-center gap-3 border-b border-border-subtle pb-4">
+            <div className="flex size-10 items-center justify-center rounded-lg bg-feedback-warning-bg text-feedback-warning-fg">
+              <FileX className="size-5" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-text-primary">Informações do Motivo</h3>
+              <p className="text-sm text-text-secondary">
+                Dados de identificação do motivo de perda de leads.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="reasonName" required>
+                Nome
+              </Label>
+              <Input
+                id="reasonName"
+                aria-invalid={errors.name ? true : undefined}
+                placeholder="Ex.: Preço alto"
+                {...register('name')}
               />
-            )}
-          />
+              {errors.name ? (
+                <p className="text-xs text-feedback-danger-fg">{errors.name.message}</p>
+              ) : null}
+            </div>
+
+            {mode === 'edit' && isAdmin ? (
+              <div className="flex items-center justify-between rounded-md border border-border bg-surface-sunken px-4 py-3">
+                <div className="flex flex-col">
+                  <Label htmlFor="reasonActive">Motivo ativo</Label>
+                  <p className="text-xs text-text-secondary">
+                    Motivos inativos ficam ocultos na listagem padrão.
+                  </p>
+                </div>
+                <Controller
+                  control={control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <Switch
+                      id="reasonActive"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Action Bar */}
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => router.push('/leads/loss-reasons')}
+            disabled={isPending}
+          >
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={isPending || (mode === 'edit' && !isDirty)}>
+            {isPending
+              ? 'Salvando...'
+              : mode === 'create'
+                ? 'Criar motivo'
+                : 'Salvar alterações'}
+          </Button>
+        </div>
+      </form>
+
+      {/* Danger Zone — edit only */}
+      {mode === 'edit' && reason ? (
+        <div className="rounded-xl border border-feedback-danger-border bg-feedback-danger-bg p-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-lg bg-feedback-danger-solid-bg text-feedback-danger-solid-fg">
+              <AlertTriangle className="size-5" aria-hidden="true" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-text-primary">Zona de Perigo</h3>
+              <p className="mt-1 text-sm text-text-secondary">
+                Excluir este motivo o remove permanentemente do sistema. Leads já associados
+                não serão afetados, mas o motivo não poderá ser recuperado.
+              </p>
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setConfirmText('');
+                    setShowDeleteDialog(true);
+                  }}
+                  className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-4 text-sm font-bold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover focus-visible:outline-none focus-visible:shadow-focus"
+                >
+                  <Trash2 className="size-4" aria-hidden="true" />
+                  Excluir motivo
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       ) : null}
 
-      <div className="flex items-center justify-end gap-3">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => router.push('/leads/loss-reasons')}
-          disabled={isPending}
-        >
-          Cancelar
-        </Button>
-        <Button type="submit" disabled={isPending || (mode === 'edit' && !isDirty)}>
-          {isPending
-            ? 'Salvando...'
-            : mode === 'create'
-              ? 'Criar motivo'
-              : 'Salvar alterações'}
-        </Button>
-      </div>
-    </form>
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog ? (
+        <Dialog open onOpenChange={(open) => !open && setShowDeleteDialog(false)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Excluir motivo de perda</DialogTitle>
+              <DialogDescription>
+                Esta ação não pode ser desfeita. O motivo{' '}
+                <span className="font-semibold text-text-primary">{reason?.name}</span> será
+                excluído permanentemente.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex flex-col gap-1.5 py-2">
+              <Label htmlFor="confirmDelete">
+                Digite <span className="font-semibold">excluir</span> para confirmar
+              </Label>
+              <Input
+                id="confirmDelete"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="excluir"
+                autoComplete="off"
+              />
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setShowDeleteDialog(false)}
+                disabled={isDeleting}
+              >
+                Cancelar
+              </Button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={confirmText !== 'excluir' || isDeleting}
+                className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-4 text-sm font-bold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover focus-visible:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isDeleting ? 'Excluindo...' : 'Excluir motivo'}
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      ) : null}
+    </>
   );
 }

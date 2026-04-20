@@ -1,10 +1,19 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
+import { Calendar, ChevronRight, Clock } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import { LeadOriginForm } from '@/components/lead-origins/LeadOriginForm';
 import { getLeadOriginByIdAction } from '@/lib/actions/lead-origins';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
 
 export default async function EditLeadOriginPage(props: {
   params: Promise<{ id: string }>;
@@ -66,12 +75,24 @@ export default async function EditLeadOriginPage(props: {
       </nav>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-bold tracking-tight text-text-primary">
-          {origin.name}
-        </h2>
-        <p className="max-w-2xl text-text-secondary">
-          Atualize os dados desta origem de leads.
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary">
+            {origin.name}
+          </h2>
+          <Badge variant={origin.is_active ? 'role-admin' : 'status-inactive'}>
+            {origin.is_active ? 'Ativa' : 'Inativa'}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-4 text-sm text-text-secondary">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="size-3.5" aria-hidden="true" />
+            Criado em {formatDate(origin.created_at)}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Clock className="size-3.5" aria-hidden="true" />
+            Atualizado em {formatDate(origin.updated_at)}
+          </span>
+        </div>
       </div>
 
       <LeadOriginForm mode="edit" origin={origin} isAdmin />

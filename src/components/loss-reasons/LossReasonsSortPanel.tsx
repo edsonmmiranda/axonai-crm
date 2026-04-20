@@ -88,7 +88,7 @@ export function LossReasonsSortPanel() {
           <ArrowUpDown className="size-4 text-text-secondary" aria-hidden="true" />
           <span>Ordenação</span>
           {rules.length > 0 ? (
-            <span className="inline-flex size-5 items-center justify-center rounded-full bg-action-primary text-[10px] font-bold text-action-primary-fg">
+            <span className="inline-flex size-5 items-center justify-center rounded-full bg-action-primary text-xs font-bold text-action-primary-fg">
               {rules.length}
             </span>
           ) : null}
@@ -101,7 +101,7 @@ export function LossReasonsSortPanel() {
                 return (
                   <span
                     key={rule.key}
-                    className="inline-flex items-center gap-1 rounded-full border border-action-primary/20 bg-action-primary/10 px-2 py-0.5 text-[11px] font-medium text-action-primary"
+                    className="inline-flex items-center gap-1 rounded-full border border-action-primary/20 bg-action-primary/10 px-2 py-0.5 text-xs font-medium text-action-primary"
                   >
                     {SORT_COLUMN_LABELS[rule.key]}
                     <DirIcon className="size-3" aria-hidden="true" />
@@ -158,7 +158,7 @@ export function LossReasonsSortPanel() {
                     className="inline-flex items-center gap-1 rounded-full border border-action-primary/30 bg-action-primary/10 py-1 pl-1 pr-1 text-xs font-medium text-action-primary"
                   >
                     {rules.length > 1 ? (
-                      <span className="inline-flex size-4 items-center justify-center rounded-full bg-action-primary text-[10px] font-bold text-action-primary-fg">
+                      <span className="inline-flex size-4 items-center justify-center rounded-full bg-action-primary text-xs font-bold text-action-primary-fg">
                         {idx + 1}
                       </span>
                     ) : null}

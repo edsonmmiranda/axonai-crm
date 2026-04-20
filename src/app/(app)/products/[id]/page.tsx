@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
+import { Calendar, ChevronRight, Clock } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
 
 import { ProductForm } from '@/components/products/ProductForm';
 import { getCategoriesAction } from '@/lib/actions/categories';
@@ -89,13 +91,30 @@ export default async function EditProductPage(props: {
       </nav>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-bold tracking-tight text-text-primary">
-          {product.name}
-        </h2>
-        <p className="max-w-2xl text-text-secondary">
-          SKU <span className="font-mono">{product.sku}</span>
-          {product.category_name ? ` · ${product.category_name}` : ''}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary">
+            {product.name}
+          </h2>
+          <Badge variant={product.status === 'active' ? 'role-owner' : 'status-inactive'}>
+            {product.status === 'active' ? 'Ativo' : 'Arquivado'}
+          </Badge>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
+          <span className="font-mono">
+            SKU: {product.sku}
+            {product.category_name ? ` · ${product.category_name}` : ''}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Calendar className="size-3.5" aria-hidden="true" />
+            Criado em {new Date(product.created_at).toLocaleDateString('pt-BR')}
+          </span>
+          {product.updated_at ? (
+            <span className="flex items-center gap-1.5">
+              <Clock className="size-3.5" aria-hidden="true" />
+              Atualizado em {new Date(product.updated_at).toLocaleDateString('pt-BR')}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <ProductForm

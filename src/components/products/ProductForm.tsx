@@ -7,16 +7,27 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import {
+  AlertTriangle,
+  Archive,
   ClipboardCheck,
   FileText,
   Image as ImageIcon,
   Info,
   NotebookPen,
   Package,
+  RotateCcw,
   ShoppingBag,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -39,7 +50,9 @@ import {
   type ProductImageItem,
 } from '@/components/products/ProductImageGallery';
 import {
+  archiveProductAction,
   createProductAction,
+  restoreProductAction,
   updateProductAction,
   type ProductRow,
 } from '@/lib/actions/products';
@@ -210,6 +223,10 @@ export function ProductForm({
   const [tab, setTab] = useState<TabKey>('info');
   const [isPending, startTransition] = useTransition();
 
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [isArchiving, startArchiveTransition] = useTransition();
+
   const {
     register,
     handleSubmit,
@@ -360,6 +377,7 @@ export function ProductForm({
       </Tabs>
 
       <form
+        id="product-form"
         onSubmit={onSubmit}
         className={cn('flex flex-col gap-6', !isFormTab && 'hidden')}
         noValidate
@@ -510,6 +528,28 @@ export function ProductForm({
                   </p>
                 )}
               </div>
+
+              {mode === 'edit' && isAdmin ? (
+                <div className="flex items-center justify-between rounded-md border border-border bg-surface-sunken px-4 py-3">
+                  <div className="flex flex-col">
+                    <Label htmlFor="productActive">Produto ativo</Label>
+                    <p className="text-xs text-text-secondary">
+                      Produtos arquivados ficam ocultos da listagem padrão.
+                    </p>
+                  </div>
+                  <Controller
+                    control={control}
+                    name="active"
+                    render={({ field }) => (
+                      <Switch
+                        id="productActive"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
+              ) : null}
             </div>
           </SectionCard>
         </div>
@@ -563,27 +603,6 @@ export function ProductForm({
                 </div>
               </div>
 
-              {mode === 'edit' && isAdmin ? (
-                <div className="flex items-center justify-between rounded-lg border border-border bg-surface-base px-4 py-3">
-                  <div className="flex flex-col">
-                    <Label htmlFor="productActive">Produto ativo</Label>
-                    <p className="text-xs text-text-secondary">
-                      Produtos arquivados ficam ocultos da listagem padrão.
-                    </p>
-                  </div>
-                  <Controller
-                    control={control}
-                    name="active"
-                    render={({ field }) => (
-                      <Switch
-                        id="productActive"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                </div>
-              ) : null}
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col gap-1.5">
@@ -737,6 +756,136 @@ export function ProductForm({
             <ProductDocumentList productId={productId} documents={documents ?? []} />
           </SectionCard>
         </div>
+      ) : null}
+
+      {/* Danger Zone — edit only */}
+      {mode === 'edit' && product ? (
+        <>
+          {product.status === 'active' ? (
+            <div className="rounded-xl border border-feedback-danger-border bg-feedback-danger-bg p-6 shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-lg bg-feedback-danger-solid-bg text-feedback-danger-solid-fg">
+                  <AlertTriangle className="size-5" aria-hidden="true" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-text-primary">Zona de Perigo</h3>
+                  <p className="mt-1 text-sm text-text-secondary">
+                    Arquivar este produto o remove da listagem ativa e impede que seja
+                    associado a novos leads. Dados existentes não são apagados.
+                  </p>
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setConfirmText('');
+                        setShowArchiveDialog(true);
+                      }}
+                      className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-4 text-sm font-bold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover focus-visible:outline-none focus-visible:shadow-focus"
+                    >
+                      <Archive className="size-4" aria-hidden="true" />
+                      Arquivar produto
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-lg bg-feedback-success-bg text-feedback-success-fg">
+                  <RotateCcw className="size-5" aria-hidden="true" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-text-primary">Produto arquivado</h3>
+                  <p className="mt-1 text-sm text-text-secondary">
+                    Este produto está arquivado e não aparece na listagem ativa.
+                    Restaure-o para torná-lo disponível novamente.
+                  </p>
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      disabled={isArchiving}
+                      onClick={() => {
+                        startArchiveTransition(async () => {
+                          const res = await restoreProductAction(product.id);
+                          if (!res.success) {
+                            toast.error(res.error ?? 'Não foi possível restaurar o produto.');
+                            return;
+                          }
+                          toast.success('Produto restaurado.');
+                          router.push('/products');
+                        });
+                      }}
+                      className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-4 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover focus-visible:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <RotateCcw className="size-4" aria-hidden="true" />
+                      {isArchiving ? 'Restaurando...' : 'Restaurar produto'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Archive Confirmation Dialog */}
+          {showArchiveDialog ? (
+            <Dialog open onOpenChange={(open) => !open && setShowArchiveDialog(false)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Arquivar produto</DialogTitle>
+                  <DialogDescription>
+                    O produto{' '}
+                    <span className="font-semibold text-text-primary">{product.name}</span>{' '}
+                    será arquivado e removido da listagem ativa.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="flex flex-col gap-1.5 py-2">
+                  <Label htmlFor="confirmArchive">
+                    Digite <span className="font-semibold">arquivar</span> para confirmar
+                  </Label>
+                  <Input
+                    id="confirmArchive"
+                    value={confirmText}
+                    onChange={(e) => setConfirmText(e.target.value)}
+                    placeholder="arquivar"
+                    autoComplete="off"
+                  />
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setShowArchiveDialog(false)}
+                    disabled={isArchiving}
+                  >
+                    Cancelar
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      startArchiveTransition(async () => {
+                        const res = await archiveProductAction(product.id);
+                        if (!res.success) {
+                          toast.error(res.error ?? 'Não foi possível arquivar o produto.');
+                          setShowArchiveDialog(false);
+                          return;
+                        }
+                        toast.success('Produto arquivado.');
+                        router.push('/products');
+                      });
+                    }}
+                    disabled={confirmText !== 'arquivar' || isArchiving}
+                    className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-danger px-4 text-sm font-bold text-action-danger-fg shadow-sm transition-colors hover:bg-action-danger-hover focus-visible:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isArchiving ? 'Arquivando...' : 'Arquivar produto'}
+                  </button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          ) : null}
+        </>
       ) : null}
     </div>
   );

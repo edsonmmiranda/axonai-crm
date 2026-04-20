@@ -52,13 +52,30 @@ export default async function NewLeadOriginPage() {
         </ol>
       </nav>
 
-      <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-bold tracking-tight text-text-primary">
-          Nova origem
-        </h2>
-        <p className="max-w-2xl text-text-secondary">
-          Preencha os dados para criar uma nova origem de leads.
-        </p>
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary">
+            Nova origem
+          </h2>
+          <p className="text-sm text-text-secondary">
+            Preencha os dados para criar uma nova origem de leads.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/leads/origins"
+            className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-action-secondary-border bg-action-secondary px-5 text-sm font-semibold text-action-secondary-fg shadow-sm transition-colors hover:bg-action-secondary-hover focus-visible:outline-none focus-visible:shadow-focus"
+          >
+            Cancelar
+          </Link>
+          <button
+            type="submit"
+            form="lead-origin-form"
+            className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-action-primary px-5 text-sm font-bold text-action-primary-fg shadow-sm transition-colors hover:bg-action-primary-hover focus-visible:outline-none focus-visible:shadow-focus"
+          >
+            Criar origem
+          </button>
+        </div>
       </div>
 
       <LeadOriginForm mode="create" />

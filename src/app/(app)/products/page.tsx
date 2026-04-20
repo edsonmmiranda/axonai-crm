@@ -92,12 +92,12 @@ export default async function ProductsPage(props: {
 
   return (
     <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
-      <nav className="flex text-sm font-medium text-text-secondary">
+      <nav className="flex text-sm font-medium text-text-secondary" aria-label="breadcrumb">
         <ol className="flex items-center gap-2">
           <li>
             <Link
               href="/dashboard"
-              className="transition-colors hover:text-action-ghost-fg"
+              className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
             >
               Home
             </Link>
