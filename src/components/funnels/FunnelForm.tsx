@@ -123,7 +123,7 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
     startTransition(async () => {
       // Normalize order_index before saving
       const normalizedStages: StageUpsertInput[] = values.stages.map((s, i) => ({
-        id: s.id,
+        ...(s.id ? { id: s.id } : {}),
         name: s.name,
         order_index: i,
         stage_role: s.stage_role ?? null,
