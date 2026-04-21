@@ -53,7 +53,7 @@ export default async function PipelinePage(props: {
         pipeline.stages.length === 0 ? (
           <EmptyStagesState funnelId={selectedFunnelId} />
         ) : (
-          <KanbanBoard initialData={pipeline} lossReasons={lossReasons} />
+          <KanbanBoard key={selectedFunnelId} initialData={pipeline} lossReasons={lossReasons} />
         )
       ) : (
         <div className="flex flex-1 items-center justify-center p-10">

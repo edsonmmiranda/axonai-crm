@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   BarChart3,
   Building2,
@@ -22,6 +22,8 @@ import {
 import { cn } from '@/lib/utils';
 import { logoutAction } from '@/lib/actions/auth';
 
+type ParamsReader = { get(key: string): string | null };
+
 interface NavItem {
   href: string;
   label: string;
@@ -33,6 +35,7 @@ interface NavItem {
 interface NavChild {
   href: string;
   label: string;
+  match?: (pathname: string, params: ParamsReader) => boolean;
 }
 
 interface NavSection {
@@ -40,24 +43,10 @@ interface NavSection {
   items: NavItem[];
 }
 
-const primaryNav: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/products', label: 'Produtos', icon: Package },
-  {
-    href: '/leads',
-    label: 'Leads',
-    icon: Users,
-    children: [
-      { href: '/leads', label: 'Todos os Leads' },
-      { href: '/leads-origins', label: 'Origens' },
-      { href: '/leads-tags', label: 'Tags' },
-      { href: '/leads-loss-reasons', label: 'Motivos de Perda' },
-    ],
-  },
-  { href: '/funnels', label: 'Funis', icon: GitBranch },
-  { href: '/pipeline', label: 'Pipeline', icon: Kanban },
-  { href: '#', label: 'WhatsApp', icon: MessageCircle, badge: '3' },
-];
+interface FunnelOption {
+  id: string;
+  name: string;
+}
 
 const secondarySections: NavSection[] = [
   {
@@ -79,9 +68,18 @@ function isActive(pathname: string, href: string): boolean {
   return pathname.startsWith(href);
 }
 
-function isChildActive(pathname: string, href: string): boolean {
+function defaultChildMatch(pathname: string, href: string): boolean {
   if (href === '/leads') return pathname === '/leads';
   return pathname.startsWith(href);
+}
+
+function isChildActive(
+  pathname: string,
+  params: ParamsReader,
+  child: NavChild,
+): boolean {
+  if (child.match) return child.match(pathname, params);
+  return defaultChildMatch(pathname, child.href);
 }
 
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
@@ -114,12 +112,15 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
 function NavItemWithChildren({
   item,
   pathname,
+  params,
 }: {
   item: NavItem;
   pathname: string;
+  params: ParamsReader;
 }) {
   const Icon = item.icon;
-  const hasActiveChild = item.children?.some((c) => isChildActive(pathname, c.href)) ?? false;
+  const hasActiveChild =
+    item.children?.some((c) => isChildActive(pathname, params, c)) ?? false;
   const [open, setOpen] = useState(hasActiveChild);
 
   return (
@@ -147,7 +148,7 @@ function NavItemWithChildren({
       {open && item.children && (
         <div className="mt-1 ml-5 flex flex-col gap-0.5 border-l border-border-subtle pl-3">
           {item.children.map((child) => {
-            const active = isChildActive(pathname, child.href);
+            const active = isChildActive(pathname, params, child);
             return (
               <Link
                 key={child.href}
@@ -173,11 +174,55 @@ function NavItemWithChildren({
 
 interface SidebarProps {
   organizationName: string;
+  funnels: FunnelOption[];
 }
 
-export function Sidebar({ organizationName }: SidebarProps) {
+export function Sidebar({ organizationName, funnels }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+
+  const primaryNav = useMemo<NavItem[]>(() => {
+    const pipelineChildren: NavChild[] = funnels.map((f, i) => ({
+      href: `/pipeline?funnel=${f.id}`,
+      label: f.name,
+      match: (p, params) => {
+        if (!p.startsWith('/pipeline')) return false;
+        const current = params.get('funnel');
+        if (current) return current === f.id;
+        return i === 0;
+      },
+    }));
+
+    const pipelineItem: NavItem =
+      pipelineChildren.length > 0
+        ? {
+            href: '/pipeline',
+            label: 'Pipeline',
+            icon: Kanban,
+            children: pipelineChildren,
+          }
+        : { href: '/pipeline', label: 'Pipeline', icon: Kanban };
+
+    return [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/products', label: 'Produtos', icon: Package },
+      {
+        href: '/leads',
+        label: 'Leads',
+        icon: Users,
+        children: [
+          { href: '/leads', label: 'Todos os Leads' },
+          { href: '/leads-origins', label: 'Origens' },
+          { href: '/leads-tags', label: 'Tags' },
+          { href: '/leads-loss-reasons', label: 'Motivos de Perda' },
+        ],
+      },
+      { href: '/funnels', label: 'Funis', icon: GitBranch },
+      pipelineItem,
+      { href: '#', label: 'WhatsApp', icon: MessageCircle, badge: '3' },
+    ];
+  }, [funnels]);
 
   const handleLogout = () => {
     startTransition(() => {
@@ -204,7 +249,12 @@ export function Sidebar({ organizationName }: SidebarProps) {
       <nav className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-6">
         {primaryNav.map((item) =>
           item.children ? (
-            <NavItemWithChildren key={item.label} item={item} pathname={pathname} />
+            <NavItemWithChildren
+              key={item.label}
+              item={item}
+              pathname={pathname}
+              params={searchParams}
+            />
           ) : (
             <NavLink key={item.label} item={item} active={isActive(pathname, item.href)} />
           ),
