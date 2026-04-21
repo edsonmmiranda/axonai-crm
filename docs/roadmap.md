@@ -13,19 +13,19 @@ Este documento é o **plano executivo** para levar o app de "dashboard mockado" 
 ```
 Sprint 03 → Auth & Tenancy          ← bloqueia tudo - Feito
 Sprint 04 → Profile & Org Settings  ← fecha auth - Feito
-Sprint 05 → Categories   ← warm-up CRUD - Feito
+Sprint 05 → Categories              ← warm-up CRUD - Feito
 Sprint 06 → Products + Storage      ← upload + galeria - Feito
-Sprint 07 → Lead Origins (menu Leads > Origens)
-Sprint 08 → Loss Reasons (menu Leads > Motivos de Perda)
-Sprint 09 → Tags (menu Leads > Tags)
-Sprint 10 → Leads — Lista (menu Leads > Todos os Leads) ← core do produto
-Sprint 11 → Funnels              ← Feito
-Sprint 12 → Funnel Stages
-Sprint 13 → Pipeline — Kanban DnD
-Sprint 18 → Dashboard real          ← substitui mocks
-Sprint 19 → WhatsApp Groups (CRUD)
-Sprint 20 → WhatsApp Research (provider + mapping)
-Sprint 21 → WhatsApp Inbox (webhook + messages)
+Sprint 07 → Lead Origins (menu Leads > Origens) - Feito
+Sprint 08 → Loss Reasons (menu Leads > Motivos de Perda) - Feito
+Sprint 09 → Tags (menu Leads > Tags) - Feito
+Sprint 10 → Leads — Lista (menu Leads > Todos os Leads) ← core do produto - Feito
+Sprint 11 → Funnels                 - Feito
+Sprint 12 → Funnel Stages           - Feito
+Sprint 13 → Pipeline — Kanban DnD   - Feito
+Sprint 14 → Dashboard real          ← substitui mocks
+Sprint 15 → WhatsApp Groups (CRUD)
+Sprint 16 → WhatsApp Research (provider + mapping)
+Sprint 17 → WhatsApp Inbox (webhook + messages)
 ```
 
 Sprint	Modelo	Por quê
@@ -38,12 +38,12 @@ Sprint	Modelo	Por quê
 11 — Funnels	Sonnet 4.6	CRUD simples, toggle is_active.
 12 — Funnel Stages	Sonnet 4.6	CRUD + reordenação de linhas (drag). Padrão conhecido.
 13 — Pipeline Kanban DnD	Opus 4.6	DnD com @dnd-kit, bulk update atômico de card_order, transação, modal condicional de perda. Performance + correção.
-18 — Dashboard real	Opus 4.6 para a decisão arquitetural (manter/cortar tasks e sales_goals) → Sonnet 4.6 para executar as queries depois de decidido	Decisão de escopo é o valor; queries em si são diretas.
-19 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples + FK pra lead_origins.
-20 — WhatsApp Research	Opus 4.6	Escolha de provider (Evolution / Z-API / Cloud API), mapeamento de grupos → origens. Ambíguo, alta alavancagem.
-21 — WhatsApp Inbox	Opus 4.6	Webhook seguro, nova tabela com RLS, matching por telefone, página /whatsapp/inbox. Alto impacto.
+14 — Dashboard real	Opus 4.6 para a decisão arquitetural (manter/cortar tasks e sales_goals) → Sonnet 4.6 para executar as queries depois de decidido	Decisão de escopo é o valor; queries em si são diretas.
+15 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples + FK pra lead_origins.
+16 — WhatsApp Research	Opus 4.6	Escolha de provider (Evolution / Z-API / Cloud API), mapeamento de grupos → origens. Ambíguo, alta alavancagem.
+17 — WhatsApp Inbox	Opus 4.6	Webhook seguro, nova tabela com RLS, matching por telefone, página /whatsapp/inbox. Alto impacto.
 
-Regra geral para este roadmap: Opus nos sprints 06, 10, 13, 20, 21 (e na fase de decisão do 18); Sonnet/Haiku no resto. Se um sprint Sonnet/Haiku travar em decisão não-óbvia, escalar para Opus na hora em vez de forçar.
+Regra geral para este roadmap: Opus nos sprints 06, 10, 13, 16, 17 (e na fase de decisão do 14); Sonnet/Haiku no resto. Se um sprint Sonnet/Haiku travar em decisão não-óbvia, escalar para Opus na hora em vez de forçar.
 
 
 
@@ -231,7 +231,7 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 ---
 
-## 📋 Sprint 18 — Dashboard real
+## 📋 Sprint 14 — Dashboard real
 
 **Trabalho:** substituir `src/lib/mocks/dashboard.ts` por queries reais:
 - KPIs: COUNT leads por status do mês + comparação com mês anterior.
