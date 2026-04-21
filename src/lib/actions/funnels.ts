@@ -525,3 +525,41 @@ export async function restoreFunnelAction(
     return { success: false, error: 'Erro interno, tente novamente' };
   }
 }
+
+export async function getActiveFunnelsWithStagesAction(): Promise<ActionResponse<FunnelWithStages[]>> {
+  try {
+    const ctx = await getSessionContext();
+    const supabase = await createClient();
+
+    type DbRow = Omit<FunnelWithStages, 'stages'> & {
+      funnel_stages: Omit<FunnelStageRow, 'lead_count'>[];
+    };
+
+    const { data, error } = await supabase
+      .from('funnels')
+      .select(
+        'id, organization_id, name, description, is_active, created_at, updated_at, funnel_stages(id, funnel_id, name, order_index, stage_role, created_at, updated_at)'
+      )
+      .eq('organization_id', ctx.organizationId)
+      .eq('is_active', true)
+      .order('name', { ascending: true })
+      .order('order_index', { referencedTable: 'funnel_stages', ascending: true })
+      .returns<DbRow[]>();
+
+    if (error) {
+      console.error('[funnels:active-with-stages]', error);
+      return { success: false, error: 'Não foi possível carregar os funis.' };
+    }
+
+    return {
+      success: true,
+      data: (data ?? []).map(({ funnel_stages, ...rest }) => ({
+        ...rest,
+        stages: (funnel_stages ?? []).map((s) => ({ ...s, lead_count: 0 })),
+      })),
+    };
+  } catch (error) {
+    console.error('[funnels:active-with-stages] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}

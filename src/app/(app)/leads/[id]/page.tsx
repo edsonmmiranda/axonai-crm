@@ -11,6 +11,7 @@ import {
   getActiveTagsForLeadsAction,
   type LeadStatus,
 } from '@/lib/actions/leads';
+import { getActiveFunnelsWithStagesAction } from '@/lib/actions/funnels';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 
 function formatDate(iso: string): string {
@@ -27,11 +28,12 @@ export default async function EditLeadPage(props: {
   const ctx = await getSessionContext();
   const { id } = await props.params;
 
-  const [leadRes, originsRes, profilesRes, tagsRes] = await Promise.all([
+  const [leadRes, originsRes, profilesRes, tagsRes, funnelsRes] = await Promise.all([
     getLeadByIdAction(id),
     getActiveOriginsAction(),
     getActiveProfilesAction(),
     getActiveTagsForLeadsAction(),
+    getActiveFunnelsWithStagesAction(),
   ]);
 
   if (!leadRes.success || !leadRes.data) {
@@ -42,6 +44,7 @@ export default async function EditLeadPage(props: {
   const origins = originsRes.success && originsRes.data ? originsRes.data : [];
   const profiles = profilesRes.success && profilesRes.data ? profilesRes.data : [];
   const tags = tagsRes.success && tagsRes.data ? tagsRes.data : [];
+  const funnels = funnelsRes.success && funnelsRes.data ? funnelsRes.data : [];
   const isAdmin = ctx.role === 'owner' || ctx.role === 'admin';
 
   return (
@@ -100,6 +103,7 @@ export default async function EditLeadPage(props: {
         origins={origins}
         profiles={profiles}
         tags={tags}
+        funnels={funnels}
         isAdmin={isAdmin}
       />
     </div>

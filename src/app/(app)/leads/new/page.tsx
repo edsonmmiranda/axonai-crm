@@ -8,17 +8,20 @@ import {
   getActiveProfilesAction,
   getActiveTagsForLeadsAction,
 } from '@/lib/actions/leads';
+import { getActiveFunnelsWithStagesAction } from '@/lib/actions/funnels';
 
 export default async function NewLeadPage() {
-  const [originsRes, profilesRes, tagsRes] = await Promise.all([
+  const [originsRes, profilesRes, tagsRes, funnelsRes] = await Promise.all([
     getActiveOriginsAction(),
     getActiveProfilesAction(),
     getActiveTagsForLeadsAction(),
+    getActiveFunnelsWithStagesAction(),
   ]);
 
   const origins = originsRes.success && originsRes.data ? originsRes.data : [];
   const profiles = profilesRes.success && profilesRes.data ? profilesRes.data : [];
   const tags = tagsRes.success && tagsRes.data ? tagsRes.data : [];
+  const funnels = funnelsRes.success && funnelsRes.data ? funnelsRes.data : [];
 
   return (
     <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
@@ -69,7 +72,7 @@ export default async function NewLeadPage() {
         </div>
       </div>
 
-      <LeadForm mode="create" origins={origins} profiles={profiles} tags={tags} />
+      <LeadForm mode="create" origins={origins} profiles={profiles} tags={tags} funnels={funnels} />
     </div>
   );
 }

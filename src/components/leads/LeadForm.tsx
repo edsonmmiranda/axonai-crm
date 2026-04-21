@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -25,6 +25,7 @@ import {
   type TagOption,
   type LeadStatus,
 } from '@/lib/actions/leads';
+import type { FunnelWithStages } from '@/lib/actions/funnels';
 
 const LEAD_STATUS_VALUES = [
   'new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost',
@@ -59,6 +60,7 @@ const FormSchema = z.object({
   utm_term: z.string().trim().transform((v) => (v === '' ? undefined : v)).pipe(z.string().max(200).optional()),
   origin_id: z.string().trim().transform((v) => (v === '' ? undefined : v)).pipe(z.string().uuid().optional()),
   assigned_to: z.string().trim().transform((v) => (v === '' ? undefined : v)).pipe(z.string().uuid().optional()),
+  stage_id: z.string().trim().transform((v) => (v === '' ? undefined : v)).pipe(z.string().uuid().optional()),
   is_active: z.coerce.boolean().optional().default(true),
   tagIds: z.array(z.string().uuid()).optional().default([]),
 });
@@ -74,14 +76,27 @@ export interface LeadFormProps {
   origins: OriginOption[];
   profiles: ProfileOption[];
   tags: TagOption[];
+  funnels: FunnelWithStages[];
   isAdmin?: boolean;
 }
 
-export function LeadForm({ mode, lead, origins, profiles, tags, isAdmin = false }: LeadFormProps) {
+export function LeadForm({ mode, lead, origins, profiles, tags, funnels, isAdmin = false }: LeadFormProps) {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const initialFunnelId = useMemo(() => {
+    if (!lead?.stage_id) return '';
+    return funnels.find((f) => f.stages.some((s) => s.id === lead.stage_id))?.id ?? '';
+  }, [funnels, lead?.stage_id]);
+
+  const [funnelId, setFunnelId] = useState(initialFunnelId);
+
+  const selectedFunnelStages = useMemo(
+    () => funnels.find((f) => f.id === funnelId)?.stages ?? [],
+    [funnels, funnelId]
+  );
 
   const {
     register,
@@ -110,6 +125,7 @@ export function LeadForm({ mode, lead, origins, profiles, tags, isAdmin = false 
       utm_term: lead?.utm_term ?? '',
       origin_id: lead?.origin_id ?? '',
       assigned_to: lead?.assigned_to ?? '',
+      stage_id: lead?.stage_id ?? '',
       is_active: lead?.is_active ?? true,
       tagIds: lead?.tags.map((t) => t.id) ?? [],
     },
@@ -402,6 +418,43 @@ export function LeadForm({ mode, lead, origins, profiles, tags, isAdmin = false 
                     {profiles.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="leadFunnel">Funil</Label>
+                  <select
+                    id="leadFunnel"
+                    className={selectClasses}
+                    value={funnelId}
+                    onChange={(e) => {
+                      setFunnelId(e.target.value);
+                      void register('stage_id').onChange({ target: { value: '' } });
+                    }}
+                  >
+                    <option value="">Sem funil</option>
+                    {funnels.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="leadStage">Coluna (Etapa)</Label>
+                  <select
+                    id="leadStage"
+                    className={selectClasses}
+                    disabled={!funnelId}
+                    {...register('stage_id')}
+                  >
+                    <option value="">Sem coluna</option>
+                    {selectedFunnelStages.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
                       </option>
                     ))}
                   </select>

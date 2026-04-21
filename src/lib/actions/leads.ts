@@ -55,6 +55,7 @@ export interface LeadRow {
   updated_at: string;
   created_by: string | null;
   assigned_to: string | null;
+  stage_id: string | null;
   origin_id: string | null;
   is_active: boolean;
   loss_reason_id: string | null;
@@ -104,7 +105,7 @@ const LEAD_STATUS_VALUES = [
 export type LeadStatus = (typeof LEAD_STATUS_VALUES)[number];
 
 const LEADS_BASE_COLUMNS =
-  'id, organization_id, name, email, phone, medium, campaign, utm_source, utm_medium, utm_campaign, utm_content, utm_term, company, position, notes, status, score, value, created_at, updated_at, created_by, assigned_to, origin_id, loss_reason_id, loss_notes, is_active' as const;
+  'id, organization_id, name, email, phone, medium, campaign, utm_source, utm_medium, utm_campaign, utm_content, utm_term, company, position, notes, status, score, value, created_at, updated_at, created_by, assigned_to, stage_id, origin_id, loss_reason_id, loss_notes, is_active' as const;
 
 /* ------------------------------------------------------------------ */
 /*  Zod Schemas                                                        */
@@ -141,6 +142,7 @@ const CreateLeadSchema = z.object({
   utm_term: optionalString.pipe(z.string().max(200).optional()),
   origin_id: optionalUuid,
   assigned_to: optionalUuid,
+  stage_id: optionalUuid,
   is_active: z.boolean().optional().default(true),
   tagIds: z.array(z.string().uuid()).optional().default([]),
 });
@@ -272,6 +274,7 @@ function enrichLeads(
     updated_at: lead.updated_at as string,
     created_by: (lead.created_by as string | null) ?? null,
     assigned_to: (lead.assigned_to as string | null) ?? null,
+    stage_id: (lead.stage_id as string | null) ?? null,
     origin_id: (lead.origin_id as string | null) ?? null,
     is_active: (lead.is_active as boolean) ?? true,
     loss_reason_id: (lead.loss_reason_id as string | null) ?? null,
@@ -470,6 +473,7 @@ export async function createLeadAction(
     if (leadData.utm_term) insertData.utm_term = leadData.utm_term;
     if (leadData.origin_id) insertData.origin_id = leadData.origin_id;
     if (leadData.assigned_to) insertData.assigned_to = leadData.assigned_to;
+    if (leadData.stage_id) insertData.stage_id = leadData.stage_id;
 
     const { data, error } = await supabase
       .from('leads')
@@ -553,6 +557,7 @@ export async function updateLeadAction(
       utm_term: leadData.utm_term ?? null,
       origin_id: leadData.origin_id ?? null,
       assigned_to: leadData.assigned_to ?? null,
+      stage_id: leadData.stage_id ?? null,
       is_active: leadData.is_active ?? true,
       updated_at: new Date().toISOString(),
     };
