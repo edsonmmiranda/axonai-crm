@@ -65,18 +65,7 @@ const FormSchema = z.object({
   is_active: z.boolean(),
   stages: z
     .array(StageSchema)
-    .min(1, 'O funil deve ter ao menos 1 estágio')
-    .superRefine((stages, ctx) => {
-      for (const role of ['entry', 'won', 'lost'] as const) {
-        const count = stages.filter((s) => s.stage_role === role).length;
-        const label = role === 'entry' ? 'Entrada' : role === 'won' ? 'Ganho' : 'Perdido';
-        if (count === 0) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Defina um estágio de "${label}".` });
-        } else if (count > 1) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Apenas um estágio pode ser "${label}".` });
-        }
-      }
-    }),
+    .min(1, 'O funil deve ter ao menos 1 estágio'),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -122,6 +111,20 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
 
   const onSubmit = handleSubmit((values) => {
     setFormError(null);
+
+    // Validate stage roles before sending to server
+    const ROLE_LABELS = { entry: 'Entrada', won: 'Ganho', lost: 'Perdido' } as const;
+    const roleErrors = (['entry', 'won', 'lost'] as const).flatMap((role) => {
+      const count = values.stages.filter((s) => s.stage_role === role).length;
+      if (count === 0) return [`Defina um estágio de "${ROLE_LABELS[role]}".`];
+      if (count > 1) return [`Apenas um estágio pode ser "${ROLE_LABELS[role]}".`];
+      return [];
+    });
+    if (roleErrors.length > 0) {
+      setFormError(roleErrors.join(' '));
+      return;
+    }
+
     startTransition(async () => {
       // Normalize order_index before saving
       const normalizedStages: StageUpsertInput[] = values.stages.map((s, i) => ({
