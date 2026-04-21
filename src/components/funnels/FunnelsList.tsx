@@ -160,7 +160,6 @@ export function FunnelsList({ funnels, hasFilter, metadata }: FunnelsListProps) 
                   <FunnelRowActions
                     id={funnel.id}
                     name={funnel.name}
-                    isActive={funnel.is_active}
                   />
                 </td>
               </tr>

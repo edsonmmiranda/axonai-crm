@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
-import { Pencil, PowerOff, RefreshCw, Trash2 } from 'lucide-react';
+import { useTransition, useState } from 'react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -17,39 +17,18 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
-import {
-  deactivateFunnelAction,
-  deleteFunnelAction,
-  restoreFunnelAction,
-} from '@/lib/actions/funnels';
+import { deleteFunnelAction } from '@/lib/actions/funnels';
 
 interface FunnelRowActionsProps {
   id: string;
   name: string;
-  isActive: boolean;
 }
 
-export function FunnelRowActions({ id, name, isActive }: FunnelRowActionsProps) {
+export function FunnelRowActions({ id, name }: FunnelRowActionsProps) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const [isDeleting, startDeleteTransition] = useTransition();
-  const [isToggling, startToggleTransition] = useTransition();
-
-  function handleToggleActive() {
-    startToggleTransition(async () => {
-      const res = isActive
-        ? await deactivateFunnelAction(id)
-        : await restoreFunnelAction(id);
-      if (!res.success) {
-        toast.error(res.error ?? 'Não foi possível alterar o status do funil.');
-        return;
-      }
-      toast.success(isActive ? 'Funil desativado.' : 'Funil reativado.');
-      router.refresh();
-    });
-  }
 
   function handleDelete() {
     startDeleteTransition(async () => {
@@ -71,19 +50,6 @@ export function FunnelRowActions({ id, name, isActive }: FunnelRowActionsProps) 
           <Link href={`/funnels/${id}`} aria-label={`Editar ${name}`}>
             <Pencil className="size-4" aria-hidden="true" />
           </Link>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleToggleActive}
-          disabled={isToggling}
-          aria-label={isActive ? `Desativar ${name}` : `Reativar ${name}`}
-        >
-          {isActive ? (
-            <PowerOff className="size-4" aria-hidden="true" />
-          ) : (
-            <RefreshCw className="size-4" aria-hidden="true" />
-          )}
         </Button>
         <Button
           variant="ghost"

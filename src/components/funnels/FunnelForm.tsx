@@ -19,7 +19,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
   createFunnelAction,
@@ -223,27 +229,32 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
                 ) : null}
               </div>
 
-              {mode === 'edit' ? (
-                <div className="flex items-center justify-between rounded-md border border-border bg-surface-sunken px-4 py-3">
-                  <div className="flex flex-col">
-                    <Label htmlFor="funnelActive">Funil ativo</Label>
-                    <p className="text-xs text-text-secondary">
-                      Funis inativos ficam ocultos na listagem padrão.
-                    </p>
-                  </div>
-                  <Controller
-                    control={control}
-                    name="is_active"
-                    render={({ field }) => (
-                      <Switch
-                        id="funnelActive"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                </div>
-              ) : null}
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="funnelStatus" required>
+                  Situação
+                </Label>
+                <Controller
+                  control={control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ? 'active' : 'inactive'}
+                      onValueChange={(val) => field.onChange(val === 'active')}
+                    >
+                      <SelectTrigger id="funnelStatus">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Ativo</SelectItem>
+                        <SelectItem value="inactive">Inativo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <p className="text-xs text-text-secondary">
+                  Funis inativos ficam ocultos na listagem padrão.
+                </p>
+              </div>
             </div>
           </div>
 
