@@ -206,7 +206,7 @@ export function Sidebar({ organizationName, funnels }: SidebarProps) {
 
     return [
       { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-      { href: '/products', label: 'Produtos', icon: Package },
+      pipelineItem,
       {
         href: '/leads',
         label: 'Leads',
@@ -219,7 +219,7 @@ export function Sidebar({ organizationName, funnels }: SidebarProps) {
         ],
       },
       { href: '/funnels', label: 'Funis', icon: GitBranch },
-      pipelineItem,
+      { href: '/products', label: 'Produtos', icon: Package },
       {
         href: '#',
         label: 'WhatsApp',
