@@ -165,10 +165,10 @@ Score 4 com Reference Module presente encaixa na regra 5 da rubrica (score ≤5 
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
-| Banco de dados | `@db-admin` | ⬜ Pendente | — |
-| Server Actions | `@backend` | ⬜ Pendente | — |
-| Frontend | `@frontend+` | ⬜ Pendente | — |
-| Guardian | `@guardian` | ⬜ Pendente | — |
-| Git | `@git-master` | ⬜ Pendente | — |
+| Banco de dados | `@db-admin` | ✅ Concluído | schema OK — nenhuma migration necessária (tabela + 4 RLS policies já existem) |
+| Server Actions | `@backend` | ✅ Concluído | `src/lib/actions/whatsapp-groups.ts`, `src/lib/whatsapp-groups/constants.ts` |
+| Frontend | `@frontend+` | ✅ Concluído | `src/app/(app)/whatsapp-groups/` (layout, page, new/page, [id]/page), `src/components/whatsapp-groups/` (7 componentes), `src/components/layout/Sidebar.tsx` |
+| Guardian | `@guardian` | ✅ Concluído | aprovado após 1 ciclo de correções (3 violações corrigidas: Badge semântico, max-w arbitrário, 5× botões inline) |
+| Git | `@git-master` | ▶️ Em andamento | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review

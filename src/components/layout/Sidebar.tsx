@@ -220,7 +220,12 @@ export function Sidebar({ organizationName, funnels }: SidebarProps) {
       },
       { href: '/funnels', label: 'Funis', icon: GitBranch },
       pipelineItem,
-      { href: '#', label: 'WhatsApp', icon: MessageCircle, badge: '3' },
+      {
+        href: '#',
+        label: 'WhatsApp',
+        icon: MessageCircle,
+        children: [{ href: '/whatsapp-groups', label: 'Grupos' }],
+      },
     ];
   }, [funnels]);
 

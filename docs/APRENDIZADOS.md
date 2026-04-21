@@ -96,6 +96,20 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-21 — [AGENT-DRIFT] @frontend+ repetiu botões inline em vez de `<Button>` (2ª ocorrência)
+
+**Agente afetado:** `@frontend+`
+
+**Sprint:** sprint_15_whatsapp_groups
+
+**Padrão repetido:** usou `<button className="...bg-action-danger...">` em 3 locais (danger zone, 2× dialog confirm) e `<Link>/<button>` com classes de primary/secondary inline no header de página — mesmo drift do sprint_10.
+
+**Frequência nesta sprint:** 5 instâncias em 3 arquivos
+
+**Gatilho provável:** `@frontend+` copia fielmente o reference module, e o reference module (`leads-origins`) já tinha o padrão inline; a regra em `agents/stack/frontend-plus.md` mencionada no sprint_10 ainda não foi atualizada.
+
+**Correção estrutural recomendada:** atualizar `agents/stack/frontend-plus.md` com regra explícita; atualizar o reference module `leads-origins` para usar `<Button variant="danger">` e `<Button asChild variant="secondary">` — enquanto o módulo de referência tiver o padrão errado, @frontend+ vai continuar copiando.
+
 ### 2026-04-21 · [NEXT] Server Action serializa `undefined` de objeto como `null`
 
 **Regra:** Nunca passar `{ id: s.id }` quando `s.id` pode ser `undefined` para Server Actions — Next.js converte `undefined` em `null` na serialização, quebrando constraints NOT NULL. Usar spread condicional: `...(s.id ? { id: s.id } : {})`.
