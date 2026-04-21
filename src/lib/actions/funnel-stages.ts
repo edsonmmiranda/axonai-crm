@@ -111,6 +111,26 @@ export async function updateFunnelStagesAction(
     const toDeleteIds = [...currentIds].filter((id) => !incomingIds.has(id));
 
     if (toDeleteIds.length > 0) {
+      // Block deletion of stages that have active leads
+      const { data: occupiedLeads } = await supabase
+        .from('leads')
+        .select('stage_id, name')
+        .in('stage_id', toDeleteIds)
+        .eq('is_active', true)
+        .limit(1);
+
+      if (occupiedLeads && occupiedLeads.length > 0) {
+        const { data: blockedStages } = await supabase
+          .from('funnel_stages')
+          .select('name')
+          .in('id', toDeleteIds);
+        const stageNames = (blockedStages ?? []).map((s) => `"${s.name}"`).join(', ');
+        return {
+          success: false,
+          error: `Não é possível remover o estágio ${stageNames} pois existem leads ativos nele. Mova os leads antes de excluir.`,
+        };
+      }
+
       const { error: deleteErr } = await supabase
         .from('funnel_stages')
         .delete()

@@ -30,6 +30,7 @@ export interface FunnelStageRow {
   name: string;
   order_index: number;
   stage_role: StageRole | null;
+  lead_count: number;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -258,9 +259,28 @@ export async function getFunnelByIdAction(
     }
 
     const { funnel_stages, ...rest } = data;
+    const stages = funnel_stages ?? [];
+
+    // Count active leads per stage
+    const stageIds = stages.map((s) => s.id);
+    const leadCountMap = new Map<string, number>();
+    if (stageIds.length > 0) {
+      const { data: leadRows } = await supabase
+        .from('leads')
+        .select('stage_id')
+        .in('stage_id', stageIds)
+        .eq('is_active', true);
+      (leadRows ?? []).forEach((l) => {
+        leadCountMap.set(l.stage_id, (leadCountMap.get(l.stage_id) ?? 0) + 1);
+      });
+    }
+
     return {
       success: true,
-      data: { ...rest, stages: funnel_stages ?? [] },
+      data: {
+        ...rest,
+        stages: stages.map((s) => ({ ...s, lead_count: leadCountMap.get(s.id) ?? 0 })),
+      },
     };
   } catch (error) {
     console.error('[funnels:get] unexpected', error);

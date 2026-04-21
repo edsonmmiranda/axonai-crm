@@ -64,6 +64,7 @@ interface SortableStageRowProps {
   fieldName: string;
   totalFields: number;
   usedRoles: Set<string>;
+  leadCount: number;
   fieldErrors: Record<string, { message?: string }> | undefined;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -78,6 +79,7 @@ function SortableStageRow({
   fieldName,
   totalFields,
   usedRoles,
+  leadCount,
   fieldErrors,
   onMoveUp,
   onMoveDown,
@@ -189,8 +191,13 @@ function SortableStageRow({
         <button
           type="button"
           onClick={onRemove}
-          disabled={totalFields <= 1}
-          aria-label={`Remover estágio ${index + 1}`}
+          disabled={totalFields <= 1 || leadCount > 0}
+          aria-label={
+            leadCount > 0
+              ? `Estágio ${index + 1} possui ${leadCount} lead(s) ativo(s) e não pode ser removido`
+              : `Remover estágio ${index + 1}`
+          }
+          title={leadCount > 0 ? `${leadCount} lead(s) ativo(s) neste estágio` : undefined}
           className="rounded p-1 text-feedback-danger-fg transition-colors hover:bg-feedback-danger-bg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:shadow-focus"
         >
           <Trash2 className="size-4" aria-hidden="true" />
@@ -240,8 +247,8 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
 
   const stagesErrors = (errors as Record<string, unknown>)[fieldName];
 
-  // Collect which roles are already assigned (for disabling options)
-  const watchedStages = watch(fieldName) as { stage_role?: StageRole }[];
+  // Collect which roles are already assigned and lead counts
+  const watchedStages = watch(fieldName) as { stage_role?: StageRole; lead_count?: number }[];
   const usedRoles = new Set(
     (watchedStages ?? []).map((s) => s.stage_role).filter(Boolean) as string[]
   );
@@ -290,6 +297,8 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
                 ? (stagesErrors[index] as Record<string, { message?: string }> | undefined)
                 : undefined;
 
+              const leadCount = watchedStages?.[index]?.lead_count ?? 0;
+
               return (
                 <SortableStageRow
                   key={field.id}
@@ -298,6 +307,7 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
                   fieldName={fieldName}
                   totalFields={fields.length}
                   usedRoles={usedRoles}
+                  leadCount={leadCount}
                   fieldErrors={fieldErrors}
                   onMoveUp={() => index > 0 && move(index, index - 1)}
                   onMoveDown={() => index < fields.length - 1 && move(index, index + 1)}

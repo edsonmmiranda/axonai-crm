@@ -47,6 +47,7 @@ const StageSchema = z.object({
     .max(100, 'Nome do estágio deve ter no máximo 100 caracteres'),
   order_index: z.number().int().min(0),
   stage_role: StageRoleSchema,
+  lead_count: z.number().int().min(0).optional(),
 });
 
 const FormSchema = z.object({
@@ -106,8 +107,9 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
               name: s.name,
               order_index: s.order_index,
               stage_role: s.stage_role ?? null,
+              lead_count: s.lead_count ?? 0,
             }))
-          : [{ name: '', order_index: 0, stage_role: null }],
+          : [{ name: '', order_index: 0, stage_role: null, lead_count: 0 }],
     },
   });
 
