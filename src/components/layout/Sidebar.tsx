@@ -55,7 +55,7 @@ const primaryNav: NavItem[] = [
     ],
   },
   { href: '/funnels', label: 'Funis', icon: GitBranch },
-  { href: '#', label: 'Pipeline', icon: Kanban },
+  { href: '/pipeline', label: 'Pipeline', icon: Kanban },
   { href: '#', label: 'WhatsApp', icon: MessageCircle, badge: '3' },
 ];
 

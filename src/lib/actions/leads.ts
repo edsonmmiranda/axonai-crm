@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
+import type { StageRole } from '@/lib/actions/funnels';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
 
@@ -1078,6 +1079,315 @@ export async function getActiveTagsForLeadsAction(): Promise<ActionResponse<TagO
     };
   } catch (error) {
     console.error('[leads:tags] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Pipeline (Kanban)                                                  */
+/* ------------------------------------------------------------------ */
+
+const PIPELINE_PAGE_SIZE = 50;
+
+export interface PipelineLead {
+  id: string;
+  name: string;
+  value: number;
+  status: LeadStatus;
+  card_order: number;
+  tags: LeadTag[];
+  assigned_to: {
+    id: string;
+    full_name: string;
+    avatar_url: string | null;
+  } | null;
+}
+
+export interface PipelineStage {
+  id: string;
+  name: string;
+  order_index: number;
+  stage_role: StageRole | null;
+  leads_total: number;
+  leads: PipelineLead[];
+}
+
+export interface PipelineData {
+  funnel: { id: string; name: string };
+  stages: PipelineStage[];
+}
+
+const GetPipelineInputSchema = z.object({
+  funnelId: z.string().uuid('Funil inválido'),
+  pageByStage: z.record(z.string().uuid(), z.number().int().min(1)).optional().default({}),
+});
+
+const MoveLeadInputSchema = z.object({
+  leadId: z.string().uuid('Lead inválido'),
+  toStageId: z.string().uuid('Estágio inválido'),
+  toIndex: z.number().int().min(0, 'Índice inválido'),
+  lossReasonId: z
+    .string()
+    .uuid('Motivo de perda inválido')
+    .nullable()
+    .optional(),
+  lossNotes: z.string().max(500, 'Notas de perda devem ter no máximo 500 caracteres').nullable().optional(),
+});
+
+export type GetPipelineInput = z.input<typeof GetPipelineInputSchema>;
+export type MoveLeadInput = z.input<typeof MoveLeadInputSchema>;
+
+function isLeadStatus(raw: unknown): raw is LeadStatus {
+  return typeof raw === 'string' && (LEAD_STATUS_VALUES as readonly string[]).includes(raw);
+}
+
+async function loadProfilesWithAvatar(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  profileIds: string[]
+): Promise<Map<string, { id: string; full_name: string; avatar_url: string | null }>> {
+  const uniqueIds = [...new Set(profileIds.filter(Boolean))];
+  if (uniqueIds.length === 0) return new Map();
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, full_name, avatar_url')
+    .in('id', uniqueIds);
+
+  const map = new Map<string, { id: string; full_name: string; avatar_url: string | null }>();
+  for (const row of data ?? []) {
+    map.set(row.id as string, {
+      id: row.id as string,
+      full_name: (row.full_name as string | null) ?? '',
+      avatar_url: (row.avatar_url as string | null) ?? null,
+    });
+  }
+  return map;
+}
+
+export async function getPipelineDataAction(
+  input: GetPipelineInput
+): Promise<ActionResponse<PipelineData>> {
+  const parsed = GetPipelineInputSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message };
+  }
+
+  try {
+    const ctx = await getSessionContext();
+    const supabase = await createClient();
+    const { funnelId, pageByStage } = parsed.data;
+
+    const { data: funnel, error: funnelErr } = await supabase
+      .from('funnels')
+      .select('id, name, organization_id')
+      .eq('id', funnelId)
+      .maybeSingle();
+
+    if (funnelErr) {
+      console.error('[pipeline:get] funnel load', funnelErr);
+      return { success: false, error: 'Não foi possível carregar o funil.' };
+    }
+    if (!funnel || funnel.organization_id !== ctx.organizationId) {
+      return { success: false, error: 'Funil não encontrado.' };
+    }
+
+    const { data: stagesRaw, error: stagesErr } = await supabase
+      .from('funnel_stages')
+      .select('id, name, order_index, stage_role')
+      .eq('funnel_id', funnelId)
+      .order('order_index', { ascending: true });
+
+    if (stagesErr) {
+      console.error('[pipeline:get] stages load', stagesErr);
+      return { success: false, error: 'Não foi possível carregar os estágios.' };
+    }
+
+    const stages = (stagesRaw ?? []).map((s) => ({
+      id: s.id as string,
+      name: s.name as string,
+      order_index: s.order_index as number,
+      stage_role: (s.stage_role as StageRole | null) ?? null,
+    }));
+
+    if (stages.length === 0) {
+      return {
+        success: true,
+        data: {
+          funnel: { id: funnel.id as string, name: funnel.name as string },
+          stages: [],
+        },
+      };
+    }
+
+    const pipelineStages: PipelineStage[] = [];
+    const allLeadIds: string[] = [];
+    const allProfileIds: string[] = [];
+    const leadsByStage = new Map<
+      string,
+      Array<{
+        id: string;
+        name: string;
+        value: number;
+        status: LeadStatus;
+        card_order: number;
+        assigned_to: string | null;
+      }>
+    >();
+
+    for (const stage of stages) {
+      const page = Math.max(1, pageByStage[stage.id] ?? 1);
+      const from = 0;
+      const to = page * PIPELINE_PAGE_SIZE - 1;
+
+      const { count, error: countErr } = await supabase
+        .from('leads')
+        .select('id', { count: 'exact', head: true })
+        .eq('organization_id', ctx.organizationId)
+        .eq('stage_id', stage.id);
+
+      if (countErr) {
+        console.error('[pipeline:get] stage count', stage.id, countErr);
+        return { success: false, error: 'Não foi possível carregar os leads.' };
+      }
+
+      const { data: leadsRaw, error: leadsErr } = await supabase
+        .from('leads')
+        .select('id, name, value, status, card_order, assigned_to')
+        .eq('organization_id', ctx.organizationId)
+        .eq('stage_id', stage.id)
+        .order('card_order', { ascending: true })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (leadsErr) {
+        console.error('[pipeline:get] stage leads', stage.id, leadsErr);
+        return { success: false, error: 'Não foi possível carregar os leads.' };
+      }
+
+      const rows = (leadsRaw ?? []).map((r) => {
+        const rawStatus = r.status as string | null;
+        return {
+          id: r.id as string,
+          name: r.name as string,
+          value: Number(r.value ?? 0),
+          status: isLeadStatus(rawStatus) ? rawStatus : 'new',
+          card_order: (r.card_order as number | null) ?? 0,
+          assigned_to: (r.assigned_to as string | null) ?? null,
+        };
+      });
+
+      leadsByStage.set(stage.id, rows);
+      for (const row of rows) {
+        allLeadIds.push(row.id);
+        if (row.assigned_to) allProfileIds.push(row.assigned_to);
+      }
+
+      pipelineStages.push({
+        id: stage.id,
+        name: stage.name,
+        order_index: stage.order_index,
+        stage_role: stage.stage_role,
+        leads_total: count ?? rows.length,
+        leads: [],
+      });
+    }
+
+    const [tagsMap, profilesMap] = await Promise.all([
+      loadLeadTags(supabase, allLeadIds),
+      loadProfilesWithAvatar(supabase, allProfileIds),
+    ]);
+
+    for (const stage of pipelineStages) {
+      const rows = leadsByStage.get(stage.id) ?? [];
+      stage.leads = rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        value: row.value,
+        status: row.status,
+        card_order: row.card_order,
+        tags: tagsMap.get(row.id) ?? [],
+        assigned_to: row.assigned_to ? profilesMap.get(row.assigned_to) ?? null : null,
+      }));
+    }
+
+    return {
+      success: true,
+      data: {
+        funnel: { id: funnel.id as string, name: funnel.name as string },
+        stages: pipelineStages,
+      },
+    };
+  } catch (error) {
+    console.error('[pipeline:get] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}
+
+export async function moveLeadAction(
+  input: MoveLeadInput
+): Promise<ActionResponse<{ leadId: string; newStageId: string; newOrder: number }>> {
+  const parsed = MoveLeadInputSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message };
+  }
+
+  try {
+    const ctx = await getSessionContext();
+    const supabase = await createClient();
+    const { leadId, toStageId, toIndex, lossReasonId, lossNotes } = parsed.data;
+
+    if (lossReasonId) {
+      const { data: reason } = await supabase
+        .from('loss_reasons')
+        .select('id, organization_id')
+        .eq('id', lossReasonId)
+        .maybeSingle();
+      if (!reason || reason.organization_id !== ctx.organizationId) {
+        return { success: false, error: 'Motivo de perda não encontrado.' };
+      }
+    }
+
+    const { data, error } = await supabase.rpc('move_lead_atomic', {
+      p_lead_id: leadId,
+      p_to_stage_id: toStageId,
+      p_to_index: toIndex,
+      p_loss_reason_id: lossReasonId ?? null,
+      p_loss_notes: lossNotes ?? null,
+    });
+
+    if (error) {
+      const code = (error.message ?? '').trim();
+      if (code.includes('LEAD_NOT_FOUND') || code.includes('CROSS_ORG_BLOCKED')) {
+        return { success: false, error: 'Lead não encontrado.' };
+      }
+      if (code.includes('STAGE_NOT_FOUND')) {
+        return { success: false, error: 'Estágio não encontrado.' };
+      }
+      if (code.includes('LOSS_REASON_REQUIRED')) {
+        return { success: false, error: 'LOSS_REASON_REQUIRED' };
+      }
+      console.error('[pipeline:move] rpc error', error);
+      return { success: false, error: 'Não foi possível mover o lead.' };
+    }
+
+    const result = data as { leadId: string; newStageId: string; newOrder: number } | null;
+    if (!result) {
+      console.error('[pipeline:move] rpc returned null');
+      return { success: false, error: 'Não foi possível mover o lead.' };
+    }
+
+    revalidatePath('/pipeline');
+
+    return {
+      success: true,
+      data: {
+        leadId: result.leadId,
+        newStageId: result.newStageId,
+        newOrder: result.newOrder,
+      },
+    };
+  } catch (error) {
+    console.error('[pipeline:move] unexpected', error);
     return { success: false, error: 'Erro interno, tente novamente' };
   }
 }

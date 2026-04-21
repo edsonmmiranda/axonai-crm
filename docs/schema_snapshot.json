@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-20T10:00:00.000Z",
+  "timestamp": "2026-04-21T14:37:32.341Z",
   "tables": [
     {
       "table_name": "categories",
@@ -206,6 +206,13 @@
           "is_nullable": "YES",
           "column_default": "now()",
           "character_maximum_length": null
+        },
+        {
+          "column_name": "stage_role",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null
         }
       ],
       "indexes": [
@@ -220,6 +227,10 @@
         {
           "index_name": "idx_funnel_stages_order",
           "index_definition": "CREATE INDEX idx_funnel_stages_order ON public.funnel_stages USING btree (funnel_id, order_index)"
+        },
+        {
+          "index_name": "idx_funnel_stages_role",
+          "index_definition": "CREATE UNIQUE INDEX idx_funnel_stages_role ON public.funnel_stages USING btree (funnel_id, stage_role) WHERE (stage_role IS NOT NULL)"
         }
       ],
       "policies": [
@@ -779,6 +790,10 @@
           "index_definition": "CREATE INDEX idx_leads_email ON public.leads USING btree (email) WHERE (email IS NOT NULL)"
         },
         {
+          "index_name": "idx_leads_is_active",
+          "index_definition": "CREATE INDEX idx_leads_is_active ON public.leads USING btree (organization_id, is_active)"
+        },
+        {
           "index_name": "idx_leads_loss_reason",
           "index_definition": "CREATE INDEX idx_leads_loss_reason ON public.leads USING btree (loss_reason_id)"
         },
@@ -791,8 +806,8 @@
           "index_definition": "CREATE INDEX idx_leads_stage_id ON public.leads USING btree (stage_id)"
         },
         {
-          "index_name": "idx_leads_is_active",
-          "index_definition": "CREATE INDEX idx_leads_is_active ON public.leads USING btree (organization_id, is_active)"
+          "index_name": "idx_leads_stage_order",
+          "index_definition": "CREATE INDEX idx_leads_stage_order ON public.leads USING btree (organization_id, stage_id, card_order)"
         },
         {
           "index_name": "idx_leads_status",
@@ -1541,17 +1556,17 @@
           "character_maximum_length": null
         },
         {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "NO",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
           "column_name": "updated_at",
           "data_type": "timestamp with time zone",
           "is_nullable": "YES",
           "column_default": "now()",
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "is_active",
+          "data_type": "boolean",
+          "is_nullable": "NO",
+          "column_default": "true",
           "character_maximum_length": null
         }
       ],
