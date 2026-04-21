@@ -96,6 +96,10 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-21 · [SHADCN] `SelectItem` proíbe `value=""`
+
+**Regra:** Radix `<Select.Item value="">` lança runtime error — string vazia é reservada para limpar a seleção. Usar sentinel explícito (ex.: `"neutral"`) e converter para `null` no `onValueChange`.
+
 ### 2026-04-20 — [AGENT-DRIFT] @frontend+ repetiu botões inline em vez de `<Button>`
 
 **Agente afetado:** `@frontend+`
