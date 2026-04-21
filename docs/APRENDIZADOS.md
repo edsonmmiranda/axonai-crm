@@ -96,6 +96,10 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-21 · [NEXT] Server Action serializa `undefined` de objeto como `null`
+
+**Regra:** Nunca passar `{ id: s.id }` quando `s.id` pode ser `undefined` para Server Actions — Next.js converte `undefined` em `null` na serialização, quebrando constraints NOT NULL. Usar spread condicional: `...(s.id ? { id: s.id } : {})`.
+
 ### 2026-04-21 · [SHADCN] `SelectItem` proíbe `value=""`
 
 **Regra:** Radix `<Select.Item value="">` lança runtime error — string vazia é reservada para limpar a seleção. Usar sentinel explícito (ex.: `"neutral"`) e converter para `null` no `onValueChange`.
