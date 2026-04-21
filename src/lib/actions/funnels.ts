@@ -22,11 +22,14 @@ interface PaginationMeta {
   itemsPerPage: number;
 }
 
+export type StageRole = 'entry' | 'won' | 'lost';
+
 export interface FunnelStageRow {
   id: string;
   funnel_id: string;
   name: string;
   order_index: number;
+  stage_role: StageRole | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -61,6 +64,8 @@ const DescriptionSchema = z
   .optional()
   .or(z.literal('').transform(() => undefined));
 
+const StageRoleSchema = z.enum(['entry', 'won', 'lost']).nullable().optional();
+
 const StageInputSchema = z.object({
   id: z.string().uuid().optional(),
   name: z
@@ -69,7 +74,24 @@ const StageInputSchema = z.object({
     .min(2, 'Nome do estágio deve ter ao menos 2 caracteres')
     .max(100, 'Nome do estágio deve ter no máximo 100 caracteres'),
   order_index: z.number().int().min(0),
+  stage_role: StageRoleSchema,
 });
+
+function validateStageRoles(stages: { stage_role?: 'entry' | 'won' | 'lost' | null | undefined }[]): string | null {
+  const roles = stages.map((s) => s.stage_role ?? null);
+  for (const role of ['entry', 'won', 'lost'] as const) {
+    const count = roles.filter((r) => r === role).length;
+    if (count === 0) {
+      const label = role === 'entry' ? 'Entrada' : role === 'won' ? 'Ganho' : 'Perdido';
+      return `O funil deve ter exatamente um estágio de "${label}".`;
+    }
+    if (count > 1) {
+      const label = role === 'entry' ? 'Entrada' : role === 'won' ? 'Ganho' : 'Perdido';
+      return `O funil tem mais de um estágio de "${label}". Cada papel deve ser único.`;
+    }
+  }
+  return null;
+}
 
 const CreateFunnelSchema = z.object({
   name: NameSchema,
@@ -211,7 +233,7 @@ export async function getFunnelByIdAction(
     const { data, error } = await supabase
       .from('funnels')
       .select(
-        'id, organization_id, name, description, is_active, created_at, updated_at, funnel_stages(id, funnel_id, name, order_index, created_at, updated_at)'
+        'id, organization_id, name, description, is_active, created_at, updated_at, funnel_stages(id, funnel_id, name, order_index, stage_role, created_at, updated_at)'
       )
       .eq('id', parsed.data)
       .eq('organization_id', ctx.organizationId)
@@ -254,6 +276,11 @@ export async function createFunnelAction(
     return { success: false, error: parsed.error.issues[0].message };
   }
 
+  const roleError = validateStageRoles(parsed.data.stages);
+  if (roleError) {
+    return { success: false, error: roleError };
+  }
+
   try {
     const ctx = await getSessionContext();
     const gate = assertRole(ctx, ['owner', 'admin']);
@@ -283,12 +310,13 @@ export async function createFunnelAction(
       funnel_id: funnel.id,
       name: s.name,
       order_index: i,
+      stage_role: s.stage_role ?? null,
     }));
 
     const { data: stages, error: stagesErr } = await supabase
       .from('funnel_stages')
       .insert(stagesPayload)
-      .select('id, funnel_id, name, order_index, created_at, updated_at')
+      .select('id, funnel_id, name, order_index, stage_role, created_at, updated_at')
       .returns<FunnelStageRow[]>();
 
     if (stagesErr) {

@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
-import type { FunnelStageRow } from '@/lib/actions/funnels';
+import type { FunnelStageRow, StageRole } from '@/lib/actions/funnels';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
 
@@ -22,6 +22,7 @@ const StageUpsertSchema = z.object({
     .min(2, 'Nome do estágio deve ter ao menos 2 caracteres')
     .max(100, 'Nome do estágio deve ter no máximo 100 caracteres'),
   order_index: z.number().int().min(0),
+  stage_role: z.enum(['entry', 'won', 'lost']).nullable().optional(),
 });
 
 const UpdateStagesSchema = z.object({
@@ -32,6 +33,22 @@ const UpdateStagesSchema = z.object({
 });
 
 export type StageUpsertInput = z.infer<typeof StageUpsertSchema>;
+
+function validateStageRoles(stages: { stage_role?: StageRole | null | undefined }[]): string | null {
+  const roles = stages.map((s) => s.stage_role ?? null);
+  for (const role of ['entry', 'won', 'lost'] as const) {
+    const count = roles.filter((r) => r === role).length;
+    if (count === 0) {
+      const label = role === 'entry' ? 'Entrada' : role === 'won' ? 'Ganho' : 'Perdido';
+      return `O funil deve ter exatamente um estágio de "${label}".`;
+    }
+    if (count > 1) {
+      const label = role === 'entry' ? 'Entrada' : role === 'won' ? 'Ganho' : 'Perdido';
+      return `O funil tem mais de um estágio de "${label}". Cada papel deve ser único.`;
+    }
+  }
+  return null;
+}
 
 /**
  * Replaces all stages for a funnel with the provided list.
@@ -45,6 +62,11 @@ export async function updateFunnelStagesAction(
   const parsed = UpdateStagesSchema.safeParse({ funnelId, stages });
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };
+  }
+
+  const roleError = validateStageRoles(parsed.data.stages);
+  if (roleError) {
+    return { success: false, error: roleError };
   }
 
   try {
@@ -112,18 +134,23 @@ export async function updateFunnelStagesAction(
       funnel_id: parsed.data.funnelId,
       name: s.name,
       order_index: s.order_index,
+      stage_role: s.stage_role ?? null,
       updated_at: new Date().toISOString(),
     }));
 
     const { data: upserted, error: upsertErr } = await supabase
       .from('funnel_stages')
       .upsert(upsertPayload, { onConflict: 'id' })
-      .select('id, funnel_id, name, order_index, created_at, updated_at')
+      .select('id, funnel_id, name, order_index, stage_role, created_at, updated_at')
       .order('order_index', { ascending: true })
       .returns<FunnelStageRow[]>();
 
     if (upsertErr) {
       console.error('[funnel-stages:update:upsert]', upsertErr);
+      // Unique partial index violation on stage_role
+      if (upsertErr.code === '23505') {
+        return { success: false, error: 'Cada papel (Entrada, Ganho, Perdido) deve ser único por funil.' };
+      }
       return { success: false, error: 'Não foi possível salvar os estágios.' };
     }
 

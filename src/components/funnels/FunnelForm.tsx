@@ -36,6 +36,8 @@ import {
 import { updateFunnelStagesAction, type StageUpsertInput } from '@/lib/actions/funnel-stages';
 import { FunnelStagesEditor } from './FunnelStagesEditor';
 
+const StageRoleSchema = z.enum(['entry', 'won', 'lost']).nullable().optional();
+
 const StageSchema = z.object({
   id: z.string().uuid().optional(),
   name: z
@@ -44,6 +46,7 @@ const StageSchema = z.object({
     .min(2, 'Nome do estágio deve ter ao menos 2 caracteres')
     .max(100, 'Nome do estágio deve ter no máximo 100 caracteres'),
   order_index: z.number().int().min(0),
+  stage_role: StageRoleSchema,
 });
 
 const FormSchema = z.object({
@@ -61,7 +64,18 @@ const FormSchema = z.object({
   is_active: z.boolean(),
   stages: z
     .array(StageSchema)
-    .min(1, 'O funil deve ter ao menos 1 estágio'),
+    .min(1, 'O funil deve ter ao menos 1 estágio')
+    .superRefine((stages, ctx) => {
+      for (const role of ['entry', 'won', 'lost'] as const) {
+        const count = stages.filter((s) => s.stage_role === role).length;
+        const label = role === 'entry' ? 'Entrada' : role === 'won' ? 'Ganho' : 'Perdido';
+        if (count === 0) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Defina um estágio de "${label}".` });
+        } else if (count > 1) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Apenas um estágio pode ser "${label}".` });
+        }
+      }
+    }),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -91,8 +105,9 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
               id: s.id,
               name: s.name,
               order_index: s.order_index,
+              stage_role: s.stage_role ?? null,
             }))
-          : [{ name: '', order_index: 0 }],
+          : [{ name: '', order_index: 0, stage_role: null }],
     },
   });
 
@@ -111,6 +126,7 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
         id: s.id,
         name: s.name,
         order_index: i,
+        stage_role: s.stage_role ?? null,
       }));
 
       if (mode === 'create') {
