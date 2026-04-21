@@ -15,6 +15,7 @@ Quando um projeto já estiver bootstrapped, a fonte autoritativa passa a ser o `
 - **UI Components:** wrappers finos sobre Radix Primitives (e React Aria quando Radix não cobre) em `src/components/ui/`, estilizados com tokens semânticos via `class-variance-authority`. Distribuição estilo Shadcn — você é dono do código, não é dependência. Contrato em [`design_system/components/CONTRACT.md`](../design_system/components/CONTRACT.md).
 - **Icons:** Lucide Icons (logos de marca ficam como SVG assets em `src/assets/brands/`, não como ícones)
 - **Forms & Validation:** react-hook-form + Zod 4 (nota: Zod 4 usa `.issues`, não `.errors` — ver [APRENDIZADOS.md](./APRENDIZADOS.md))
+- **Drag-and-drop:** `@dnd-kit/core` + `@dnd-kit/sortable` + `@dnd-kit/utilities` (v6/v10/v3). Usado para reordenação de listas dentro de formulários. Padrão: `SortableContext` com estratégia `verticalListSortingStrategy`, sensor de teclado habilitado para acessibilidade, `arrayMove` do `@dnd-kit/sortable` para reordenar arrays de `useFieldArray`. Handle visual: ícone `GripVertical` do Lucide envolvido em `useSortable`. Nunca usar `react-beautiful-dnd` (descontinuada).
 
 ## Backend
 
