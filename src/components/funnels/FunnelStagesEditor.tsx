@@ -128,14 +128,14 @@ function SortableStageRow({
                 <span className="size-4 flex-shrink-0" />
               )}
               <Select
-                value={field.value ?? ''}
-                onValueChange={(val) => field.onChange(val === '' ? null : val)}
+                value={field.value ?? 'neutral'}
+                onValueChange={(val) => field.onChange(val === 'neutral' ? null : val)}
               >
                 <SelectTrigger className="h-8 w-28 text-xs" aria-label={`Papel do estágio ${index + 1}`}>
-                  <SelectValue placeholder="Neutro" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">— Neutro —</SelectItem>
+                  <SelectItem value="neutral">— Neutro —</SelectItem>
                   {(['entry', 'won', 'lost'] as const).map((role) => {
                     const cfg = ROLE_CONFIG[role];
                     const isUsedElsewhere = usedRoles.has(role) && currentRole !== role;
