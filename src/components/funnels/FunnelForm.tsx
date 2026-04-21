@@ -98,7 +98,11 @@ export function FunnelForm({ mode, funnel }: FunnelFormProps) {
               stage_role: s.stage_role ?? null,
               lead_count: s.lead_count ?? 0,
             }))
-          : [{ name: '', order_index: 0, stage_role: null, lead_count: 0 }],
+          : [
+              { name: 'Início', order_index: 0, stage_role: 'entry' as const, lead_count: 0 },
+              { name: 'Ganho', order_index: 1, stage_role: 'won' as const, lead_count: 0 },
+              { name: 'Perdido', order_index: 2, stage_role: 'lost' as const, lead_count: 0 },
+            ],
     },
   });
 
