@@ -39,7 +39,7 @@ Sprint	Modelo	Por quê
 12 — Funnel Stages	Sonnet 4.6	CRUD + reordenação de linhas (drag). Padrão conhecido.
 13 — Pipeline Kanban DnD	Opus 4.6	DnD com @dnd-kit, bulk update atômico de card_order, transação, modal condicional de perda. Performance + correção.
 14 — Dashboard real	Opus 4.6 para a decisão arquitetural (manter/cortar tasks e sales_goals) → Sonnet 4.6 para executar as queries depois de decidido	Decisão de escopo é o valor; queries em si são diretas.
-15 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples + FK pra lead_origins.
+15 — WhatsApp Groups CRUD	Sonnet 4.6	CRUD simples
 16 — WhatsApp Research	Opus 4.6	Escolha de provider (Evolution / Z-API / Cloud API), mapeamento de grupos → origens. Ambíguo, alta alavancagem.
 17 — WhatsApp Inbox	Opus 4.6	Webhook seguro, nova tabela com RLS, matching por telefone, página /whatsapp/inbox. Alto impacto.
 
@@ -248,7 +248,7 @@ Todo sprint começa com o Tech Lead rodando esta checklist. Se qualquer item fal
 
 **Tabela:** `whatsapp_groups`.
 
-**Trabalho:** `/settings/whatsapp/groups` — CRUD + vinculação de grupos a origens (lead_origin).
+**Trabalho:** `/whatsapp-groups` — CRUD.
 
 **Aceite:** criar grupo, editar, desativar, listar.
 
