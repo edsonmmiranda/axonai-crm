@@ -216,7 +216,7 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
     register,
     control,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitted },
   } = useFormContext();
 
   const { fields, append, remove, move } = useFieldArray({ control, name: fieldName });
@@ -253,6 +253,17 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
     (watchedStages ?? []).map((s) => s.stage_role).filter(Boolean) as string[]
   );
 
+  // Derive role validation errors live (mirrors superRefine) — shown only after first submit attempt
+  const ROLE_LABELS = { entry: 'Entrada', won: 'Ganho', lost: 'Perdido' } as const;
+  const roleErrors = isSubmitted
+    ? (['entry', 'won', 'lost'] as const).flatMap((role) => {
+        const count = (watchedStages ?? []).filter((s) => s.stage_role === role).length;
+        if (count === 0) return [`Defina um estágio de "${ROLE_LABELS[role]}".`];
+        if (count > 1) return [`Apenas um estágio pode ser "${ROLE_LABELS[role]}".`];
+        return [];
+      })
+    : [];
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -270,6 +281,7 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
         </Button>
       </div>
 
+      {/* Array-level error (e.g. min 1 stage) */}
       {typeof stagesErrors === 'object' &&
       stagesErrors !== null &&
       'message' in stagesErrors ? (
@@ -278,16 +290,10 @@ export function FunnelStagesEditor({ fieldName = 'stages' }: FunnelStagesEditorP
         </p>
       ) : null}
 
-      {/* Role validation errors from superRefine */}
-      {Array.isArray(stagesErrors) ? null : (
-        typeof stagesErrors === 'object' && stagesErrors !== null && !('message' in stagesErrors) ? (
-          Object.values(stagesErrors as Record<string, { message?: string }>)
-            .filter((e) => e?.message)
-            .map((e, i) => (
-              <p key={i} className="text-xs text-feedback-danger-fg">{e.message}</p>
-            ))
-        ) : null
-      )}
+      {/* Role validation errors (entry / won / lost) */}
+      {roleErrors.map((msg, i) => (
+        <p key={i} className="text-xs text-feedback-danger-fg">{msg}</p>
+      ))}
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy}>
