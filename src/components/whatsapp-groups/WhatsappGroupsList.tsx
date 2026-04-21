@@ -149,7 +149,6 @@ export function WhatsappGroupsList({ groups, hasFilter, metadata }: WhatsappGrou
                   <WhatsappGroupRowActions
                     id={group.id}
                     name={group.name}
-                    isActive={group.is_active}
                   />
                 </td>
               </tr>
