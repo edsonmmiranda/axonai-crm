@@ -142,36 +142,91 @@ export async function updateFunnelStagesAction(
       }
     }
 
-    // Normalize order_index sequentially (0, 1, 2, ...)
-    const normalizedStages = parsed.data.stages.map((s, i) => ({
-      ...s,
-      order_index: i,
-    }));
+    // Normalize order_index sequentially and split by new vs existing
+    const newStages = parsed.data.stages
+      .filter((s) => !s.id)
+      .map((s, i) => ({
+        funnel_id: parsed.data.funnelId,
+        name: s.name,
+        order_index: parsed.data.stages.findIndex((x) => x === s),
+        stage_role: s.stage_role ?? null,
+      }));
 
-    // Upsert all stages (insert new, update existing)
-    const upsertPayload = normalizedStages.map((s) => ({
-      ...(s.id ? { id: s.id } : {}),
-      funnel_id: parsed.data.funnelId,
-      name: s.name,
-      order_index: s.order_index,
-      stage_role: s.stage_role ?? null,
-      updated_at: new Date().toISOString(),
-    }));
+    const existingStages = parsed.data.stages
+      .filter((s) => !!s.id)
+      .map((s, _i) => ({
+        id: s.id!,
+        funnel_id: parsed.data.funnelId,
+        name: s.name,
+        order_index: parsed.data.stages.findIndex((x) => x === s),
+        stage_role: s.stage_role ?? null,
+        updated_at: new Date().toISOString(),
+      }));
 
-    const { data: upserted, error: upsertErr } = await supabase
+    // Re-normalize order_index using final position in original array
+    const allWithIndex = parsed.data.stages.map((s, i) => ({ ...s, _idx: i }));
+
+    const insertPayload = allWithIndex
+      .filter((s) => !s.id)
+      .map((s) => ({
+        funnel_id: parsed.data.funnelId,
+        name: s.name,
+        order_index: s._idx,
+        stage_role: s.stage_role ?? null,
+      }));
+
+    const updatePayload = allWithIndex
+      .filter((s) => !!s.id)
+      .map((s) => ({
+        id: s.id!,
+        funnel_id: parsed.data.funnelId,
+        name: s.name,
+        order_index: s._idx,
+        stage_role: s.stage_role ?? null,
+        updated_at: new Date().toISOString(),
+      }));
+
+    // INSERT new stages
+    if (insertPayload.length > 0) {
+      const { error: insertErr } = await supabase
+        .from('funnel_stages')
+        .insert(insertPayload);
+
+      if (insertErr) {
+        console.error('[funnel-stages:update:insert]', insertErr);
+        if (insertErr.code === '23505') {
+          return { success: false, error: 'Cada papel (Entrada, Ganho, Perdido) deve ser único por funil.' };
+        }
+        return { success: false, error: 'Não foi possível salvar os estágios.' };
+      }
+    }
+
+    // UPDATE existing stages
+    if (updatePayload.length > 0) {
+      const { error: updateErr } = await supabase
+        .from('funnel_stages')
+        .upsert(updatePayload, { onConflict: 'id' });
+
+      if (updateErr) {
+        console.error('[funnel-stages:update:update]', updateErr);
+        if (updateErr.code === '23505') {
+          return { success: false, error: 'Cada papel (Entrada, Ganho, Perdido) deve ser único por funil.' };
+        }
+        return { success: false, error: 'Não foi possível salvar os estágios.' };
+      }
+    }
+
+    // Fetch final ordered result
+    const { data: upserted, error: fetchFinalErr } = await supabase
       .from('funnel_stages')
-      .upsert(upsertPayload, { onConflict: 'id' })
       .select('id, funnel_id, name, order_index, stage_role, created_at, updated_at')
+      .eq('funnel_id', parsed.data.funnelId)
       .order('order_index', { ascending: true })
       .returns<FunnelStageRow[]>();
 
-    if (upsertErr) {
-      console.error('[funnel-stages:update:upsert]', upsertErr);
-      // Unique partial index violation on stage_role
-      if (upsertErr.code === '23505') {
-        return { success: false, error: 'Cada papel (Entrada, Ganho, Perdido) deve ser único por funil.' };
-      }
-      return { success: false, error: 'Não foi possível salvar os estágios.' };
+    if (fetchFinalErr) {
+      console.error('[funnel-stages:update:fetch-final]', fetchFinalErr);
+      return { success: false, error: 'Não foi possível carregar os estágios atualizados.' };
     }
 
     revalidatePath('/funnels');
