@@ -370,7 +370,20 @@ supabase db push --dry-run
 ls supabase/migrations/[timestamp]_*.sql
 ```
 - Se o arquivo não existe → Reporte o erro
-- Se o arquivo existe → ✅ PASSOU
+- Se o arquivo existe → Continue para o Passo 4
+
+### Passo 4: Validar presença de RLS em tabelas novas
+Para cada `CREATE TABLE` na migration, verificar que existe `ENABLE ROW LEVEL SECURITY` correspondente:
+```bash
+# Contar CREATE TABLE vs ENABLE ROW LEVEL SECURITY na migration
+grep -c "CREATE TABLE" supabase/migrations/[timestamp]_*.sql
+grep -c "ENABLE ROW LEVEL SECURITY" supabase/migrations/[timestamp]_*.sql
+```
+- **Se há CREATE TABLE sem RLS correspondente:**
+  - ⛔ PARE — reporte ao `@db-admin`: "Tabela [nome] criada sem RLS. Toda tabela com dados de usuário deve ter RLS habilitado (ver `docs/conventions/security.md` §2)."
+  - Retry: Comande `@db-admin` para adicionar RLS
+- **Se os contadores batem (ou não há CREATE TABLE):**
+  - ✅ PASSOU
 
 ---
 
@@ -624,6 +637,52 @@ Preflight pode ser enxuto:
 
 ---
 
+# 🔎 AUDITORIAS SOB DEMANDA
+
+Fora do ciclo de sprint, o usuário pode pedir auditorias pontuais. Elas **não são sprints** — não geram PRD, não passam pelos 5 gates, não criam sprint file, não commitam nada. São invocações pontuais que produzem relatório inline.
+
+## Auditoria de Multi-tenancy (banco de dados)
+
+**Gatilhos reconhecidos** (qualquer frase começando com "Tech Lead" que contenha um destes padrões):
+
+- "audite o banco" / "rode uma auditoria no banco" / "valide o banco"
+- "audite multi-tenancy" / "verifique multi-tenancy"
+- "verifique conformidade de `organization_id`" / "check de `organization_id`"
+
+**Protocolo:**
+
+1. **Preflight mínimo** (não rode o preflight completo de sprint):
+   - Passo 0: `git rev-parse --is-inside-work-tree` — precisa ser repo git
+   - Passo 3: validação real de `.env.local` — obrigatória (auditor precisa acessar o banco via service_role)
+   - Pule Passos 1, 2 e 4 (git limpo, bootstrap detection, DB framework check) — auditoria é read-only e não vai criar commits
+
+2. **Delegue ao `@db-auditor`** adotando a persona conforme [`agents/on-demand/db-auditor.md`](on-demand/db-auditor.md). Contexto de entrada: apenas "executar auditoria completa de multi-tenancy". Não passe escopo reduzido — o protocolo do auditor é binário.
+
+3. **Receba o relatório inline** do auditor (APROVADO ou REPROVADO com lista de violações por tabela).
+
+4. **Apresente ao usuário**:
+   - Se **APROVADO**: apenas mostre o relatório e encerre. Não faça nada mais.
+   - Se **REPROVADO**: mostre o relatório e pergunte:
+     > Encontrei violações em [N] tabelas. Deseja que eu delegue ao `@db-admin` para gerar a migration corretiva? (sim/não)
+
+5. **Se o usuário aprovar correção** (`"sim"` ou equivalente):
+   - Delegue ao `@db-admin` passando **literalmente** a seção "Violações" do relatório do auditor como input
+   - `@db-admin` gera migration idempotente em `supabase/migrations/[timestamp]_fix_multitenancy.sql`
+   - Rode GATE 1 (dry-run) normalmente
+   - Após passar o gate: peça ao usuário para rodar `supabase db push` e depois re-invocar a auditoria para confirmar 100% conforme
+   - **Não** commite automaticamente — auditoria corretiva é sensível, usuário decide quando comitar
+
+6. **Se o usuário recusar correção** (`"não"` ou equivalente):
+   - Encerre com: *"Relatório gerado. Nenhuma mudança aplicada. As violações ficam registradas neste turno — o usuário decide quando corrigir."*
+
+**Regras:**
+- **Não crie sprint file** para auditoria. É invocação pontual, não sprint.
+- **Não registre em `docs/APRENDIZADOS.md`** a menos que o auditor descubra algo genuinamente não-óbvio (ex.: failure mode de `pg_policy` que quebra a análise textual).
+- **Não toque `docs/schema_snapshot.json`** — auditor é read-only.
+- Auditoria que termina em APROVADO é **não-evento** — não há nada a commitar, mover ou registrar.
+
+---
+
 # Contrato
 
 **Inputs:**
@@ -638,7 +697,7 @@ Preflight pode ser enxuto:
 
 **Agentes delegados:** `@spec-writer`, `@sanity-checker`, `@db-admin`, `@api-integrator`, `@frontend+`, `@backend`, `@guardian`, `@git-master`
 
-**On-demand (apenas por pedido explícito do usuário):** `@qa`, `@performance-engineer`, `@sprint-creator`
+**On-demand (apenas por pedido explícito do usuário):** `@qa`, `@performance-engineer`, `@sprint-creator`, `@db-auditor`
 
 **Arquivos tocados diretamente pelo Tech Lead:**
 - `docs/APRENDIZADOS.md` — apenas quando algo não-óbvio aconteceu

@@ -4,7 +4,7 @@ description: Convenção compartilhada para agentes on-demand — PASSIVE OBSERV
 
 # Convenção: Agentes On-Demand
 
-Esta é a fonte única para o comportamento de agentes **on-demand** (`@qa`, `@performance-engineer`, `@sprint-creator`). Cada um desses agentes referencia este arquivo em vez de duplicar as regras.
+Esta é a fonte única para o comportamento de agentes **on-demand** (`@qa`, `@performance-engineer`, `@sprint-creator`, `@db-auditor`). Cada um desses agentes referencia este arquivo em vez de duplicar as regras.
 
 ---
 
@@ -30,6 +30,7 @@ Cada agente on-demand só age quando o usuário usa seu nome explicitamente:
 | `@qa` | "QA, crie testes para o módulo X", "QA, cubra create[Entity]Action com testes de integração" |
 | `@performance-engineer` | "Performance Engineer, analise o módulo X", "Performance Engineer, prepare o dashboard para 10k usuários" |
 | `@sprint-creator` | "Sprint Creator, crie uma sprint para X", "Sprint Creator, preciso de uma sprint para o módulo de dashboard" |
+| `@db-auditor` | "DB Auditor, valide o banco", "DB Auditor, audite multi-tenancy", "DB Auditor, verifique conformidade de organization_id" |
 
 Menções indiretas ("acho que deveríamos ter testes aqui", "isso parece lento") **não** são invocações — são observações que o agente ignora.
 
@@ -65,6 +66,7 @@ Quando o usuário invoca um agente on-demand, a primeira ação é **verificar s
 - `@qa`: Checar se `vitest` / `playwright` / `@testing-library` estão instalados. Se não, perguntar se deve instalar infra mínima escopada ao pedido.
 - `@performance-engineer`: Checar se há build rodável (`package.json` existe, `npm run build` funciona). Se não, reportar bloqueio.
 - `@sprint-creator`: Verificar que `sprints/` e os templates existem.
+- `@db-auditor`: Rodar preflight probe ([`docs/templates/db_introspection.md`](../../docs/templates/db_introspection.md) → "Preflight probe") para confirmar que o bootstrap + helpers de auditoria estão instalados. Se faltar, pedir `supabase db push`.
 
 Se a infra necessária não existir, **pergunte antes de instalar qualquer coisa**.
 

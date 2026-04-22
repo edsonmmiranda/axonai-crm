@@ -102,6 +102,24 @@ Aplicam-se a **toda** Server Action do framework, sem exceção:
 
 ---
 
+## Regras invioláveis de Multi-tenancy (`organization_id`)
+
+Estas regras se aplicam ao schema, ao RLS e às Server Actions — **sem exceção**, mesmo em projetos que hoje atendem um único cliente. A coluna existe desde a primeira migration para permitir expansão futura sem refactor destrutivo.
+
+1. **Toda tabela de domínio em `public.*` DEVE ter coluna `organization_id uuid not null`** referenciando a tabela de organizações (FK). Não existe "esta tabela é single-tenant" — se armazena dado de cliente, tem `organization_id`.
+2. **Toda policy RLS DEVE filtrar por `organization_id`**, combinada com `auth.uid() = user_id` quando houver dono individual:
+   ```sql
+   create policy "select_own_org" on public.nome_tabela for select
+     using (organization_id = (auth.jwt() ->> 'organization_id')::uuid);
+   ```
+3. **Server Actions NUNCA aceitam `organization_id` como parâmetro do cliente.** O valor vem de `auth.jwt() ->> 'organization_id'` server-side (ver `docs/conventions/security.md` §2.2).
+4. **O custom claim `organization_id` é populado via Supabase Auth Hook** (não via trigger em `auth.users` — hooks são o caminho oficial e sobrevivem a resets de sessão).
+5. **Exceção única:** tabelas genuinamente globais e read-only (ex.: `countries`, `currencies`, catálogos compartilhados, feature flags do sistema) vivem em schema separado `public_ref` e são listadas explicitamente neste arquivo quando criadas. **Qualquer tabela em `public.*` exige `organization_id`.**
+
+**Tabelas em `public_ref` atualmente registradas:** _(nenhuma — adicionar aqui quando criada)_
+
+---
+
 ## Regras invioláveis do ambiente
 
 1. **Nunca** modifique `.env.local`
@@ -129,6 +147,7 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 ### Ao adotar `@db-admin`
 1. `agents/ops/db-admin.md`
 2. `docs/templates/db_introspection.md`
+3. `docs/conventions/security.md` §2 (RLS e isolamento de dados)
 
 ### Ao adotar `@backend`
 1. `agents/stack/backend.md`
@@ -143,6 +162,7 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 3. `design_system/components/CONTRACT.md` — **apenas no Nível 3** (quando não existe tela pronta)
 4. `design_system/enforcement/rules.md` — apenas se precisar confirmar regra de lint
 5. `docs/conventions/crud.md` (se o sprint envolve CRUD)
+6. `docs/conventions/security.md` §4.1 e §6 (XSS e exposição de dados) — já resumido no próprio `frontend-plus.md`
 
 ### Ao adotar `@guardian`
 1. `agents/quality/guardian.md`

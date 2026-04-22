@@ -27,7 +27,7 @@ if (!user) return { success: false, error: 'No autenticado' };
 export async function getItemAction(userId: string, itemId: string) { ... }
 ```
 
-**Regra:** Server Actions **nunca** aceitam `user_id`, `company_id` ou `tenant_id` como parmetro. Esses valores so extrados de `supabase.auth.getUser()` ou `auth.jwt()` no servidor.
+**Regra:** Server Actions **nunca** aceitam `user_id`, `organization_id` ou `tenant_id` como parmetro. Esses valores so extrados de `supabase.auth.getUser()` ou `auth.jwt()` no servidor.
 
 ### 1.2 Service Role Key
 
@@ -72,20 +72,23 @@ create policy "delete_own" on public.nome_tabela for delete
   using (auth.uid() = user_id);
 ```
 
-### 2.2 Multi-tenant (quando aplicvel)
+### 2.2 Multi-tenancy — `organization_id` obrigatrio
 
-Quando o projeto tiver mltiplas empresas/organizaes, **todas** as policies devem incluir `company_id`:
+**Regra inviolvel** (ver `standards.md`  Multi-tenancy): toda tabela de domnio em `public.*` tem coluna `organization_id uuid not null` e RLS que filtra por ela. Sem exceo, mesmo em projetos "single-tenant"  a coluna existe desde a primeira migration para permitir expanso futura.
 
 ```sql
-create policy "select_own_company" on public.nome_tabela for select
+-- Toda tabela com dados de cliente
+create policy "select_own_org" on public.nome_tabela for select
   using (
     auth.uid() = user_id
-    AND company_id = (auth.jwt() ->> 'company_id')::uuid
+    AND organization_id = (auth.jwt() ->> 'organization_id')::uuid
   );
 ```
 
-- `company_id` deve vir de `auth.jwt()` custom claims, **nunca** do request body
-- Custom claims devem ser configurados via Supabase Auth hooks ou triggers em `auth.users`
+- **Fonte do valor:** `organization_id` vem exclusivamente de `auth.jwt() ->> 'organization_id'` (custom claim), **nunca** do request body ou de parmetro de funo.
+- **Como popular o custom claim:** via **Supabase Auth Hook** (`custom_access_token_hook`)  caminho oficial desde 2024. **No use triggers em `auth.users`**: triggers no re-executam ao renovar sesso, ento o claim pode ficar desatualizado e a RLS passa a falhar silenciosamente "open".
+- **Falha-modo crtico:** se o JWT no contiver `organization_id`, a expresso `(auth.jwt() ->> 'organization_id')::uuid` retorna `NULL` e a comparao `organization_id = NULL` retorna `NULL` (tratado como falso pelas policies)  ou seja, nenhum dado aparece. Teste isso explicitamente ao configurar um novo ambiente.
+- **Exceo nica:** tabelas globais read-only (catlogos compartilhados, feature flags do sistema) vivem em schema separado `public_ref`, listado em `standards.md`. Qualquer coisa em `public.*` exige `organization_id`.
 
 ### 2.3 SECURITY DEFINER
 
@@ -297,16 +300,17 @@ O framework no inclui template de upload. Quando um projeto adicionar, **deve** 
 
 ### Ao criar nova tabela (`@db-admin`)
 
+- [ ] Tabela em `public.*` (no em `public_ref`, que  exceo documentada)
+- [ ] Coluna `organization_id uuid not null` com FK para tabela de organizaes
 - [ ] RLS habilitado
-- [ ] Policies CRUD com `auth.uid() = user_id`
-- [ ] `company_id` nas policies (se multi-tenant)
+- [ ] Policies CRUD com `auth.uid() = user_id` + `organization_id = (auth.jwt() ->> 'organization_id')::uuid`
 - [ ] Sem `SECURITY DEFINER` desnecessrio
 
 ### Ao criar Server Action (`@backend`)
 
 - [ ] Zod valida input na borda
 - [ ] `supabase.auth.getUser()` antes de qualquer query
-- [ ] user_id/company_id do servidor, nunca do cliente
+- [ ] user_id/organization_id do servidor (JWT), nunca do cliente
 - [ ] Try/catch com mensagem amigvel
 - [ ] `ActionResponse<T>` como retorno
 - [ ] Sem `error.message` exposto ao cliente
@@ -334,9 +338,11 @@ O framework no inclui template de upload. Quando um projeto adicionar, **deve** 
 - [ ] Nome de arquivo sanitizado
 - [ ] Sem execuo de uploads
 
-### Ao implementar multi-tenant
+### Configurao de multi-tenancy (obrigatrio em todo projeto)
 
-- [ ] `company_id` em toda tabela com dados de tenant
-- [ ] RLS com `auth.jwt() ->> 'company_id'`
-- [ ] `company_id` do JWT, nunca do request
-- [ ] Testes de isolamento entre tenants
+- [ ] `organization_id uuid not null` em toda tabela de `public.*`
+- [ ] RLS com `organization_id = (auth.jwt() ->> 'organization_id')::uuid` em todas as policies
+- [ ] Custom claim `organization_id` populado via **Supabase Auth Hook** (no via trigger em `auth.users`)
+- [ ] `organization_id` do JWT, nunca do request body ou parmetro de funo
+- [ ] Teste explcito: JWT sem o claim no deve retornar dados (fail-closed)
+- [ ] Testes de isolamento entre organizaes

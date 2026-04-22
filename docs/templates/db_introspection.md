@@ -22,24 +22,46 @@ supabase db push
 
 ## Preflight probe
 
-Antes de qualquer sprint, confirme que os helpers estão presentes:
+Antes de qualquer sprint, confirme que os helpers estão presentes. **Probe completo** (cobre bootstrap inicial e upgrades do framework):
 
 ```typescript
-const { error } = await supabase.rpc('get_schema_tables');
-if (error?.message?.includes('does not exist')) {
+// 1. Bootstrap mínimo presente?
+const { error: baseErr } = await supabase.rpc('get_schema_tables');
+if (baseErr?.message?.includes('does not exist')) {
   throw new Error(
     'Framework bootstrap migration not applied. Run `supabase db push` to install the helper RPCs.'
   );
 }
+
+// 2. Helpers de auditoria presentes? (adicionados após o bootstrap inicial)
+const { error: auditErr } = await supabase.rpc('get_rls_status', { p_table_name: 'nonexistent' });
+if (auditErr?.message?.includes('does not exist')) {
+  throw new Error(
+    'Framework bootstrap is outdated (missing audit helpers). Run `supabase db push` to upgrade.'
+  );
+}
 ```
 
-Se o probe falhar com `function get_schema_tables() does not exist`, pare e peça ao usuário para aplicar a bootstrap antes de continuar.
+Se qualquer probe falhar com `function ... does not exist`, pare e peça ao usuário para aplicar/atualizar o bootstrap antes de continuar.
 
 ---
 
 ## Helper functions (definição canônica)
 
 Estas funções vivem no arquivo de bootstrap acima. Se precisar editá-las, edite o arquivo de bootstrap — **nunca duplique em migração separada**.
+
+**Catálogo de helpers:**
+
+| Helper | Consumido por | Retorna |
+|---|---|---|
+| `get_schema_tables()` | `@db-admin`, `@db-auditor` | Tabelas em `public` |
+| `get_table_columns(p_table_name)` | `@db-admin`, `@db-auditor` | Colunas + `is_nullable` + defaults |
+| `get_table_indexes(p_table_name)` | `@db-admin`, `@db-auditor` | Índices da tabela |
+| `get_table_policies(p_table_name)` | `@db-admin`, `@db-auditor` | Policies RLS (expressão `USING`) |
+| `get_table_foreign_keys(p_table_name)` | `@db-auditor` | FKs + `ON DELETE`/`ON UPDATE` |
+| `get_rls_status(p_table_name)` | `@db-auditor` | Flag `relrowsecurity` (RLS enabled/forced) |
+| `get_table_policy_checks(p_table_name)` | `@db-auditor` | Policies RLS (expressão `WITH CHECK` — complementa `get_table_policies`) |
+
 
 ```sql
 -- Listar todas as tabelas do schema public
@@ -96,7 +118,7 @@ AS $$
   ORDER BY i.indexname;
 $$;
 
--- Políticas RLS de uma tabela
+-- Políticas RLS de uma tabela (expressão USING)
 CREATE OR REPLACE FUNCTION get_table_policies(p_table_name text)
 RETURNS TABLE (
   policy_name text,
@@ -115,7 +137,22 @@ AS $$
   WHERE c.relname = p_table_name
   ORDER BY p.policyname;
 $$;
+
+-- FKs de uma tabela (usado por @db-auditor)
+-- Retorna constraint_name, column_name, referenced_table, referenced_column,
+-- on_delete, on_update.
+
+-- RLS status de uma tabela (usado por @db-auditor)
+-- Retorna rls_enabled e rls_forced. Use para detectar tabelas com policies
+-- definidas mas RLS desabilitado (failure mode silencioso).
+
+-- Policy checks (WITH CHECK) de uma tabela (usado por @db-auditor)
+-- Complementa get_table_policies — retorna with_check_definition por policy.
+-- Necessário para auditar policies INSERT, cuja expressão vive em WITH CHECK
+-- (não em USING).
 ```
+
+> Para as definições completas desses três helpers, ver `supabase/migrations/00000000000000_framework_bootstrap.sql`.
 
 ---
 

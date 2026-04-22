@@ -62,7 +62,9 @@ Estas são as checagens que o lint **não** cobre. Exigem que você leia o PR e 
 - [ ] **`service_role_key` nunca exposta ao browser.** Regex: `/NEXT_PUBLIC_.*SERVICE_ROLE/i` ou import de `service_role_key` em arquivo com `'use client'`.
 - [ ] **Validação Zod na borda de toda Server Action.** Toda função `'use server'` que recebe input deve ter `Schema.safeParse()` antes de qualquer lógica.
 - [ ] **Auth check presente.** Toda Server Action com read/write deve ter `supabase.auth.getUser()` antes da query.
-- [ ] **user_id/company_id nunca aceitos como parâmetro.** Grep por parâmetros de função chamados `userId`, `user_id`, `companyId`, `company_id`, `tenantId`, `tenant_id` em Server Actions — se vierem do cliente, rejeitar.
+- [ ] **user_id/organization_id nunca aceitos como parâmetro.** Grep por parâmetros de função chamados `userId`, `user_id`, `organizationId`, `organization_id`, `tenantId`, `tenant_id` em Server Actions — se vierem do cliente, rejeitar.
+- [ ] **`organization_id` obrigatório em toda tabela nova de `public.*`.** Em migrations com `CREATE TABLE public.*`, verificar que existe coluna `organization_id uuid not null` + FK. Exceção única: `CREATE TABLE public_ref.*` (schema de catálogos globais). Ver [`docs/conventions/standards.md`](../../docs/conventions/standards.md) → Multi-tenancy.
+- [ ] **RLS policies filtram por `organization_id`.** Toda policy em tabela de `public.*` deve conter `organization_id = (auth.jwt() ->> 'organization_id')::uuid`. Policy que filtra apenas por `auth.uid() = user_id` em tabela de domínio é violação.
 - [ ] **Sem `dangerouslySetInnerHTML`.** Regex: `/dangerouslySetInnerHTML/`. Exceção: se usado com `DOMPurify.sanitize()` no mesmo bloco.
 - [ ] **Sem `href` dinâmico inseguro.** Buscar `href={` com variáveis que possam vir do usuário sem validação de protocolo.
 - [ ] **RLS habilitado em toda nova tabela.** Toda migration com `CREATE TABLE` deve ter `ENABLE ROW LEVEL SECURITY` correspondente.
@@ -107,7 +109,9 @@ Rejeite imediatamente se qualquer uma das seguintes estiver presente:
 **Segurança** (ver [`docs/conventions/security.md`](../../docs/conventions/security.md))
 - Segredos detectados no código (API keys, passwords, tokens, JWTs hardcoded)
 - `service_role_key` exposta ao browser (`NEXT_PUBLIC_` ou import em `'use client'`)
-- Server Action que aceita `user_id`/`company_id` como parâmetro do cliente
+- Server Action que aceita `user_id`/`organization_id` como parâmetro do cliente
+- Nova tabela em `public.*` sem coluna `organization_id uuid not null`
+- Policy RLS em tabela de `public.*` que não filtra por `organization_id`
 - Tabela sem RLS habilitado
 - `dangerouslySetInnerHTML` sem sanitização (`DOMPurify`)
 - `error.message` retornado diretamente ao cliente no `ActionResponse`

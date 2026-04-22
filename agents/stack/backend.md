@@ -17,7 +17,8 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 
 - Sempre valide input com Zod na borda da Server Action
 - Sempre use Row Level Security (RLS) do Supabase
-- **Nunca** aceite `user_id`/`company_id` como parâmetro — extraia de `supabase.auth.getUser()`
+- **Nunca** aceite `user_id`/`organization_id` como parâmetro — extraia `user_id` de `supabase.auth.getUser()` e `organization_id` de `auth.jwt() ->> 'organization_id'`
+- **Toda query a tabela de `public.*` DEVE filtrar por `organization_id`** (via `.eq('organization_id', ctx.organizationId)` ou deixar RLS filtrar) — ver [`docs/conventions/standards.md`](../../docs/conventions/standards.md) → Multi-tenancy
 - Trate erros explicitamente (try/catch) em todas as actions
 - Nunca exponha erros internos ao usuário (`error.message` proibido no response)
 
@@ -42,7 +43,24 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 - Siga o protocolo de 4 passos exatamente para Server Actions
 - Exemplo completo: `agents/skills/reference-module-copy/examples/` (ver exemplos disponíveis)
 
-**Se NÃO há Reference Module:** siga os templates canônicos de `docs/templates/server_actions.md`.
+**Se NÃO há Reference Module:** siga a hierarquia de resolução abaixo.
+
+### Hierarquia de resolução de padrões (sem Reference Module)
+
+Resolva na ordem. **Pare no primeiro nível que cobrir a operação.**
+
+| Nível | Fonte | O que contém |
+|---|---|---|
+| **1. Template canônico** | [`docs/templates/server_actions.md`](../../docs/templates/server_actions.md) | Templates completos de List, GetById, Create, Update, Soft Delete, Hard Delete, Stats, Schemas Zod, utilities |
+| **2. Fallback cirúrgico** | **Um** arquivo específico em `src/lib/actions/` | Apenas quando o Nível 1 não cobre a operação (ex: upload de arquivo, padrão não documentado) |
+| **3. Escalação** | Reporte ao Tech Lead | Se nem o Nível 2 resolver |
+
+**Regras do Nível 2 (fallback):**
+- Leia **um único arquivo** de action que pareça mais próximo do caso — não varra `src/lib/actions/` inteiro com Glob/Grep
+- Identifique o arquivo pelo nome (ex: se precisa de upload, procure `product-images.ts`, não faça `Glob("src/lib/actions/*.ts")`)
+- Ao final, registre o gap em `docs/APRENDIZADOS.md`: *"[AGENT-DRIFT] @backend precisou de fallback para [operação] — template `server_actions.md` não cobre este caso. Adicionar template de [tipo]."*
+
+> ⛔ **Proibido:** varrer `src/lib/actions/` inteiro com Glob + Grep para descobrir padrões. O Nível 1 cobre a grande maioria dos casos. O Nível 2 é exceção documentada, não rotina.
 
 ---
 

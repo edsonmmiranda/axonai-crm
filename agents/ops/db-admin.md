@@ -180,9 +180,12 @@ $$ LANGUAGE plpgsql;
 
 # RLS guidelines
 
-- Habilitar RLS em toda tabela com dados de usuário
-- Políticas explícitas para SELECT, INSERT, UPDATE, DELETE
-- `SECURITY DEFINER` para funções helper
+**Fonte normativa:** [`docs/conventions/security.md`](../../docs/conventions/security.md) — §2 (Autorização & Isolamento) e [`docs/conventions/standards.md`](../../docs/conventions/standards.md) — Multi-tenancy. Resumo:
+
+- **Obrigatório:** RLS habilitado em toda tabela com dados de usuário — sem exceção
+- **Obrigatório:** coluna `organization_id uuid not null` (FK para tabela de organizações) em toda tabela de `public.*`, sem exceção — mesmo em projetos single-tenant. Única exceção: schema `public_ref` para catálogos globais read-only, listado em `standards.md`
+- Políticas explícitas para SELECT, INSERT, UPDATE, DELETE com `auth.uid() = user_id` + `organization_id = (auth.jwt() ->> 'organization_id')::uuid`
+- `SECURITY DEFINER` **apenas** para funções read-only; GRANTS restritos (`anon` revogado)
 - Reportar todas as políticas no output ao Tech Lead
 
 ---
@@ -270,6 +273,10 @@ Pare e siga [`escalation-protocol.md`](../workflows/escalation-protocol.md) se:
 # Checklist antes de entregar
 
 - [ ] Migração testada com `supabase db push --dry-run`
+- [ ] Toda nova tabela em `public.*` tem `organization_id uuid not null` + FK para tabela de organizações (exceção apenas para `public_ref`)
+- [ ] RLS habilitado em toda nova tabela (`ALTER TABLE ... ENABLE ROW LEVEL SECURITY`)
+- [ ] Policies CRUD filtram por `organization_id = (auth.jwt() ->> 'organization_id')::uuid` (e `auth.uid() = user_id` quando houver dono individual)
+- [ ] `SECURITY DEFINER` justificado e com GRANTS restritos (se aplicável)
 - [ ] `docs/schema_snapshot.json` atualizado
 - [ ] Linha `@db-admin` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + path da migration criada)
 

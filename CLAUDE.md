@@ -40,6 +40,10 @@ Após a escolha:
 
 Mostre a saída do script e aguarde o usuário revisar com `git diff` antes de commitar.
 
+## 🔎 Gatilho: auditoria de banco
+
+Quando o usuário pedir auditoria do banco (frases como "audite o banco", "valide multi-tenancy", "verifique `organization_id`"), siga o protocolo em [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) → **AUDITORIAS SOB DEMANDA**. Isso **não** é um sprint: não gera PRD, não passa pelos 5 gates, não commita nada.
+
 ## 🗺️ Mapa rápido do framework
 
 | Precisa de | Leia |
@@ -53,3 +57,4 @@ Mostre a saída do script e aguarde o usuário revisar com `git diff` antes de c
 | Camadas de memória (onde escrever o quê) | [`agents/workflows/memory-layers.md`](agents/workflows/memory-layers.md) |
 | Design system (fonte única) | [`design_system/README.md`](design_system/README.md) |
 | Armadilhas descobertas | [`docs/APRENDIZADOS.md`](docs/APRENDIZADOS.md) |
+| Auditoria sob demanda de multi-tenancy no banco | [`agents/on-demand/db-auditor.md`](agents/on-demand/db-auditor.md) |

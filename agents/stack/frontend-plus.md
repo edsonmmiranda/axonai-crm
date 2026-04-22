@@ -11,6 +11,16 @@ allowedTools: Read, Write, Edit, Bash, Grep, Glob
 
 Quando existe referência visual: **não interprete, não melhore, não reorganize — traduza.**
 
+# 🔒 Segurança no frontend
+
+**Fonte normativa:** [`docs/conventions/security.md`](../../docs/conventions/security.md) — §4.1 (XSS) e §6 (Exposição de Dados). Resumo das regras críticas para componentes:
+
+- **Proibido:** `dangerouslySetInnerHTML` — exceto com `DOMPurify.sanitize()` no mesmo bloco
+- **Proibido:** `href={variavel}` sem validação de protocolo — URLs dinâmicas devem começar com `https://` ou `/` (bloquear `javascript:`)
+- **Proibido:** armazenar tokens, passwords ou IDs de sessão em `useState`, `useContext` ou `localStorage`
+- Links externos devem usar `rel="noopener noreferrer"`
+- Dados sensíveis (user_id, organization_id) **nunca** são passados como props do cliente para Server Actions — o servidor extrai esses valores do JWT
+
 ---
 
 # 🔑 PROTOCOLO DE RESOLUÇÃO DE REFERÊNCIA
@@ -68,7 +78,25 @@ Antes de escrever qualquer `page.tsx`, resolva qual é sua **fonte de verdade vi
 - **`cva`** para qualquer componente com mais de uma variante visual (button, badge, alert). Nunca use condicionais ad-hoc para variantes.
 - **Composição antes de reinvenção** — antes de criar um componente novo, verifique se pode montá-lo a partir dos existentes em `src/components/ui/`.
 
-> Se o tipo de página não existe nem no Nível 2 nem no Nível 3: escale ao Tech Lead antes de inventar layout. Formato: *"Não existe referência visual para [tipo]. Preciso de uma tela pronta ou direção de layout."*
+> Se o tipo de página não existe nem no Nível 2 nem no Nível 3: tente o Nível 4 antes de escalar.
+
+---
+
+## Nível 4 — Fallback cirúrgico em módulo existente
+
+**Condição:** Nenhum dos 3 níveis anteriores resolveu (tipo de página inédito, componente não coberto pelo DS, padrão de layout não documentado).
+
+**Ação:**
+- Leia **uma única página** de módulo existente em `src/app/` que seja a mais próxima do caso — não varra `src/app/` inteiro com Glob/Grep
+- Identifique a página pelo nome da rota (ex: se precisa de um dashboard customizado, leia `src/app/dashboard/page.tsx`, não faça `Glob("src/app/**/page.tsx")`)
+- Use apenas como referência de **estrutura/layout** — tokens e classes continuam vindo do design system (Nível 3)
+
+**Ao usar o Nível 4, obrigatoriamente:**
+- Registre o gap em `docs/APRENDIZADOS.md`: *"[AGENT-DRIFT] @frontend+ precisou de fallback para [tipo de página/componente] — design system não cobre este caso. Adicionar tela pronta ou recipe para [tipo]."*
+
+> ⛔ **Proibido:** varrer `src/app/` inteiro com Glob + Grep para descobrir padrões ou "ver como outros módulos ficaram". Os Níveis 1-3 cobrem a grande maioria dos casos. O Nível 4 é exceção documentada, não rotina.
+
+Se mesmo o Nível 4 não resolver: escale ao Tech Lead. Formato: *"Não existe referência visual para [tipo]. Preciso de uma tela pronta ou direção de layout."*
 
 ---
 
@@ -159,11 +187,37 @@ ls src/config/navigation.ts 2>/dev/null
 - **Item ativo:** o `DashboardShell` já deve destacar o item ativo baseado na rota atual (`usePathname()`). Verifique que o `href` do novo item corresponde ao path do módulo para que o destaque funcione.
 - **Não crie seções/grupos novos** sem instrução explícita do sprint/PRD.
 
+## Passo 2.5 — Inventário de componentes existentes (OBRIGATÓRIO)
+
+**Antes de traduzir qualquer elemento do HTML**, liste os componentes disponíveis:
+
+```bash
+ls src/components/ui/ 2>/dev/null
+```
+
+Para cada `<button>`, `<a>` com aparência de botão, `<input>`, `<select>`, `<textarea>`, `<table>` ou bloco visual recorrente no HTML:
+
+1. **Verifique** se já existe componente equivalente em `src/components/ui/` (`Button`, `Input`, `Select`, `Badge`, `DataTable`, etc.)
+2. **Se existe**, abra o componente e verifique se a variante necessária já está declarada no `cva`
+3. **Use o componente com a variante existente** — mesmo que as classes difiram levemente do HTML
+
+**Ordem de prioridade (esta regra prevalece sobre "classes idênticas" do Passo 3):**
+
+| Prioridade | Situação | Ação |
+|---|---|---|
+| **1ª** | Componente existe com variante existente | Use `<Button variant="danger">` — não copie classes do HTML |
+| **2ª** | Componente existe sem a variante necessária | Adicione a variante ao `cva` do componente |
+| **3ª** | Componente não existe | Crie-o em `src/components/ui/` (Passo 4b) |
+
+> ⛔ **Nunca** escreva `<button className="...bg-action-danger...">` quando `<Button variant="danger">` existe. Tradução mecânica se aplica à **estrutura e layout** (divs, grids, seções), não a elementos que já são componentes do projeto.
+
+---
+
 ## Passo 3 — Traduza o conteúdo da página, seção por seção
 
 **Regras de preservação** (aplicam ao conteúdo dentro do `<main>`):
 1. **Hierarquia idêntica** — mesma profundidade de nesting, mesma ordem de filhos
-2. **Classes idênticas** — copie todo `className` exatamente como está no HTML
+2. **Classes idênticas em elementos estruturais** — copie `className` de `<div>`, `<section>`, `<nav>`, `<header>`, `<footer>` exatamente como no HTML. Para elementos que mapeiam a componentes (`<button>`, `<input>`, `<select>`, `<table>`), o **Passo 2.5** prevalece — use o componente, não as classes inline
 3. **Sem wrappers extras** — não adicione divs ou fragments que não existem no HTML
 4. **Sem remoções** — não omita elementos, mesmo que pareçam decorativos
 5. **Sem reordenação** — as seções saem na mesma ordem do HTML
@@ -172,13 +226,16 @@ ls src/config/navigation.ts 2>/dev/null
 
 | HTML | React/Next.js |
 |---|---|
-| `class="..."` | `className="..."` (classes idênticas) |
+| `class="..."` em divs/seções | `className="..."` (classes idênticas) |
+| `<button class="...danger...">` | `<Button variant="danger">` (use componente — Passo 2.5) |
+| `<input class="...">` | `<Input>` (use componente — Passo 2.5) |
+| `<select class="...">` | `<Select>` (use componente — Passo 2.5) |
 | `<i data-lucide="users" class="size-5">` | `<Users className="size-5" />` (PascalCase, import de `lucide-react`) |
 | `<i data-lucide="chevron-right">` | `<ChevronRight />` (kebab-case → PascalCase) |
 | `<a href="entidade_lista.html">` | `<Link href="/entidade">` (rota real, import de `next/link`) |
 | `<a href="entidade_criar.html">` | `<Link href="/entidade/new">` |
 | `<a href="entidade_editar.html">` | `<Link href={'/entidade/${id}/edit'}>` |
-| `<button onclick="fn()">` | `<button onClick={handler}>` |
+| `<button onclick="fn()">` | `<Button onClick={handler}>` (use componente) |
 | `<form>` com dados mock | `<form>` com react-hook-form + Zod (mesma estrutura visual) |
 | Rows mock em `<script>` | `.map()` sobre dados de server action / props |
 | `<!-- SEÇÃO -->` | `{/* SEÇÃO */}` |
@@ -270,6 +327,9 @@ Adapte **somente** os itens abaixo. Tudo fora desta lista permanece idêntico ao
 - [ ] Empty state com mensagem amigável quando não há dados ou resultados de busca
 - [ ] Responsividade verificada em 375px (mobile) e 1440px (desktop)
 - [ ] `npm run build` passa sem erros
+- [ ] Sem `dangerouslySetInnerHTML` (exceto com `DOMPurify`)
+- [ ] Sem `href` dinâmico sem validação de protocolo
+- [ ] Sem dados sensíveis em estado client-side (`useState`/`localStorage`)
 - [ ] Linha `@frontend+` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + paths das páginas criadas + componentes criados)
 
 **Nível 3 (sem referência):**
@@ -280,4 +340,7 @@ Adapte **somente** os itens abaixo. Tudo fora desta lista permanece idêntico ao
 - [ ] Responsividade verificada em 375px (mobile) e 1440px (desktop)
 - [ ] Dark mode verificado (`data-theme="dark"` no `<html>`)
 - [ ] `npm run build` passa sem erros
+- [ ] Sem `dangerouslySetInnerHTML` (exceto com `DOMPurify`)
+- [ ] Sem `href` dinâmico sem validação de protocolo
+- [ ] Sem dados sensíveis em estado client-side (`useState`/`localStorage`)
 - [ ] Linha `@frontend+` em `## 🔄 Execução` atualizada no sprint file (`✅ Concluído` + paths das páginas criadas)
