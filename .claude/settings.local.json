@@ -4,7 +4,10 @@
       "Bash(grep -l \"revalidatePath\" d:/AiProjects/crm/src/lib/actions/*.ts)",
       "Bash(node -e ':*)",
       "Bash(node scripts/_audit_unused.mjs)",
-      "Bash(bash scripts/update-framework-complete.sh)"
+      "Bash(bash scripts/update-framework-complete.sh)",
+      "Bash(npm run *)",
+      "Bash(node scripts/verify-design.mjs --changed)",
+      "Bash(xargs grep *)"
     ]
   }
 }
