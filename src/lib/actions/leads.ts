@@ -1396,3 +1396,46 @@ export async function moveLeadAction(
     return { success: false, error: 'Erro interno, tente novamente' };
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Global Search                                                       */
+/* ------------------------------------------------------------------ */
+
+export interface GlobalSearchLead {
+  id: string;
+  name: string;
+  email: string | null;
+  company: string | null;
+  status: LeadStatus;
+}
+
+export async function searchGlobalAction(
+  query: string
+): Promise<ActionResponse<GlobalSearchLead[]>> {
+  const q = query.trim();
+  if (q.length < 2) return { success: true, data: [] };
+
+  try {
+    const ctx = await getSessionContext();
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('leads')
+      .select('id, name, email, company, status')
+      .eq('organization_id', ctx.organizationId)
+      .eq('is_active', true)
+      .or(`name.ilike.%${q}%,email.ilike.%${q}%,phone.ilike.%${q}%,company.ilike.%${q}%`)
+      .order('name', { ascending: true })
+      .limit(8);
+
+    if (error) {
+      console.error('[leads:search-global]', error);
+      return { success: false, error: 'Erro ao buscar leads.' };
+    }
+
+    return { success: true, data: (data ?? []) as GlobalSearchLead[] };
+  } catch (error) {
+    console.error('[leads:search-global] unexpected', error);
+    return { success: false, error: 'Erro interno, tente novamente' };
+  }
+}

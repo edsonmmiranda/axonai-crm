@@ -1,11 +1,12 @@
 'use client';
 
 import { useTransition } from 'react';
-import { Bell, LogOut, Search, Settings } from 'lucide-react';
+import { Bell, LogOut, Settings } from 'lucide-react';
 
 import type { SessionContext } from '@/lib/supabase/getSessionContext';
 import { logoutAction } from '@/lib/actions/auth';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { GlobalSearch } from '@/components/layout/GlobalSearch';
 
 interface TopbarProps {
   session: SessionContext;
@@ -37,20 +38,7 @@ export function Topbar({ session }: TopbarProps) {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-surface-raised/80 px-6 backdrop-blur-md">
       <div className="hidden max-w-md flex-1 sm:flex">
-        <div className="group relative w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search
-              className="size-5 text-text-secondary transition-colors group-focus-within:text-action-primary"
-              aria-hidden="true"
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Buscar leads, empresas ou contratos..."
-            aria-label="Busca global"
-            className="block w-full rounded-lg border border-field-border bg-field py-2 pl-10 pr-3 text-sm leading-5 text-field-fg shadow-sm transition-all placeholder:text-field-placeholder hover:border-field-border-hover focus-visible:border-field-border-focus focus-visible:bg-surface-raised focus-visible:outline-none focus-visible:shadow-focus"
-          />
-        </div>
+        <GlobalSearch />
       </div>
 
       <div className="ml-4 flex items-center gap-4">
