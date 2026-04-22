@@ -96,6 +96,11 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-22 · [SUPABASE] Auditoria de RLS pode marcar policy dead-code como violação
+
+**Regra:** antes de "corrigir" uma policy flagada pelo `@db-auditor`, faça grep em `src/` pelo INSERT/UPDATE da tabela. Se a única call-site usa `createServiceClient()` ou roda em trigger `SECURITY DEFINER`, a policy é dead code — drope em vez de reescrever, e adicione policy `WITH CHECK (false)` para preservar coverage 4-cmd.
+**Follow-up:** considerar Check 9 no `@db-auditor` que cruze policies com call-sites em `src/lib/actions/**` antes de classificar como violação.
+
 ### 2026-04-21 — [AGENT-DRIFT] @frontend+ repetiu botões inline em vez de `<Button>` (2ª ocorrência)
 
 **Agente afetado:** `@frontend+`

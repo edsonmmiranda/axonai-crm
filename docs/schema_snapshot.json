@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-21T14:37:32.341Z",
+  "timestamp": "2026-04-22T15:00:00.000Z",
   "tables": [
     {
       "table_name": "categories",
@@ -65,1641 +65,398 @@
   "tableDetails": {
     "categories": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "description",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "slug",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "active",
-          "data_type": "boolean",
-          "is_nullable": "YES",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "timezone('utc'::text, now())",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "timezone('utc'::text, now())",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "description", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "slug", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "active", "data_type": "boolean", "is_nullable": "YES", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "timezone('utc'::text, now())", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "timezone('utc'::text, now())", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "categories_name_idx",
-          "index_definition": "CREATE INDEX categories_name_idx ON public.categories USING btree (name)"
-        },
-        {
-          "index_name": "categories_organization_id_idx",
-          "index_definition": "CREATE INDEX categories_organization_id_idx ON public.categories USING btree (organization_id)"
-        },
-        {
-          "index_name": "categories_pkey",
-          "index_definition": "CREATE UNIQUE INDEX categories_pkey ON public.categories USING btree (id)"
-        },
-        {
-          "index_name": "categories_slug_idx",
-          "index_definition": "CREATE INDEX categories_slug_idx ON public.categories USING btree (slug)"
-        },
-        {
-          "index_name": "categories_slug_key",
-          "index_definition": "CREATE UNIQUE INDEX categories_slug_key ON public.categories USING btree (organization_id, slug)"
-        }
+        { "index_name": "categories_name_idx", "index_definition": "CREATE INDEX categories_name_idx ON public.categories USING btree (name)" },
+        { "index_name": "categories_organization_id_idx", "index_definition": "CREATE INDEX categories_organization_id_idx ON public.categories USING btree (organization_id)" },
+        { "index_name": "categories_pkey", "index_definition": "CREATE UNIQUE INDEX categories_pkey ON public.categories USING btree (id)" },
+        { "index_name": "categories_slug_idx", "index_definition": "CREATE INDEX categories_slug_idx ON public.categories USING btree (slug)" },
+        { "index_name": "categories_slug_key", "index_definition": "CREATE UNIQUE INDEX categories_slug_key ON public.categories USING btree (organization_id, slug)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can delete categories from their organization",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can insert categories for their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update categories from their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view categories from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can delete categories from their organization", "policy_command": "DELETE" },
+        { "policy_name": "Users can insert categories for their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can update categories from their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view categories from their organization", "policy_command": "SELECT" }
       ]
     },
     "funnel_stages": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "funnel_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "order_index",
-          "data_type": "integer",
-          "is_nullable": "NO",
-          "column_default": "0",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "stage_role",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "funnel_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "order_index", "data_type": "integer", "is_nullable": "NO", "column_default": "0", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "stage_role", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "funnel_stages_pkey",
-          "index_definition": "CREATE UNIQUE INDEX funnel_stages_pkey ON public.funnel_stages USING btree (id)"
-        },
-        {
-          "index_name": "idx_funnel_stages_funnel",
-          "index_definition": "CREATE INDEX idx_funnel_stages_funnel ON public.funnel_stages USING btree (funnel_id)"
-        },
-        {
-          "index_name": "idx_funnel_stages_order",
-          "index_definition": "CREATE INDEX idx_funnel_stages_order ON public.funnel_stages USING btree (funnel_id, order_index)"
-        },
-        {
-          "index_name": "idx_funnel_stages_role",
-          "index_definition": "CREATE UNIQUE INDEX idx_funnel_stages_role ON public.funnel_stages USING btree (funnel_id, stage_role) WHERE (stage_role IS NOT NULL)"
-        }
+        { "index_name": "funnel_stages_pkey", "index_definition": "CREATE UNIQUE INDEX funnel_stages_pkey ON public.funnel_stages USING btree (id)" },
+        { "index_name": "idx_funnel_stages_funnel", "index_definition": "CREATE INDEX idx_funnel_stages_funnel ON public.funnel_stages USING btree (funnel_id)" },
+        { "index_name": "idx_funnel_stages_order", "index_definition": "CREATE INDEX idx_funnel_stages_order ON public.funnel_stages USING btree (funnel_id, order_index)" },
+        { "index_name": "idx_funnel_stages_organization_id", "index_definition": "CREATE INDEX idx_funnel_stages_organization_id ON public.funnel_stages USING btree (organization_id)" },
+        { "index_name": "idx_funnel_stages_role", "index_definition": "CREATE UNIQUE INDEX idx_funnel_stages_role ON public.funnel_stages USING btree (funnel_id, stage_role) WHERE (stage_role IS NOT NULL)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can manage stages",
-          "policy_command": "ALL"
-        },
-        {
-          "policy_name": "Users can view stages of their organization funnels",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can manage stages", "policy_command": "ALL" },
+        { "policy_name": "Users can view stages of their organization funnels", "policy_command": "SELECT" }
       ]
     },
     "funnels": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "description",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "YES",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "description", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "YES", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "funnels_pkey",
-          "index_definition": "CREATE UNIQUE INDEX funnels_pkey ON public.funnels USING btree (id)"
-        },
-        {
-          "index_name": "idx_funnels_org",
-          "index_definition": "CREATE INDEX idx_funnels_org ON public.funnels USING btree (organization_id)"
-        }
+        { "index_name": "funnels_pkey", "index_definition": "CREATE UNIQUE INDEX funnels_pkey ON public.funnels USING btree (id)" },
+        { "index_name": "idx_funnels_org", "index_definition": "CREATE INDEX idx_funnels_org ON public.funnels USING btree (organization_id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can manage funnels",
-          "policy_command": "ALL"
-        },
-        {
-          "policy_name": "Users can view funnels of their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can manage funnels", "policy_command": "ALL" },
+        { "policy_name": "Users can view funnels of their organization", "policy_command": "SELECT" }
       ]
     },
     "invitations": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "email",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "role",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": "'member'::text",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "token",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "invited_by",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "expires_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "accepted_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "now()",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "email", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "role", "data_type": "text", "is_nullable": "NO", "column_default": "'member'::text", "character_maximum_length": null },
+        { "column_name": "token", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "invited_by", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "expires_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "accepted_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "now()", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_invitations_email",
-          "index_definition": "CREATE INDEX idx_invitations_email ON public.invitations USING btree (email)"
-        },
-        {
-          "index_name": "idx_invitations_organization_id",
-          "index_definition": "CREATE INDEX idx_invitations_organization_id ON public.invitations USING btree (organization_id)"
-        },
-        {
-          "index_name": "idx_invitations_token",
-          "index_definition": "CREATE INDEX idx_invitations_token ON public.invitations USING btree (token)"
-        },
-        {
-          "index_name": "invitations_pkey",
-          "index_definition": "CREATE UNIQUE INDEX invitations_pkey ON public.invitations USING btree (id)"
-        },
-        {
-          "index_name": "invitations_token_key",
-          "index_definition": "CREATE UNIQUE INDEX invitations_token_key ON public.invitations USING btree (token)"
-        }
+        { "index_name": "idx_invitations_email", "index_definition": "CREATE INDEX idx_invitations_email ON public.invitations USING btree (email)" },
+        { "index_name": "idx_invitations_organization_id", "index_definition": "CREATE INDEX idx_invitations_organization_id ON public.invitations USING btree (organization_id)" },
+        { "index_name": "idx_invitations_token", "index_definition": "CREATE INDEX idx_invitations_token ON public.invitations USING btree (token)" },
+        { "index_name": "invitations_pkey", "index_definition": "CREATE UNIQUE INDEX invitations_pkey ON public.invitations USING btree (id)" },
+        { "index_name": "invitations_token_key", "index_definition": "CREATE UNIQUE INDEX invitations_token_key ON public.invitations USING btree (token)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can create invitations",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Allow invitation acceptance",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Enable delete for organization admins",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Enable select for organization admins",
-          "policy_command": "SELECT"
-        },
-        {
-          "policy_name": "Enable update for organization admins",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view org invitations",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can create invitations", "policy_command": "INSERT" },
+        { "policy_name": "Enable delete for organization admins", "policy_command": "DELETE" },
+        { "policy_name": "Enable select for organization admins", "policy_command": "SELECT" },
+        { "policy_name": "Enable update for organization admins", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view org invitations", "policy_command": "SELECT" }
       ]
     },
     "lead_origins": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "type",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "platform",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "YES",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "type", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "platform", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "YES", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "lead_origins_name_org_unique",
-          "index_definition": "CREATE UNIQUE INDEX lead_origins_name_org_unique ON public.lead_origins USING btree (organization_id, name)"
-        },
-        {
-          "index_name": "lead_origins_pkey",
-          "index_definition": "CREATE UNIQUE INDEX lead_origins_pkey ON public.lead_origins USING btree (id)"
-        }
+        { "index_name": "lead_origins_name_org_unique", "index_definition": "CREATE UNIQUE INDEX lead_origins_name_org_unique ON public.lead_origins USING btree (organization_id, name)" },
+        { "index_name": "lead_origins_pkey", "index_definition": "CREATE UNIQUE INDEX lead_origins_pkey ON public.lead_origins USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can delete origins for their organization",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can insert origins for their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update origins for their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view origins from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can delete origins for their organization", "policy_command": "DELETE" },
+        { "policy_name": "Users can insert origins for their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can update origins for their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view origins from their organization", "policy_command": "SELECT" }
       ]
     },
     "lead_tags": {
       "columns": [
-        {
-          "column_name": "lead_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "tag_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        }
+        { "column_name": "lead_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "tag_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_lead_tags_lead",
-          "index_definition": "CREATE INDEX idx_lead_tags_lead ON public.lead_tags USING btree (lead_id)"
-        },
-        {
-          "index_name": "idx_lead_tags_tag",
-          "index_definition": "CREATE INDEX idx_lead_tags_tag ON public.lead_tags USING btree (tag_id)"
-        },
-        {
-          "index_name": "lead_tags_pkey",
-          "index_definition": "CREATE UNIQUE INDEX lead_tags_pkey ON public.lead_tags USING btree (lead_id, tag_id)"
-        }
+        { "index_name": "idx_lead_tags_lead", "index_definition": "CREATE INDEX idx_lead_tags_lead ON public.lead_tags USING btree (lead_id)" },
+        { "index_name": "idx_lead_tags_organization_id", "index_definition": "CREATE INDEX idx_lead_tags_organization_id ON public.lead_tags USING btree (organization_id)" },
+        { "index_name": "idx_lead_tags_tag", "index_definition": "CREATE INDEX idx_lead_tags_tag ON public.lead_tags USING btree (tag_id)" },
+        { "index_name": "lead_tags_pkey", "index_definition": "CREATE UNIQUE INDEX lead_tags_pkey ON public.lead_tags USING btree (lead_id, tag_id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can create lead tags for their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can delete lead tags from their organization",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can view lead tags from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can create lead tags for their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can delete lead tags from their organization", "policy_command": "DELETE" },
+        { "policy_name": "Users can update lead tags from their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view lead tags from their organization", "policy_command": "SELECT" }
       ]
     },
     "leads": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "email",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "phone",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "medium",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "campaign",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "utm_source",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "utm_medium",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "utm_campaign",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "utm_content",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "utm_term",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "company",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "position",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "notes",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "status",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": "'new'::text",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "score",
-          "data_type": "integer",
-          "is_nullable": "YES",
-          "column_default": "0",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_by",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "assigned_to",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "stage_id",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "card_order",
-          "data_type": "integer",
-          "is_nullable": "YES",
-          "column_default": "0",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "value",
-          "data_type": "numeric",
-          "is_nullable": "YES",
-          "column_default": "0",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "origin_id",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "loss_reason_id",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "loss_notes",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "NO",
-          "column_default": "true",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "email", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "phone", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "medium", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "campaign", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "utm_source", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "utm_medium", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "utm_campaign", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "utm_content", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "utm_term", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "company", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "position", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "notes", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "status", "data_type": "text", "is_nullable": "YES", "column_default": "'new'::text", "character_maximum_length": null },
+        { "column_name": "score", "data_type": "integer", "is_nullable": "YES", "column_default": "0", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "created_by", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "assigned_to", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "stage_id", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "card_order", "data_type": "integer", "is_nullable": "YES", "column_default": "0", "character_maximum_length": null },
+        { "column_name": "value", "data_type": "numeric", "is_nullable": "YES", "column_default": "0", "character_maximum_length": null },
+        { "column_name": "origin_id", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "loss_reason_id", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "loss_notes", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "NO", "column_default": "true", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_leads_assigned_to",
-          "index_definition": "CREATE INDEX idx_leads_assigned_to ON public.leads USING btree (assigned_to)"
-        },
-        {
-          "index_name": "idx_leads_card_order",
-          "index_definition": "CREATE INDEX idx_leads_card_order ON public.leads USING btree (stage_id, card_order)"
-        },
-        {
-          "index_name": "idx_leads_created_at",
-          "index_definition": "CREATE INDEX idx_leads_created_at ON public.leads USING btree (created_at DESC)"
-        },
-        {
-          "index_name": "idx_leads_email",
-          "index_definition": "CREATE INDEX idx_leads_email ON public.leads USING btree (email) WHERE (email IS NOT NULL)"
-        },
-        {
-          "index_name": "idx_leads_is_active",
-          "index_definition": "CREATE INDEX idx_leads_is_active ON public.leads USING btree (organization_id, is_active)"
-        },
-        {
-          "index_name": "idx_leads_loss_reason",
-          "index_definition": "CREATE INDEX idx_leads_loss_reason ON public.leads USING btree (loss_reason_id)"
-        },
-        {
-          "index_name": "idx_leads_organization",
-          "index_definition": "CREATE INDEX idx_leads_organization ON public.leads USING btree (organization_id)"
-        },
-        {
-          "index_name": "idx_leads_stage_id",
-          "index_definition": "CREATE INDEX idx_leads_stage_id ON public.leads USING btree (stage_id)"
-        },
-        {
-          "index_name": "idx_leads_stage_order",
-          "index_definition": "CREATE INDEX idx_leads_stage_order ON public.leads USING btree (organization_id, stage_id, card_order)"
-        },
-        {
-          "index_name": "idx_leads_status",
-          "index_definition": "CREATE INDEX idx_leads_status ON public.leads USING btree (status)"
-        },
-        {
-          "index_name": "leads_pkey",
-          "index_definition": "CREATE UNIQUE INDEX leads_pkey ON public.leads USING btree (id)"
-        }
+        { "index_name": "idx_leads_assigned_to", "index_definition": "CREATE INDEX idx_leads_assigned_to ON public.leads USING btree (assigned_to)" },
+        { "index_name": "idx_leads_card_order", "index_definition": "CREATE INDEX idx_leads_card_order ON public.leads USING btree (stage_id, card_order)" },
+        { "index_name": "idx_leads_created_at", "index_definition": "CREATE INDEX idx_leads_created_at ON public.leads USING btree (created_at DESC)" },
+        { "index_name": "idx_leads_email", "index_definition": "CREATE INDEX idx_leads_email ON public.leads USING btree (email) WHERE (email IS NOT NULL)" },
+        { "index_name": "idx_leads_is_active", "index_definition": "CREATE INDEX idx_leads_is_active ON public.leads USING btree (organization_id, is_active)" },
+        { "index_name": "idx_leads_loss_reason", "index_definition": "CREATE INDEX idx_leads_loss_reason ON public.leads USING btree (loss_reason_id)" },
+        { "index_name": "idx_leads_organization", "index_definition": "CREATE INDEX idx_leads_organization ON public.leads USING btree (organization_id)" },
+        { "index_name": "idx_leads_stage_id", "index_definition": "CREATE INDEX idx_leads_stage_id ON public.leads USING btree (stage_id)" },
+        { "index_name": "idx_leads_stage_order", "index_definition": "CREATE INDEX idx_leads_stage_order ON public.leads USING btree (organization_id, stage_id, card_order)" },
+        { "index_name": "idx_leads_status", "index_definition": "CREATE INDEX idx_leads_status ON public.leads USING btree (status)" },
+        { "index_name": "leads_pkey", "index_definition": "CREATE UNIQUE INDEX leads_pkey ON public.leads USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can delete leads",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can create leads in their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update leads in their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view leads of their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can delete leads", "policy_command": "DELETE" },
+        { "policy_name": "Users can create leads in their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can update leads in their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view leads of their organization", "policy_command": "SELECT" }
       ]
     },
     "loss_reasons": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "YES",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "YES", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_loss_reasons_org",
-          "index_definition": "CREATE INDEX idx_loss_reasons_org ON public.loss_reasons USING btree (organization_id)"
-        },
-        {
-          "index_name": "loss_reasons_pkey",
-          "index_definition": "CREATE UNIQUE INDEX loss_reasons_pkey ON public.loss_reasons USING btree (id)"
-        }
+        { "index_name": "idx_loss_reasons_org", "index_definition": "CREATE INDEX idx_loss_reasons_org ON public.loss_reasons USING btree (organization_id)" },
+        { "index_name": "loss_reasons_pkey", "index_definition": "CREATE UNIQUE INDEX loss_reasons_pkey ON public.loss_reasons USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can create loss_reasons in their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can delete loss_reasons in their organization",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can update loss_reasons in their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view loss_reasons from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can create loss_reasons in their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can delete loss_reasons in their organization", "policy_command": "DELETE" },
+        { "policy_name": "Users can update loss_reasons in their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view loss_reasons from their organization", "policy_command": "SELECT" }
       ]
     },
     "organizations": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "slug",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "plan",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": "'free'::text",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "max_users",
-          "data_type": "integer",
-          "is_nullable": "NO",
-          "column_default": "3",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "NO",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "settings",
-          "data_type": "jsonb",
-          "is_nullable": "YES",
-          "column_default": "'{}'::jsonb",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "slug", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "plan", "data_type": "text", "is_nullable": "NO", "column_default": "'free'::text", "character_maximum_length": null },
+        { "column_name": "max_users", "data_type": "integer", "is_nullable": "NO", "column_default": "3", "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "NO", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "settings", "data_type": "jsonb", "is_nullable": "YES", "column_default": "'{}'::jsonb", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_organizations_is_active",
-          "index_definition": "CREATE INDEX idx_organizations_is_active ON public.organizations USING btree (is_active)"
-        },
-        {
-          "index_name": "idx_organizations_slug",
-          "index_definition": "CREATE INDEX idx_organizations_slug ON public.organizations USING btree (slug)"
-        },
-        {
-          "index_name": "organizations_pkey",
-          "index_definition": "CREATE UNIQUE INDEX organizations_pkey ON public.organizations USING btree (id)"
-        },
-        {
-          "index_name": "organizations_slug_key",
-          "index_definition": "CREATE UNIQUE INDEX organizations_slug_key ON public.organizations USING btree (slug)"
-        }
+        { "index_name": "idx_organizations_is_active", "index_definition": "CREATE INDEX idx_organizations_is_active ON public.organizations USING btree (is_active)" },
+        { "index_name": "idx_organizations_slug", "index_definition": "CREATE INDEX idx_organizations_slug ON public.organizations USING btree (slug)" },
+        { "index_name": "organizations_pkey", "index_definition": "CREATE UNIQUE INDEX organizations_pkey ON public.organizations USING btree (id)" },
+        { "index_name": "organizations_slug_key", "index_definition": "CREATE UNIQUE INDEX organizations_slug_key ON public.organizations USING btree (slug)" }
       ],
       "policies": [
-        {
-          "policy_name": "Allow organization creation during signup",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Only owners can update organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view own organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Allow organization creation during signup", "policy_command": "INSERT" },
+        { "policy_name": "Only owners can update organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view own organization", "policy_command": "SELECT" }
       ]
     },
     "product_documents": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "uuid_generate_v4()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "product_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "url",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "file_name",
-          "data_type": "character varying",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": 255
-        },
-        {
-          "column_name": "file_size",
-          "data_type": "integer",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "mime_type",
-          "data_type": "character varying",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": 50
-        },
-        {
-          "column_name": "document_type",
-          "data_type": "character varying",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": 50
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "uploaded_by",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "extensions.uuid_generate_v4()", "character_maximum_length": null },
+        { "column_name": "product_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "url", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "file_name", "data_type": "character varying", "is_nullable": "NO", "column_default": null, "character_maximum_length": 255 },
+        { "column_name": "file_size", "data_type": "integer", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "mime_type", "data_type": "character varying", "is_nullable": "YES", "column_default": null, "character_maximum_length": 50 },
+        { "column_name": "document_type", "data_type": "character varying", "is_nullable": "YES", "column_default": null, "character_maximum_length": 50 },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "uploaded_by", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_product_documents_product",
-          "index_definition": "CREATE INDEX idx_product_documents_product ON public.product_documents USING btree (product_id)"
-        },
-        {
-          "index_name": "idx_product_documents_type",
-          "index_definition": "CREATE INDEX idx_product_documents_type ON public.product_documents USING btree (document_type)"
-        },
-        {
-          "index_name": "product_documents_pkey",
-          "index_definition": "CREATE UNIQUE INDEX product_documents_pkey ON public.product_documents USING btree (id)"
-        }
+        { "index_name": "idx_product_documents_organization_id", "index_definition": "CREATE INDEX idx_product_documents_organization_id ON public.product_documents USING btree (organization_id)" },
+        { "index_name": "idx_product_documents_product", "index_definition": "CREATE INDEX idx_product_documents_product ON public.product_documents USING btree (product_id)" },
+        { "index_name": "idx_product_documents_type", "index_definition": "CREATE INDEX idx_product_documents_type ON public.product_documents USING btree (document_type)" },
+        { "index_name": "product_documents_pkey", "index_definition": "CREATE UNIQUE INDEX product_documents_pkey ON public.product_documents USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can delete product documents",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can insert product documents",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update product documents",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view product documents from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can delete product documents", "policy_command": "DELETE" },
+        { "policy_name": "Users can insert product documents", "policy_command": "INSERT" },
+        { "policy_name": "Users can update product documents", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view product documents from their organization", "policy_command": "SELECT" }
       ]
     },
     "product_images": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "uuid_generate_v4()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "product_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "url",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "file_name",
-          "data_type": "character varying",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": 255
-        },
-        {
-          "column_name": "file_size",
-          "data_type": "integer",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "mime_type",
-          "data_type": "character varying",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": 50
-        },
-        {
-          "column_name": "position",
-          "data_type": "integer",
-          "is_nullable": "YES",
-          "column_default": "0",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_primary",
-          "data_type": "boolean",
-          "is_nullable": "YES",
-          "column_default": "false",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "uploaded_by",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "extensions.uuid_generate_v4()", "character_maximum_length": null },
+        { "column_name": "product_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "url", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "file_name", "data_type": "character varying", "is_nullable": "NO", "column_default": null, "character_maximum_length": 255 },
+        { "column_name": "file_size", "data_type": "integer", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "mime_type", "data_type": "character varying", "is_nullable": "YES", "column_default": null, "character_maximum_length": 50 },
+        { "column_name": "position", "data_type": "integer", "is_nullable": "YES", "column_default": "0", "character_maximum_length": null },
+        { "column_name": "is_primary", "data_type": "boolean", "is_nullable": "YES", "column_default": "false", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "uploaded_by", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_product_images_position",
-          "index_definition": "CREATE INDEX idx_product_images_position ON public.product_images USING btree (product_id, \"position\")"
-        },
-        {
-          "index_name": "idx_product_images_primary",
-          "index_definition": "CREATE INDEX idx_product_images_primary ON public.product_images USING btree (product_id, is_primary) WHERE (is_primary = true)"
-        },
-        {
-          "index_name": "idx_product_images_product",
-          "index_definition": "CREATE INDEX idx_product_images_product ON public.product_images USING btree (product_id)"
-        },
-        {
-          "index_name": "product_images_pkey",
-          "index_definition": "CREATE UNIQUE INDEX product_images_pkey ON public.product_images USING btree (id)"
-        }
+        { "index_name": "idx_product_images_organization_id", "index_definition": "CREATE INDEX idx_product_images_organization_id ON public.product_images USING btree (organization_id)" },
+        { "index_name": "idx_product_images_position", "index_definition": "CREATE INDEX idx_product_images_position ON public.product_images USING btree (product_id, \"position\")" },
+        { "index_name": "idx_product_images_primary", "index_definition": "CREATE INDEX idx_product_images_primary ON public.product_images USING btree (product_id, is_primary) WHERE (is_primary = true)" },
+        { "index_name": "idx_product_images_product", "index_definition": "CREATE INDEX idx_product_images_product ON public.product_images USING btree (product_id)" },
+        { "index_name": "product_images_pkey", "index_definition": "CREATE UNIQUE INDEX product_images_pkey ON public.product_images USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can delete product images",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can insert product images",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update product images",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view product images from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can delete product images", "policy_command": "DELETE" },
+        { "policy_name": "Users can insert product images", "policy_command": "INSERT" },
+        { "policy_name": "Users can update product images", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view product images from their organization", "policy_command": "SELECT" }
       ]
     },
     "products": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "uuid_generate_v4()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "character varying",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": 255
-        },
-        {
-          "column_name": "short_description",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "description",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "price",
-          "data_type": "numeric",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "sku",
-          "data_type": "character varying",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": 100
-        },
-        {
-          "column_name": "status",
-          "data_type": "character varying",
-          "is_nullable": "YES",
-          "column_default": "'active'::character varying",
-          "character_maximum_length": 20
-        },
-        {
-          "column_name": "stock",
-          "data_type": "integer",
-          "is_nullable": "YES",
-          "column_default": "0",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "weight",
-          "data_type": "numeric",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "height",
-          "data_type": "numeric",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "width",
-          "data_type": "numeric",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "depth",
-          "data_type": "numeric",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "brand",
-          "data_type": "character varying",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": 100
-        },
-        {
-          "column_name": "tags",
-          "data_type": "ARRAY",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "notes",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_by",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "category_id",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "extensions.uuid_generate_v4()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "character varying", "is_nullable": "NO", "column_default": null, "character_maximum_length": 255 },
+        { "column_name": "short_description", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "description", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "price", "data_type": "numeric", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "sku", "data_type": "character varying", "is_nullable": "NO", "column_default": null, "character_maximum_length": 100 },
+        { "column_name": "status", "data_type": "character varying", "is_nullable": "YES", "column_default": "'active'::character varying", "character_maximum_length": 20 },
+        { "column_name": "stock", "data_type": "integer", "is_nullable": "YES", "column_default": "0", "character_maximum_length": null },
+        { "column_name": "weight", "data_type": "numeric", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "height", "data_type": "numeric", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "width", "data_type": "numeric", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "depth", "data_type": "numeric", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "brand", "data_type": "character varying", "is_nullable": "YES", "column_default": null, "character_maximum_length": 100 },
+        { "column_name": "tags", "data_type": "ARRAY", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "notes", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "created_by", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "category_id", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_products_category_id",
-          "index_definition": "CREATE INDEX idx_products_category_id ON public.products USING btree (category_id)"
-        },
-        {
-          "index_name": "idx_products_created_at",
-          "index_definition": "CREATE INDEX idx_products_created_at ON public.products USING btree (created_at DESC)"
-        },
-        {
-          "index_name": "idx_products_organization",
-          "index_definition": "CREATE INDEX idx_products_organization ON public.products USING btree (organization_id)"
-        },
-        {
-          "index_name": "idx_products_sku",
-          "index_definition": "CREATE INDEX idx_products_sku ON public.products USING btree (organization_id, sku)"
-        },
-        {
-          "index_name": "idx_products_status",
-          "index_definition": "CREATE INDEX idx_products_status ON public.products USING btree (status)"
-        },
-        {
-          "index_name": "products_pkey",
-          "index_definition": "CREATE UNIQUE INDEX products_pkey ON public.products USING btree (id)"
-        },
-        {
-          "index_name": "unique_sku_per_org",
-          "index_definition": "CREATE UNIQUE INDEX unique_sku_per_org ON public.products USING btree (organization_id, sku)"
-        }
+        { "index_name": "idx_products_category_id", "index_definition": "CREATE INDEX idx_products_category_id ON public.products USING btree (category_id)" },
+        { "index_name": "idx_products_created_at", "index_definition": "CREATE INDEX idx_products_created_at ON public.products USING btree (created_at DESC)" },
+        { "index_name": "idx_products_organization", "index_definition": "CREATE INDEX idx_products_organization ON public.products USING btree (organization_id)" },
+        { "index_name": "idx_products_sku", "index_definition": "CREATE INDEX idx_products_sku ON public.products USING btree (organization_id, sku)" },
+        { "index_name": "idx_products_status", "index_definition": "CREATE INDEX idx_products_status ON public.products USING btree (status)" },
+        { "index_name": "products_pkey", "index_definition": "CREATE UNIQUE INDEX products_pkey ON public.products USING btree (id)" },
+        { "index_name": "unique_sku_per_org", "index_definition": "CREATE UNIQUE INDEX unique_sku_per_org ON public.products USING btree (organization_id, sku)" }
       ],
       "policies": [
-        {
-          "policy_name": "Users can delete products in their organization",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can insert products in their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update products in their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view products from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Users can delete products in their organization", "policy_command": "DELETE" },
+        { "policy_name": "Users can insert products in their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can update products in their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view products from their organization", "policy_command": "SELECT" }
       ]
     },
     "profiles": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "full_name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "avatar_url",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "phone",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "role",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": "'member'::text",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "NO",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "preferences",
-          "data_type": "jsonb",
-          "is_nullable": "YES",
-          "column_default": "'{}'::jsonb",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "email",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "full_name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "avatar_url", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "phone", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "role", "data_type": "text", "is_nullable": "NO", "column_default": "'member'::text", "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "NO", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "preferences", "data_type": "jsonb", "is_nullable": "YES", "column_default": "'{}'::jsonb", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "email", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_profiles_is_active",
-          "index_definition": "CREATE INDEX idx_profiles_is_active ON public.profiles USING btree (is_active)"
-        },
-        {
-          "index_name": "idx_profiles_organization_id",
-          "index_definition": "CREATE INDEX idx_profiles_organization_id ON public.profiles USING btree (organization_id)"
-        },
-        {
-          "index_name": "idx_profiles_role",
-          "index_definition": "CREATE INDEX idx_profiles_role ON public.profiles USING btree (role)"
-        },
-        {
-          "index_name": "profiles_pkey",
-          "index_definition": "CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)"
-        }
+        { "index_name": "idx_profiles_is_active", "index_definition": "CREATE INDEX idx_profiles_is_active ON public.profiles USING btree (is_active)" },
+        { "index_name": "idx_profiles_organization_id", "index_definition": "CREATE INDEX idx_profiles_organization_id ON public.profiles USING btree (organization_id)" },
+        { "index_name": "idx_profiles_role", "index_definition": "CREATE INDEX idx_profiles_role ON public.profiles USING btree (role)" },
+        { "index_name": "profiles_pkey", "index_definition": "CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can delete profiles",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Admins can update organization profiles",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Allow profile creation",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update own profile",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view org profiles",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can delete profiles", "policy_command": "DELETE" },
+        { "policy_name": "Admins can update organization profiles", "policy_command": "UPDATE" },
+        { "policy_name": "Profiles INSERT is trigger-only", "policy_command": "INSERT" },
+        { "policy_name": "Users can update own profile", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view org profiles", "policy_command": "SELECT" }
       ]
     },
     "tags": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "color",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": "'gray'::text",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "YES",
-          "column_default": "now()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "NO",
-          "column_default": "true",
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "color", "data_type": "text", "is_nullable": "NO", "column_default": "'gray'::text", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "NO", "column_default": "true", "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_tags_name",
-          "index_definition": "CREATE INDEX idx_tags_name ON public.tags USING btree (name)"
-        },
-        {
-          "index_name": "idx_tags_organization",
-          "index_definition": "CREATE INDEX idx_tags_organization ON public.tags USING btree (organization_id)"
-        },
-        {
-          "index_name": "tags_name_org_unique",
-          "index_definition": "CREATE UNIQUE INDEX tags_name_org_unique ON public.tags USING btree (organization_id, name)"
-        },
-        {
-          "index_name": "tags_pkey",
-          "index_definition": "CREATE UNIQUE INDEX tags_pkey ON public.tags USING btree (id)"
-        }
+        { "index_name": "idx_tags_name", "index_definition": "CREATE INDEX idx_tags_name ON public.tags USING btree (name)" },
+        { "index_name": "idx_tags_organization", "index_definition": "CREATE INDEX idx_tags_organization ON public.tags USING btree (organization_id)" },
+        { "index_name": "tags_name_org_unique", "index_definition": "CREATE UNIQUE INDEX tags_name_org_unique ON public.tags USING btree (organization_id, name)" },
+        { "index_name": "tags_pkey", "index_definition": "CREATE UNIQUE INDEX tags_pkey ON public.tags USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can delete tags",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can create tags for their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update tags from their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view tags from their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can delete tags", "policy_command": "DELETE" },
+        { "policy_name": "Users can create tags for their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can update tags from their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view tags from their organization", "policy_command": "SELECT" }
       ]
     },
     "whatsapp_groups": {
       "columns": [
-        {
-          "column_name": "id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": "gen_random_uuid()",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "organization_id",
-          "data_type": "uuid",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "name",
-          "data_type": "text",
-          "is_nullable": "NO",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "description",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "whatsapp_id",
-          "data_type": "text",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "is_active",
-          "data_type": "boolean",
-          "is_nullable": "NO",
-          "column_default": "true",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "timezone('utc'::text, now())",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "updated_at",
-          "data_type": "timestamp with time zone",
-          "is_nullable": "NO",
-          "column_default": "timezone('utc'::text, now())",
-          "character_maximum_length": null
-        },
-        {
-          "column_name": "created_by",
-          "data_type": "uuid",
-          "is_nullable": "YES",
-          "column_default": null,
-          "character_maximum_length": null
-        }
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "organization_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "name", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "description", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "whatsapp_id", "data_type": "text", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "NO", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "timezone('utc'::text, now())", "character_maximum_length": null },
+        { "column_name": "updated_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "timezone('utc'::text, now())", "character_maximum_length": null },
+        { "column_name": "created_by", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null }
       ],
       "indexes": [
-        {
-          "index_name": "idx_whatsapp_groups_organization_id",
-          "index_definition": "CREATE INDEX idx_whatsapp_groups_organization_id ON public.whatsapp_groups USING btree (organization_id)"
-        },
-        {
-          "index_name": "whatsapp_groups_pkey",
-          "index_definition": "CREATE UNIQUE INDEX whatsapp_groups_pkey ON public.whatsapp_groups USING btree (id)"
-        }
+        { "index_name": "idx_whatsapp_groups_organization_id", "index_definition": "CREATE INDEX idx_whatsapp_groups_organization_id ON public.whatsapp_groups USING btree (organization_id)" },
+        { "index_name": "whatsapp_groups_pkey", "index_definition": "CREATE UNIQUE INDEX whatsapp_groups_pkey ON public.whatsapp_groups USING btree (id)" }
       ],
       "policies": [
-        {
-          "policy_name": "Admins can delete whatsapp groups",
-          "policy_command": "DELETE"
-        },
-        {
-          "policy_name": "Users can create whatsapp groups in their organization",
-          "policy_command": "INSERT"
-        },
-        {
-          "policy_name": "Users can update whatsapp groups in their organization",
-          "policy_command": "UPDATE"
-        },
-        {
-          "policy_name": "Users can view whatsapp groups of their organization",
-          "policy_command": "SELECT"
-        }
+        { "policy_name": "Admins can delete whatsapp groups", "policy_command": "DELETE" },
+        { "policy_name": "Users can create whatsapp groups in their organization", "policy_command": "INSERT" },
+        { "policy_name": "Users can update whatsapp groups in their organization", "policy_command": "UPDATE" },
+        { "policy_name": "Users can view whatsapp groups of their organization", "policy_command": "SELECT" }
       ]
     }
   }
