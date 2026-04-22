@@ -7,7 +7,12 @@
       "Bash(bash scripts/update-framework-complete.sh)",
       "Bash(npm run *)",
       "Bash(node scripts/verify-design.mjs --changed)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "mcp__supabase__apply_migration",
+      "WebFetch(domain:pt-developers.kommo.com)",
+      "WebSearch",
+      "WebFetch(domain:www.kommo.com)",
+      "WebFetch(domain:developers.kommo.com)"
     ]
   }
 }
