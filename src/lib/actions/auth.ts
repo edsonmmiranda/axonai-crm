@@ -43,10 +43,15 @@ const MagicLinkSchema = z.object({
   email: z.string().email('Email inválido'),
 });
 
+const ResendConfirmationSchema = z.object({
+  email: z.string().email('Email inválido'),
+});
+
 export type SignupWithOrgInput = z.infer<typeof SignupWithOrgSchema>;
 export type SignupWithInviteInput = z.infer<typeof SignupWithInviteSchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type MagicLinkInput = z.infer<typeof MagicLinkSchema>;
+export type ResendConfirmationInput = z.infer<typeof ResendConfirmationSchema>;
 
 async function getOrigin(): Promise<string> {
   const h = await headers();
@@ -67,8 +72,10 @@ export async function signupWithOrgAction(
   }
 
   const { email, password, fullName, orgName, orgSlug } = parsed.data;
+  const normalizedEmail = email.toLowerCase();
   const service = createServiceClient();
   let createdOrgId: string | null = null;
+  let createdIntentEmail: string | null = null;
 
   try {
     const { data: org, error: orgError } = await service
@@ -86,21 +93,41 @@ export async function signupWithOrgAction(
     }
     createdOrgId = org.id;
 
+    const { error: intentError } = await service
+      .from('signup_intents')
+      .upsert(
+        {
+          email: normalizedEmail,
+          organization_id: createdOrgId,
+          role: 'owner',
+          full_name: fullName,
+          source: 'org_creation',
+          invitation_id: null,
+        },
+        { onConflict: 'email' }
+      );
+
+    if (intentError) {
+      console.error('[auth:signupWithOrg] intent insert failed', intentError);
+      await service.from('organizations').delete().eq('id', createdOrgId);
+      return { success: false, error: 'Não foi possível iniciar cadastro. Tente novamente.' };
+    }
+    createdIntentEmail = normalizedEmail;
+
     const supabase = await createClient();
+    const origin = await getOrigin();
     const { data: signupData, error: signupError } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          full_name: fullName,
-          organization_id: createdOrgId,
-          role: 'owner',
-        },
+        data: { full_name: fullName },
+        emailRedirectTo: origin ? `${origin}/auth/callback?flow=signup_confirm` : undefined,
       },
     });
 
     if (signupError || !signupData.user) {
       console.error('[auth:signupWithOrg] signUp failed', signupError);
+      await service.from('signup_intents').delete().eq('email', createdIntentEmail);
       await service.from('organizations').delete().eq('id', createdOrgId);
       const msg = signupError?.message?.toLowerCase() ?? '';
       if (msg.includes('already') || msg.includes('registered')) {
@@ -119,6 +146,9 @@ export async function signupWithOrgAction(
     };
   } catch (error) {
     console.error('[auth:signupWithOrg] unexpected', error);
+    if (createdIntentEmail) {
+      await service.from('signup_intents').delete().eq('email', createdIntentEmail);
+    }
     if (createdOrgId) {
       await service.from('organizations').delete().eq('id', createdOrgId);
     }
@@ -136,6 +166,7 @@ export async function signupWithInviteAction(
 
   const { password, fullName, inviteToken } = parsed.data;
   const service = createServiceClient();
+  let createdIntentEmail: string | null = null;
 
   try {
     const { data: invite, error: inviteError } = await service
@@ -154,35 +185,47 @@ export async function signupWithInviteAction(
       return { success: false, error: 'Este convite expirou. Peça um novo.' };
     }
 
+    const normalizedEmail = invite.email.toLowerCase();
+
+    const { error: intentError } = await service
+      .from('signup_intents')
+      .upsert(
+        {
+          email: normalizedEmail,
+          organization_id: invite.organization_id,
+          role: invite.role,
+          full_name: fullName,
+          source: 'invitation',
+          invitation_id: invite.id,
+        },
+        { onConflict: 'email' }
+      );
+
+    if (intentError) {
+      console.error('[auth:signupWithInvite] intent insert failed', intentError);
+      return { success: false, error: 'Não foi possível iniciar cadastro. Tente novamente.' };
+    }
+    createdIntentEmail = normalizedEmail;
+
     const supabase = await createClient();
+    const origin = await getOrigin();
     const { data: signupData, error: signupError } = await supabase.auth.signUp({
       email: invite.email,
       password,
       options: {
-        data: {
-          full_name: fullName,
-          organization_id: invite.organization_id,
-          role: invite.role,
-        },
+        data: { full_name: fullName },
+        emailRedirectTo: origin ? `${origin}/auth/callback?flow=signup_confirm` : undefined,
       },
     });
 
     if (signupError || !signupData.user) {
       console.error('[auth:signupWithInvite] signUp failed', signupError);
+      await service.from('signup_intents').delete().eq('email', createdIntentEmail);
       const msg = signupError?.message?.toLowerCase() ?? '';
       if (msg.includes('already') || msg.includes('registered')) {
         return { success: false, error: 'Email já cadastrado. Faça login.' };
       }
       return { success: false, error: 'Não foi possível criar conta. Tente novamente.' };
-    }
-
-    const { error: updateError } = await service
-      .from('invitations')
-      .update({ accepted_at: new Date().toISOString() })
-      .eq('id', invite.id);
-
-    if (updateError) {
-      console.error('[auth:signupWithInvite] mark accepted failed', updateError);
     }
 
     revalidatePath('/', 'layout');
@@ -192,6 +235,9 @@ export async function signupWithInviteAction(
     };
   } catch (error) {
     console.error('[auth:signupWithInvite] unexpected', error);
+    if (createdIntentEmail) {
+      await service.from('signup_intents').delete().eq('email', createdIntentEmail);
+    }
     return { success: false, error: 'Erro interno, tente novamente' };
   }
 }
@@ -248,6 +294,42 @@ export async function sendMagicLinkAction(
     return { success: true, data: { email: parsed.data.email } };
   } catch (error) {
     console.error('[auth:magicLink] unexpected', error);
+    return { success: true, data: { email: parsed.data.email } };
+  }
+}
+
+export async function resendSignupConfirmationAction(
+  input: ResendConfirmationInput
+): Promise<ActionResponse<{ email: string }>> {
+  const parsed = ResendConfirmationSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message };
+  }
+
+  try {
+    const supabase = await createClient();
+    const origin = await getOrigin();
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: parsed.data.email,
+      options: {
+        emailRedirectTo: origin ? `${origin}/auth/callback?flow=signup_confirm` : undefined,
+      },
+    });
+
+    if (error) {
+      if (error.status === 429) {
+        return {
+          success: false,
+          error: 'Aguarde alguns segundos antes de pedir outro link.',
+        };
+      }
+      console.warn('[auth:resendConfirmation] resend error (generic success returned)', error);
+    }
+
+    return { success: true, data: { email: parsed.data.email } };
+  } catch (error) {
+    console.error('[auth:resendConfirmation] unexpected', error);
     return { success: true, data: { email: parsed.data.email } };
   }
 }

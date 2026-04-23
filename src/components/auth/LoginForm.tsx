@@ -34,6 +34,7 @@ export function LoginForm() {
         : params.get('error') === 'invalid_callback'
           ? 'Retorno inválido. Tente novamente.'
           : null;
+  const justActivated = params.get('activated') === '1';
 
   const [formError, setFormError] = useState<string | null>(initialError);
   const [magicSent, setMagicSent] = useState<string | null>(null);
@@ -76,6 +77,11 @@ export function LoginForm() {
 
   return (
     <div className="flex flex-col gap-4">
+      {justActivated && !formError && (
+        <Alert intent="success" title="Conta ativada!">
+          Pronto. Agora faça login com seu email e senha.
+        </Alert>
+      )}
       {formError && (
         <Alert intent="danger" role="alert">
           {formError}

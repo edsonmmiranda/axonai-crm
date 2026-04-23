@@ -42,8 +42,7 @@ export function AcceptInviteForm({ inviteToken, email, organizationName }: Props
         setFormError(res.error ?? 'Erro ao aceitar convite');
         return;
       }
-      router.replace('/dashboard');
-      router.refresh();
+      router.replace(`/signup/check-email?email=${encodeURIComponent(email)}`);
     });
   });
 
