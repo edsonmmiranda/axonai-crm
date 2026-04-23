@@ -12,7 +12,9 @@
       "WebFetch(domain:pt-developers.kommo.com)",
       "WebSearch",
       "WebFetch(domain:www.kommo.com)",
-      "WebFetch(domain:developers.kommo.com)"
+      "WebFetch(domain:developers.kommo.com)",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__list_extensions"
     ]
   }
 }
