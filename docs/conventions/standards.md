@@ -118,6 +118,12 @@ Estas regras se aplicam ao schema, ao RLS e às Server Actions — **sem exceç�
 
 **Tabelas em `public_ref` atualmente registradas:** _(nenhuma — adicionar aqui quando criada)_
 
+**Exceções em `public.*` (catálogos globais mantidos em `public` por decisão explícita):**
+
+| Tabela | Justificativa | Sprint | Proteção compensatória |
+|---|---|---|---|
+| `public.plans` | Catálogo comercial compartilhado por todas as orgs; ligação com org é via `subscriptions.plan_id` | `admin_01` (2026-04-24) | RLS FORCE + policy SELECT só para planos públicos não arquivados + mutações bloqueadas (sem policy de INSERT/UPDATE/DELETE); writes futuros só via RPC `SECURITY DEFINER` |
+
 ---
 
 ## Regras invioláveis do ambiente

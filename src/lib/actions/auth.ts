@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
+import { enablePublicSignup } from '@/lib/config/flags';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 
@@ -66,6 +67,10 @@ async function getOrigin(): Promise<string> {
 export async function signupWithOrgAction(
   input: SignupWithOrgInput
 ): Promise<ActionResponse<{ userId: string; organizationId: string }>> {
+  if (!enablePublicSignup) {
+    return { success: false, error: 'Signup público desativado.' };
+  }
+
   const parsed = SignupWithOrgSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };

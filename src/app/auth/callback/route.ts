@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     // GoTrue returned an error (expired token, already used, etc).
     // Send user to the link-expired page so they can request a new email.
     if (gotrueError) {
-      return NextResponse.redirect(`${origin}/signup/link-expired`);
+      return NextResponse.redirect(`${origin}/link-expired`);
     }
 
     if (code) {

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { OrganizationForm } from '@/components/settings/OrganizationForm';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { getOrganizationAction } from '@/lib/actions/organization';
+import { getOrgPlan } from '@/lib/plans/getOrgPlan';
 
 export default async function OrganizationPage() {
   const ctx = await getSessionContext();
@@ -30,6 +31,15 @@ export default async function OrganizationPage() {
 
   const org = res.data;
 
+  let planName: string;
+  try {
+    const snapshot = await getOrgPlan(ctx.organizationId);
+    planName = snapshot.planName;
+  } catch (error) {
+    console.error('[settings:organization] getOrgPlan failed', error);
+    planName = 'não identificado — contate o suporte';
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -41,7 +51,7 @@ export default async function OrganizationPage() {
           organization={{
             name: org.name,
             slug: org.slug,
-            plan: org.plan,
+            plan: planName,
             maxUsers: org.max_users,
           }}
         />

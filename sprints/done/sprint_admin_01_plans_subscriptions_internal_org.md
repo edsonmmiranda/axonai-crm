@@ -232,8 +232,8 @@ Score 11 dispara Opção 2 forçada (item 1 da árvore de decisão). Sprint toca
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
-| PRD Técnico (Implementation Plan) | `@spec-writer` | ⬜ Pendente | `prds/prd_plans_subscriptions_internal_org.md` |
-| Sanity Check | `@sanity-checker` | ⬜ Pendente | — |
+| PRD Técnico (Implementation Plan) | `@spec-writer` | ✅ Concluído | `prds/prd_admin_01_plans_subscriptions_internal_org.md` |
+| Sanity Check | `@sanity-checker` | ▶️ Em andamento | — |
 | Banco de dados | `@db-admin` | ⬜ Pendente | `supabase/migrations/[timestamp]_plans_subscriptions_internal_org.sql` |
 | Server-side refactor | `@backend` | ⬜ Pendente | `src/lib/plans/getOrgPlan.ts` + edits em `settings/organization/page.tsx` + remoção `/signup` |
 | Guardian | `@guardian` | ⬜ Pendente | — |

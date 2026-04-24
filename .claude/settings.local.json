@@ -14,7 +14,8 @@
       "WebFetch(domain:www.kommo.com)",
       "WebFetch(domain:developers.kommo.com)",
       "mcp__supabase__execute_sql",
-      "mcp__supabase__list_extensions"
+      "mcp__supabase__list_extensions",
+      "mcp__supabase__list_migrations"
     ]
   }
 }

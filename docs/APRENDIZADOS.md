@@ -96,6 +96,14 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-24 · [SUPABASE] `REVOKE FROM public` não cobre role `anon` em funções novas
+
+**Regra:** Supabase aplica `DEFAULT PRIVILEGES` que concedem `EXECUTE` a `anon`/`authenticated`/`service_role` em toda função criada em `public`. `REVOKE ALL FROM public` revoga só do pseudo-role PUBLIC — para fechar `anon` explicitamente é obrigatório `REVOKE EXECUTE ... FROM anon;`. Verificar com `has_function_privilege('anon','fn(sig)','execute')`.
+
+### 2026-04-24 · [SUPABASE] MCP read-only bloqueia `apply_migration` — fallback manual
+
+**Regra:** quando `mcp__supabase__apply_migration` retornar "Cannot apply migration in read-only mode", não tentar escalar permissão — pedir ao usuário para colar o SQL no Studio e validar com múltiplos `execute_sql` (RLS, policies, grants, seeds, INV-1). Idempotência verifica-se estruturalmente (IF NOT EXISTS / ON CONFLICT / WHERE NOT EXISTS) já que não dá para re-aplicar empiricamente.
+
 ### 2026-04-22 · [SUPABASE] Auditoria de RLS pode marcar policy dead-code como violação
 
 **Regra:** antes de "corrigir" uma policy flagada pelo `@db-auditor`, faça grep em `src/` pelo INSERT/UPDATE da tabela. Se a única call-site usa `createServiceClient()` ou roda em trigger `SECURITY DEFINER`, a policy é dead code — drope em vez de reescrever, e adicione policy `WITH CHECK (false)` para preservar coverage 4-cmd.

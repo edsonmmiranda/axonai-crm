@@ -42,7 +42,7 @@ export function AcceptInviteForm({ inviteToken, email, organizationName }: Props
         setFormError(res.error ?? 'Erro ao aceitar convite');
         return;
       }
-      router.replace(`/signup/check-email?email=${encodeURIComponent(email)}`);
+      router.replace(`/check-email?email=${encodeURIComponent(email)}`);
     });
   });
 

@@ -60,7 +60,7 @@ export function SignupForm() {
         setFormError(res.error ?? 'Erro ao criar conta');
         return;
       }
-      router.replace(`/signup/check-email?email=${encodeURIComponent(values.email)}`);
+      router.replace(`/check-email?email=${encodeURIComponent(values.email)}`);
     });
   });
 

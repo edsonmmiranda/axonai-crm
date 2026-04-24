@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { AuthCard } from '@/components/auth/AuthCard';
@@ -11,14 +10,6 @@ export default function LoginPage() {
     <AuthCard
       title="Entrar"
       description="Acesse sua conta com email e senha ou receba um link."
-      footer={
-        <>
-          Ainda não tem conta?{' '}
-          <Link href="/signup" className="font-medium text-action-primary hover:underline">
-            Criar conta
-          </Link>
-        </>
-      }
     >
       <Suspense fallback={null}>
         <LoginForm />
