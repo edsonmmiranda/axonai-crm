@@ -21,7 +21,7 @@ export default async function WhatsappGroupsPage(props: {
   searchParams: Promise<SearchParams>;
 }) {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/dashboard?notice=restricted');
   }
 

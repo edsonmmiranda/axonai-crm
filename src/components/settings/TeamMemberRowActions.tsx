@@ -22,7 +22,7 @@ export function TeamMemberRowActions({
   const isSelf = memberId === viewerId;
   const isOwner = memberRole === 'owner';
   const canEdit =
-    !isSelf && !isOwner && (viewerRole === 'owner' || memberRole === 'member');
+    !isSelf && !isOwner && (viewerRole === 'owner' || memberRole === 'user');
 
   if (!canEdit) {
     return <span className="text-xs text-text-muted">—</span>;

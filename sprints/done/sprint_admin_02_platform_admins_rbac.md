@@ -239,11 +239,11 @@ Score 12 dispara Opção 2 forçada (item 1 da árvore de decisão). Três vetor
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
-| PRD Técnico (Implementation Plan) | `@spec-writer` | ⬜ Pendente | `prds/prd_admin_02_platform_admins_rbac.md` |
-| Sanity Check | `@sanity-checker` | ⬜ Pendente | — |
-| Banco de dados | `@db-admin` | ⬜ Pendente | `supabase/migrations/[timestamp]_platform_admins_rbac.sql` |
-| Server-side refactor + helpers | `@backend` | ⬜ Pendente | `src/lib/auth/platformAdmin.ts` + edits em `getSessionContext.ts` + 25 rewrites de `(app)/*` + `scripts/check-admin-isolation.mjs` + `docs/admin_area/rbac_matrix.md` + `docs/admin_area/runbook_seed_owner.md` + linha em `docs/conventions/standards.md` |
-| Guardian | `@guardian` | ⬜ Pendente | — |
+| PRD Técnico (Implementation Plan) | `@spec-writer` | ✅ Concluído | `prds/prd_admin_02_platform_admins_rbac.md` |
+| Sanity Check | `@sanity-checker` | ✅ Concluído (APPROVED 7/7) | — |
+| Banco de dados | `@db-admin` | ✅ Concluído | `supabase/migrations/20260424170000_platform_admins_rbac.sql` |
+| Server-side refactor + helpers | `@backend` | ✅ Concluído | `src/lib/auth/platformAdmin.ts` + edits em `getSessionContext.ts` + Topbar + Invitations + Team + 24 rewrites `(app)/*` + `scripts/check-admin-isolation.mjs` + `docs/admin_area/rbac_matrix.md` + `docs/admin_area/runbook_seed_owner.md` | `src/lib/auth/platformAdmin.ts` + edits em `getSessionContext.ts` + 25 rewrites de `(app)/*` + `scripts/check-admin-isolation.mjs` + `docs/admin_area/rbac_matrix.md` + `docs/admin_area/runbook_seed_owner.md` + linha em `docs/conventions/standards.md` |
+| Guardian | `@guardian` | ✅ Concluído (APPROVED) | — |
 | Git | `@git-master` | ⬜ Pendente | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review

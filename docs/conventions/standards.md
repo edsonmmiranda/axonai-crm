@@ -123,6 +123,7 @@ Estas regras se aplicam ao schema, ao RLS e às Server Actions — **sem exceç�
 | Tabela | Justificativa | Sprint | Proteção compensatória |
 |---|---|---|---|
 | `public.plans` | Catálogo comercial compartilhado por todas as orgs; ligação com org é via `subscriptions.plan_id` | `admin_01` (2026-04-24) | RLS FORCE + policy SELECT só para planos públicos não arquivados + mutações bloqueadas (sem policy de INSERT/UPDATE/DELETE); writes futuros só via RPC `SECURITY DEFINER` |
+| `public.platform_admins` | Catálogo global de operadores da Axon AI; escopado à org interna via FK `profile_id → profiles(id)` (org com `is_internal=true`); não pertence a um org-tenant | `admin_02` (2026-04-24) | RLS FORCE + policy SELECT restrita a `profile_id = auth.uid()` + mutações bloqueadas; writes via RPC `SECURITY DEFINER` (`seed_initial_platform_admin_owner`, e RPCs do Sprint 11) |
 
 ---
 

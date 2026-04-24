@@ -23,7 +23,7 @@ import { createInvitationAction } from '@/lib/actions/invitations';
 
 const InviteSchema = z.object({
   email: z.string().email('Email inválido'),
-  role: z.enum(['admin', 'member']),
+  role: z.enum(['admin', 'user']),
 });
 
 type InviteValues = z.infer<typeof InviteSchema>;
@@ -42,7 +42,7 @@ export function InviteMemberDialog() {
     formState: { errors },
   } = useForm<InviteValues>({
     resolver: zodResolver(InviteSchema),
-    defaultValues: { email: '', role: 'member' },
+    defaultValues: { email: '', role: 'user' },
   });
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export function InviteMemberDialog() {
                 className="h-10 rounded-md border border-field-border bg-field px-3 text-sm text-field-fg focus-visible:border-field-border-focus focus-visible:outline-none focus-visible:shadow-focus"
                 {...register('role')}
               >
-                <option value="member">Membro</option>
+                <option value="user">Membro</option>
                 <option value="admin">Admin</option>
               </select>
               {errors.role ? (

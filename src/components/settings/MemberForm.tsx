@@ -21,7 +21,7 @@ import { updateMemberAction } from '@/lib/actions/team';
 import type { TeamMember } from '@/lib/actions/invitations';
 
 const FormSchema = z.object({
-  role: z.enum(['admin', 'member']),
+  role: z.enum(['admin', 'user']),
   active: z.boolean(),
 });
 
@@ -36,7 +36,7 @@ export function MemberForm({ member }: MemberFormProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const defaultRole: 'admin' | 'member' = member.role === 'admin' ? 'admin' : 'member';
+  const defaultRole: 'admin' | 'user' = member.role === 'admin' ? 'admin' : 'user';
 
   const {
     handleSubmit,
@@ -101,7 +101,7 @@ export function MemberForm({ member }: MemberFormProps) {
                 <SelectValue placeholder="Selecione a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="member">Membro</SelectItem>
+                <SelectItem value="user">Membro</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>

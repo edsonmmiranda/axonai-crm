@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 
-export type SessionRole = 'owner' | 'admin' | 'member';
+export type SessionRole = 'owner' | 'admin' | 'user' | 'viewer';
 export type ThemePreference = 'system' | 'light' | 'dark';
 
 export type SessionContext = {
@@ -17,14 +17,16 @@ export type SessionContext = {
   themePreference: ThemePreference;
 };
 
-const VALID_ROLES: readonly SessionRole[] = ['owner', 'admin', 'member'] as const;
+const VALID_ROLES: readonly SessionRole[] = ['owner', 'admin', 'user', 'viewer'] as const;
 const VALID_THEMES: readonly ThemePreference[] = ['system', 'light', 'dark'] as const;
 
 function normalizeRole(raw: unknown): SessionRole {
   if (typeof raw === 'string' && (VALID_ROLES as readonly string[]).includes(raw)) {
     return raw as SessionRole;
   }
-  return 'member';
+  // Legacy mapping: unknown values (including 'member' from pre-Sprint-02 orgs) fall to
+  // 'user' — least-privileged role. Kept as safety net during deployment window.
+  return 'user';
 }
 
 function normalizeTheme(raw: unknown): ThemePreference {

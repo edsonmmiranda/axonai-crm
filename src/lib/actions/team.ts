@@ -14,20 +14,20 @@ interface ActionResponse<T = unknown> {
   error?: string;
 }
 
-type MemberRole = 'owner' | 'admin' | 'member';
+type MemberRole = 'owner' | 'admin' | 'user';
 
 const MemberIdSchema = z.string().uuid('ID inválido');
 
 const UpdateMemberSchema = z.object({
   memberId: MemberIdSchema,
-  role: z.enum(['admin', 'member']),
+  role: z.enum(['admin', 'user']),
   active: z.boolean(),
 });
 
 export type UpdateMemberInput = z.infer<typeof UpdateMemberSchema>;
 
 function normalizeRole(raw: unknown): MemberRole {
-  return raw === 'owner' || raw === 'admin' ? raw : 'member';
+  return raw === 'owner' || raw === 'admin' ? raw : 'user';
 }
 
 async function loadTargetMember(

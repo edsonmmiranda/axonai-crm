@@ -7,7 +7,7 @@ import { TeamMemberRowActions } from './TeamMemberRowActions';
 const ROLE_LABEL: Record<TeamMember['role'], string> = {
   owner: 'Owner',
   admin: 'Admin',
-  member: 'Membro',
+  user: 'Membro',
 };
 
 function formatDate(iso: string): string {

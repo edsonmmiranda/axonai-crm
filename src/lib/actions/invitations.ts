@@ -19,7 +19,7 @@ export interface TeamMember {
   id: string;
   full_name: string;
   email: string | null;
-  role: 'owner' | 'admin' | 'member';
+  role: 'owner' | 'admin' | 'user';
   avatar_url: string | null;
   is_active: boolean;
   created_at: string;
@@ -28,7 +28,7 @@ export interface TeamMember {
 export interface PendingInvitation {
   id: string;
   email: string;
-  role: 'admin' | 'member';
+  role: 'admin' | 'user';
   token: string;
   invited_by: string;
   invited_by_name: string | null;
@@ -38,7 +38,7 @@ export interface PendingInvitation {
 
 const CreateInviteSchema = z.object({
   email: z.string().email('Email inválido').transform((v) => v.trim().toLowerCase()),
-  role: z.enum(['admin', 'member']),
+  role: z.enum(['admin', 'user']),
 });
 
 const InvitationIdSchema = z.object({
@@ -49,7 +49,7 @@ export type CreateInviteInput = z.infer<typeof CreateInviteSchema>;
 export type InvitationIdInput = z.infer<typeof InvitationIdSchema>;
 
 function normalizeRole(raw: unknown): TeamMember['role'] {
-  return raw === 'owner' || raw === 'admin' ? raw : 'member';
+  return raw === 'owner' || raw === 'admin' ? raw : 'user';
 }
 
 async function buildInviteUrl(token: string): Promise<string> {
@@ -135,7 +135,7 @@ export async function getPendingInvitationsAction(): Promise<
     }
 
     const invites: PendingInvitation[] = (data ?? []).map((row) => {
-      const role = row.role === 'admin' ? 'admin' : 'member';
+      const role = row.role === 'admin' ? 'admin' : 'user';
       return {
         id: row.id as string,
         email: row.email as string,

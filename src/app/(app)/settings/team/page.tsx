@@ -12,7 +12,7 @@ import { getSessionContext } from '@/lib/supabase/getSessionContext';
 
 export default async function TeamPage() {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/settings/profile?notice=restricted');
   }
 

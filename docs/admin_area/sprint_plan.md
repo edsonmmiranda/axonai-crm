@@ -20,7 +20,7 @@ Resolvem o §11 do PRD antes de o plano começar. Alterar um destes revisita o s
 | D-5 | Schema de role em `profiles` | **Normalizar código para o DB** — `'owner','admin','user','viewer'`. `getSessionContext` hoje converte para `member` (inconsistência). Fix incluso no Sprint 02. |
 
 Decisões diferidas que **cada sprint deve resolver no seu escopo** (não bloqueiam o início):
-- D-6 Matriz fina owner/support/billing → Sprint 02 (definir), 05/06/11 (exercitar)
+- D-6 Matriz fina owner/support/billing → **Definida no Sprint 02** em [`docs/admin_area/rbac_matrix.md`](rbac_matrix.md). Cada sprint 05/06/11 exercita e referencia a matriz ao criar RPCs.
 - D-7 Política de retenção de audit log → Sprint 12 (decidir antes da UI ir pra prod)
 - D-8 Duração da sessão admin → Sprint 04 (default sugerido: 8h inatividade, 12h absoluta)
 - D-9 SLA exato de transição automática → Sprint 13 (default sugerido: até 15min)

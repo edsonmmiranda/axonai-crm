@@ -22,7 +22,8 @@ function getInitials(name: string): string {
 const ROLE_LABEL: Record<SessionContext['role'], string> = {
   owner: 'Owner',
   admin: 'Admin',
-  member: 'Membro',
+  user: 'Membro',
+  viewer: 'Visualizador',
 };
 
 export function Topbar({ session }: TopbarProps) {

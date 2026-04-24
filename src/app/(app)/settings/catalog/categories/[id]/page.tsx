@@ -17,7 +17,7 @@ export default async function EditCategoryPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/settings/profile?notice=restricted');
   }
 

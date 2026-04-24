@@ -96,6 +96,10 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-24 · [TIPO] Grep por `role === 'member'` não captura `Record<SessionRole, string>` com chave literal
+
+**Regra:** Em refactors de SessionRole, grepar só por comparações (`=== 'member'`) deixa escapar `Record<Role, string>` com chave literal e Zod `z.enum(['admin', 'member'])`. O TypeScript break-on-build é o catch-all real — não depender só do grep, depender do build como segunda passagem.
+
 ### 2026-04-24 · [SUPABASE] `REVOKE FROM public` não cobre role `anon` em funções novas
 
 **Regra:** Supabase aplica `DEFAULT PRIVILEGES` que concedem `EXECUTE` a `anon`/`authenticated`/`service_role` em toda função criada em `public`. `REVOKE ALL FROM public` revoga só do pseudo-role PUBLIC — para fechar `anon` explicitamente é obrigatório `REVOKE EXECUTE ... FROM anon;`. Verificar com `has_function_privilege('anon','fn(sig)','execute')`.

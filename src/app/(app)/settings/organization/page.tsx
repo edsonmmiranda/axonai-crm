@@ -8,7 +8,7 @@ import { getOrgPlan } from '@/lib/plans/getOrgPlan';
 
 export default async function OrganizationPage() {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/settings/profile?notice=restricted');
   }
 

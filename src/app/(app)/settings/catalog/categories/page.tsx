@@ -24,7 +24,7 @@ export default async function CategoriesPage(props: {
   searchParams: Promise<SearchParams>;
 }) {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/settings/profile?notice=restricted');
   }
 

@@ -1,8 +1,12 @@
 {
-  "timestamp": "2026-04-23T20:23:10.848Z",
+  "timestamp": "2026-04-24T17:00:00.000Z",
   "tables": [
     {
       "table_name": "categories",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "platform_admins",
       "table_type": "BASE TABLE"
     },
     {
@@ -67,6 +71,25 @@
     }
   ],
   "tableDetails": {
+    "platform_admins": {
+      "columns": [
+        { "column_name": "id", "data_type": "uuid", "is_nullable": "NO", "column_default": "gen_random_uuid()", "character_maximum_length": null },
+        { "column_name": "profile_id", "data_type": "uuid", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "role", "data_type": "text", "is_nullable": "NO", "column_default": null, "character_maximum_length": null },
+        { "column_name": "is_active", "data_type": "boolean", "is_nullable": "NO", "column_default": "true", "character_maximum_length": null },
+        { "column_name": "created_at", "data_type": "timestamp with time zone", "is_nullable": "NO", "column_default": "now()", "character_maximum_length": null },
+        { "column_name": "deactivated_at", "data_type": "timestamp with time zone", "is_nullable": "YES", "column_default": null, "character_maximum_length": null },
+        { "column_name": "created_by", "data_type": "uuid", "is_nullable": "YES", "column_default": null, "character_maximum_length": null }
+      ],
+      "indexes": [
+        { "index_name": "platform_admins_pkey", "index_definition": "CREATE UNIQUE INDEX platform_admins_pkey ON public.platform_admins USING btree (id)" },
+        { "index_name": "platform_admins_active_profile_unique", "index_definition": "CREATE UNIQUE INDEX platform_admins_active_profile_unique ON public.platform_admins USING btree (profile_id) WHERE (is_active = true)" },
+        { "index_name": "platform_admins_role_active", "index_definition": "CREATE INDEX platform_admins_role_active ON public.platform_admins USING btree (role) WHERE (is_active = true)" }
+      ],
+      "policies": [
+        { "policy_name": "platform_admins_select_own", "policy_command": "SELECT" }
+      ]
+    },
     "categories": {
       "columns": [
         {
@@ -363,7 +386,7 @@
           "column_name": "role",
           "data_type": "text",
           "is_nullable": "NO",
-          "column_default": "'member'::text",
+          "column_default": "'user'::text",
           "character_maximum_length": null
         },
         {

@@ -20,7 +20,7 @@ export default async function EditFunnelPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/dashboard?notice=restricted');
   }
 

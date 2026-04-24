@@ -14,7 +14,7 @@ import {
 
 const ROLE_LABEL: Record<PendingInvitation['role'], string> = {
   admin: 'Admin',
-  member: 'Membro',
+  user: 'Membro',
 };
 
 function copyToClipboard(text: string): boolean {
@@ -88,7 +88,7 @@ export function PendingInvitationsList({ invitations }: { invitations: PendingIn
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] border-collapse text-sm">
+      <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-border-subtle text-left text-xs uppercase tracking-wide text-text-muted">
             <th scope="col" className="px-4 py-3 font-semibold">

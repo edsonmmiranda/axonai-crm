@@ -8,7 +8,7 @@ import { getSessionContext } from '@/lib/supabase/getSessionContext';
 
 export default async function NewWhatsappGroupPage() {
   const ctx = await getSessionContext();
-  if (ctx.role === 'member') {
+  if (ctx.role === 'user' || ctx.role === 'viewer') {
     redirect('/dashboard?notice=restricted');
   }
 
