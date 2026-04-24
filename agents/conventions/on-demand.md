@@ -27,7 +27,7 @@ Cada agente on-demand só age quando o usuário usa seu nome explicitamente:
 
 | Agente | Forma de invocação |
 |---|---|
-| `@qa` | "QA, crie testes para o módulo X", "QA, cubra create[Entity]Action com testes de integração" |
+| `@qa` | "QA, crie unit tests para `lib/utils/validation.ts`", "QA, crie teste E2E do checkout", "QA, cubra o componente `<CustomerForm />` com component tests" (integration tests de Server Actions NÃO são escopo do `@qa` — são automáticos via `@qa-integration`) |
 | `@performance-engineer` | "Performance Engineer, analise o módulo X", "Performance Engineer, prepare o dashboard para 10k usuários" |
 | `@sprint-creator` | "Sprint Creator, crie uma sprint para X", "Sprint Creator, preciso de uma sprint para o módulo de dashboard" |
 | `@db-auditor` | "DB Auditor, valide o banco", "DB Auditor, audite multi-tenancy", "DB Auditor, verifique conformidade de organization_id" |
@@ -63,7 +63,7 @@ Para o protocolo exato de escalação, veja [`agents/workflows/escalation-protoc
 
 Quando o usuário invoca um agente on-demand, a primeira ação é **verificar se o ambiente suporta** o que foi pedido antes de começar o trabalho:
 
-- `@qa`: Checar se `vitest` / `playwright` / `@testing-library` estão instalados. Se não, perguntar se deve instalar infra mínima escopada ao pedido.
+- `@qa`: Vitest base já está instalado pelo bootstrap sprint. Se o pedido envolve component tests, checar `@testing-library/react` + `jsdom`; se E2E, checar `@playwright/test`. Se o incremental necessário não existe, pedir aprovação ao usuário antes de instalar.
 - `@performance-engineer`: Checar se há build rodável (`package.json` existe, `npm run build` funciona). Se não, reportar bloqueio.
 - `@sprint-creator`: Verificar que `sprints/` e os templates existem.
 - `@db-auditor`: Rodar preflight probe ([`docs/templates/db_introspection.md`](../../docs/templates/db_introspection.md) → "Preflight probe") para confirmar que o bootstrap + helpers de auditoria estão instalados. Se faltar, pedir `supabase db push`.

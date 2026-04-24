@@ -74,10 +74,18 @@ Se **qualquer** um ausente → este é **sprint de bootstrap**. O trabalho é cr
 test -f .env.example || cp docs/templates/env.example .env.example
 ```
 
+**Segunda ação obrigatória do bootstrap sprint:** instalar infraestrutura de testes seguindo literalmente [`docs/templates/vitest_setup.md`](../docs/templates/vitest_setup.md). Isso cria `vitest.config.ts`, `tests/setup.ts`, adiciona scripts em `package.json` e instala Vitest. Essa infra é pré-requisito para **GATE 4.5** dos sprints subsequentes — sem ela, sprints de CRUD não podem passar do code review.
+
+```bash
+# Validação pós-setup: deve sair sem erro, mesmo sem testes ainda
+npm run test:run
+```
+
 Depois disso, reporte ao usuário:
 
 ```
 ✅ .env.example criado na raiz.
+✅ Infra de testes (Vitest + tests/setup.ts) instalada.
 
 Antes do próximo sprint, você precisa:
 1. Copiar .env.example para .env.local:  cp .env.example .env.local
@@ -265,7 +273,7 @@ Todo sprint file tem uma seção `## 🔄 Execução` com a tabela de progresso.
 3. Use `▶️ Em andamento` ao iniciar um agente (antes de delegar)
 4. Use `⏸️ Aguarda review` nos pontos de pausa obrigatória (aprovação de PRD, aprovação de API research)
 
-**Agentes que atualizam a própria linha:** `@db-admin`, `@backend`, `@frontend+`, `@api-integrator`  
+**Agentes que atualizam a própria linha:** `@db-admin`, `@backend`, `@qa-integration`, `@frontend+`, `@api-integrator`  
 **Tech Lead atualiza:** `@guardian` (baseado no output GATE 4) e `@git-master` (no encerramento, antes do `git mv`)
 
 **Gatilho `"Retomar sprint_[XX]"` — nova sessão após pausa:**
@@ -296,7 +304,12 @@ Todo sprint file tem uma seção `## 🔄 Execução` com a tabela de progresso.
      - **Fase 1:** Comande `@api-integrator` (Research) → Gerar relatório de pesquisa
      - **CHECKPOINT:** Apresente o relatório de pesquisa e PEÇA aprovação
      - **Fase 2:** Comande `@api-integrator` (Implementation) → Criar código de integração
-   - **Passo 3 (Código):** Comande `@backend` para Server Actions e `@frontend+` para UI.
+   - **Passo 3 (Backend):** Comande `@backend` para Server Actions.
+   - **Passo 3.5 (Integration tests — OBRIGATÓRIO quando o sprint produziu Server Actions):**
+     Comande `@qa-integration` imediatamente após o `@backend` concluir. Esse agente produz `tests/integration/<module>.test.ts` seguindo o template canônico e roda `npm test`. Se algum teste falhar, delegue correção ao `@backend` com o output literal dos testes — máximo 3 retries antes de escalar.
+     > **Justificativa:** testar a Server Action antes do frontend evita desperdício de contexto construindo UI sobre lógica quebrada.
+     > **Pular apenas quando:** o sprint não produziu Server Actions novas nem modificações. Nesse caso, registre "n/a — sprint sem Server Actions" na linha do `@qa-integration` do sprint file.
+   - **Passo 3.6 (Frontend):** Comande `@frontend+` para UI.
    - **⏸️ CHECKPOINT — após `@frontend+` concluir (quando o sprint envolveu UI):**
      Antes de prosseguir para o `@guardian`, **PAUSE** e pergunte ao usuário:
      > `@frontend+` concluiu. Deseja **continuar** nesta sessão ou fazer **limpeza de contexto**?
@@ -306,10 +319,10 @@ Todo sprint file tem uma seção `## 🔄 Execução` com a tabela de progresso.
      - Se **"limpar contexto"**: confirme que a linha `@frontend+` está `✅ Concluído` no sprint file e encerre com: *"Sprint pausado. Inicie uma nova sessão e diga `Retomar sprint_[XX]` para continuar do `@guardian`."*
    - **Passo 4 (Qualidade):** Comande `@guardian` para revisar o código.
    - **Passo 5 (Checagem de design):** Verificação manual usando `docs/PROCESS_DESIGN_VERIFICATION.md`
-   - **Passo 6 (Gates de validação):** Rode validações automatizadas (veja abaixo).
+   - **Passo 6 (Gates de validação):** Rode validações automatizadas (veja abaixo — incluindo **GATE 4.5** para re-executar os integration tests após o code review).
 
 > [!NOTE]
-> **Sobre testes automatizados:** Este framework **não possui suíte de testes automatizada obrigatória**. O projeto não tem vitest/playwright instalados, e o fluxo padrão depende de build + lint + Guardian + verificação manual de design. Se quiser gerar testes pontuais para um módulo crítico, invoque `@qa` explicitamente como agente on-demand.
+> **Sobre testes automatizados:** Integration tests de Server Actions são **obrigatórios** no workflow padrão — produzidos pelo `@qa-integration` (Passo 3.5) e re-executados no GATE 4.5. Unit tests, component tests e E2E continuam on-demand via `@qa` (ver [`agents/on-demand/qa.md`](on-demand/qa.md)).
 7. **Encerramento (Auto-Memory):**
    - **Ação:** Leia os arquivos recém-criados para confirmar que tudo foi escrito onde esperado.
    - **Ação:** Se algum bug, erro, ou novo padrão foi descoberto durante o sprint → Appende em `docs/APRENDIZADOS.md` seguindo o formato enxuto definido em [`docs/APRENDIZADOS_FORMATO.md`](../docs/APRENDIZADOS_FORMATO.md) (≤3 linhas: título + Regra + Follow-up opcional). Isso é OBRIGATÓRIO, não opcional.
@@ -493,6 +506,78 @@ npm run build
 
 ---
 
+## GATE 4.5: Integration tests de Server Actions
+
+**Depois que o Guardian aprovou e antes do GATE 5 (design).**
+
+**Quando aplicar:** sempre que o sprint produziu Server Actions novas ou modificou existentes (detectável via `git diff --name-only HEAD` buscando por `src/lib/actions/**/actions.ts`). Se o sprint não tocou Server Actions, pule este gate e registre "n/a" na tabela de execução do sprint file.
+
+### Passo 1: Identificar módulos tocados
+
+```bash
+git diff --name-only HEAD | grep "src/lib/actions/.*/actions\.ts" | awk -F/ '{print $(NF-1)}' | sort -u
+```
+
+A saída é a lista de módulos que tiveram Server Actions tocadas. Todo módulo listado **DEVE** ter arquivo de teste correspondente em `tests/integration/<module>.test.ts`.
+
+### Passo 2: Validar que arquivos de teste existem
+
+Para cada módulo retornado no Passo 1:
+
+```bash
+test -f tests/integration/<module>.test.ts || echo "MISSING: tests/integration/<module>.test.ts"
+```
+
+- **Se falta arquivo de teste:**
+  - ⛔ PARE — o `@qa-integration` do Passo 3.5 foi pulado ou falhou silenciosamente
+  - Reporte ao usuário: "GATE 4.5 bloqueado: faltam testes para [módulos]. Re-delegando ao `@qa-integration`."
+  - Comande `@qa-integration` novamente para produzir os arquivos faltantes
+  - Re-rode o gate desde o Passo 1
+
+### Passo 3: Executar os testes
+
+```bash
+npm test -- --run tests/integration/
+```
+
+### Passo 4: Checar output
+
+- **Se algum teste está em estado `failed`:**
+  - ⛔ PARE a execução
+  - Faça parse do output: identifique qual action, qual asserção falhou, qual arquivo/linha
+  - Reporte ao usuário:
+    ```
+    ⛔ GATE 4.5 FALHOU — Integration tests
+
+    Módulo: [nome]
+    Teste: [describe > it]
+    Arquivo: tests/integration/[module].test.ts:[linha]
+    Expected: [esperado]
+    Received: [recebido]
+
+    Hipótese: [qual regra da Server Action está quebrada]
+
+    Delegando correção ao @backend.
+    ```
+  - Delegue correção ao `@backend` com o output literal do teste
+  - Após correção, re-rode o GATE 4.5 **desde o Passo 3** (não re-criar testes)
+  - **Máximo 3 retries.** No 4º, escale via [`escalation-protocol.md`](workflows/escalation-protocol.md)
+
+- **Se há teste em estado `skipped` ou `todo`:**
+  - ⛔ PARE — skip silencioso é proibido (ver [`docs/templates/server_actions_test.md`](../docs/templates/server_actions_test.md) § 3)
+  - Reporte ao usuário qual teste foi pulado e por quê
+  - Comande `@qa-integration` a remover o skip ou converter em assertion real
+
+- **Se todos passam (exit 0, nenhum failed/skipped):**
+  - ✅ PASSOU — Lógica de Server Action validada
+
+### Passo 5 (opcional): Registrar cobertura no sprint file
+
+Anote na linha do `@qa-integration` da tabela `## 🔄 Execução`:
+- `N testes executados, 0 falhas` — formato enxuto.
+
+---
+
 ## GATE 5: Verificação de design e UX (automática + manual)
 
 **Depois que `@frontend+` completa trabalho de UI:**
@@ -561,7 +646,9 @@ Peça ao agente para completar, depois re-valide.
 
 ### Itens críticos por agente:
 - **DB Admin:** Migração testada (dry-run)
-- **Frontend/Backend:** Build passa + Guardian aprovado
+- **Backend:** Build passa + Guardian aprovado + GATE 4.5 passa (integration tests)
+- **QA Integration:** Arquivo de teste existe para cada módulo tocado + todos os testes passam (exit 0, nenhum skipped)
+- **Frontend+:** Build passa + Guardian aprovado
 - **API Integrator:** Build passa com código de integração presente
 
 **Limite de retry:** 2 tentativas, depois escale ao usuário
@@ -583,6 +670,7 @@ Peça ao agente para completar, depois re-valide.
   - GATE 2 (build + lint) — sempre que houve mudanças de código
   - GATE 3 (API integration) — se há integração
   - GATE 4 (`@guardian` review) — sempre
+  - GATE 4.5 (integration tests) — sempre que houve Server Actions novas ou modificadas
   - GATE 5 (design verification) — proporcional à mudança visual
 - **Encerramento** completo (APRENDIZADOS + AGENT-DRIFT)
 - **Controle de versão** (`@git-master`)
@@ -610,7 +698,11 @@ Preflight pode ser enxuto:
      - **Fase 1:** Comande `@api-integrator` (Research) → Gerar relatório de pesquisa
      - **CHECKPOINT:** Apresente o relatório de pesquisa e PEÇA aprovação
      - **Fase 2:** Comande `@api-integrator` (Implementation) → Criar código de integração
-   - **Passo 3 (Código):** Comande `@backend` para Server Actions e/ou `@frontend+` para UI.
+   - **Passo 3 (Backend):** Comande `@backend` para Server Actions (se o sprint envolve backend).
+   - **Passo 3.5 (Integration tests — OBRIGATÓRIO quando o sprint produziu Server Actions):**
+     Comande `@qa-integration` imediatamente após o `@backend` concluir. Mesmas regras da Opção 2 (Passo 3.5): testes falhando → delegar correção ao `@backend`, máximo 3 retries, GATE 4.5 re-executa após o code review.
+     > **Pular apenas quando:** o sprint não produziu Server Actions novas nem modificações (ex.: bugfix de UI, ajuste de texto). Nesse caso, registre "n/a — sprint sem Server Actions" na linha do `@qa-integration` do sprint file.
+   - **Passo 3.6 (Frontend):** Comande `@frontend+` para UI (se o sprint envolve UI).
    - **⏸️ CHECKPOINT — após `@frontend+` concluir (quando o sprint envolveu UI):**
      Antes de prosseguir para o `@guardian`, **PAUSE** e pergunte ao usuário:
      > `@frontend+` concluiu. Deseja **continuar** nesta sessão ou fazer **limpeza de contexto**?
@@ -620,7 +712,7 @@ Preflight pode ser enxuto:
      - Se **"limpar contexto"**: confirme que a linha `@frontend+` está `✅ Concluído` no sprint file e encerre com: *"Sprint pausado. Inicie uma nova sessão e diga `Retomar sprint_[XX]` para continuar do `@guardian`."*
    - **Passo 4 (Qualidade):** Comande `@guardian` para revisar o código.
    - **Passo 5 (Checagem de design):** Verificação usando `docs/PROCESS_DESIGN_VERIFICATION.md` (proporcional à mudança).
-   - **Passo 6 (Gates de validação):** Rode os gates aplicáveis (ver lista acima).
+   - **Passo 6 (Gates de validação):** Rode os gates aplicáveis (ver lista acima — incluindo **GATE 4.5** quando houve Server Actions).
 3. **Encerramento (Auto-Memory):**
    - **Ação:** Leia os arquivos recém-criados para confirmar que tudo foi escrito onde esperado.
    - **Ação:** Se algum bug, erro, ou novo padrão foi descoberto durante o sprint → Appende em `docs/APRENDIZADOS.md` seguindo o formato enxuto definido em [`docs/APRENDIZADOS_FORMATO.md`](../docs/APRENDIZADOS_FORMATO.md) (≤3 linhas: título + Regra + Follow-up opcional).
@@ -695,7 +787,7 @@ Fora do ciclo de sprint, o usuário pode pedir auditorias pontuais. Elas **não 
 - Report final ao usuário (build complete + arquivos commitados)
 - Ou escalação formal quando bloqueio detectado
 
-**Agentes delegados:** `@spec-writer`, `@sanity-checker`, `@db-admin`, `@api-integrator`, `@frontend+`, `@backend`, `@guardian`, `@git-master`
+**Agentes delegados:** `@spec-writer`, `@sanity-checker`, `@db-admin`, `@api-integrator`, `@backend`, `@qa-integration`, `@frontend+`, `@guardian`, `@git-master`
 
 **On-demand (apenas por pedido explícito do usuário):** `@qa`, `@performance-engineer`, `@sprint-creator`, `@db-auditor`
 

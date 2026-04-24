@@ -1,6 +1,10 @@
-# Test Templates — Vitest + Playwright
+# Test Templates — Vitest + Playwright (on-demand)
 
-Templates usados por [`@qa`](../../agents/on-demand/qa.md) quando invocado sob demanda. Este framework **não** envia suíte de testes pré-configurada — o `@qa` instala infra mínima quando necessário.
+Templates usados por [`@qa`](../../agents/on-demand/qa.md) quando invocado sob demanda para **unit tests, component tests e E2E**.
+
+> **Importante:** para **integration tests de Server Actions** use [`server_actions_test.md`](./server_actions_test.md) — esse fluxo é automático e rodado pelo [`@qa-integration`](../../agents/stack/qa-integration.md) em todo sprint com backend, não por este `@qa` on-demand.
+>
+> A infra base de Vitest (`vitest.config.ts` + `tests/setup.ts`) é instalada pelo sprint de bootstrap seguindo [`vitest_setup.md`](./vitest_setup.md). Para E2E ou component tests, o `@qa` on-demand instala apenas as dependências incrementais com aprovação do usuário.
 
 ---
 

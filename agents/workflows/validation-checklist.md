@@ -64,7 +64,7 @@ conforme o complexity score documentado.
 ### PRD_STANDARD (7 seções)
 - [ ] **Visão geral** — Objetivo de negócio, User Story, Métricas de sucesso
 - [ ] **Requisitos de banco de dados** — linguagem natural estruturada (tabelas, campos, tipos, constraints, RLS)
-- [ ] **Contrato de API** — com schemas Zod para toda Server Action
+- [ ] **Contrato de API** — com schemas Zod para toda Server Action e **regras de negócio testáveis** (uma bullet por regra — consumidas pelo `@qa-integration` para gerar `it(...)` dedicado)
 - [ ] **Componentes de UI** — referenciando o contrato do design system em [`design_system/components/CONTRACT.md`](../../design_system/components/CONTRACT.md) (tokens semânticos, primitivos Radix, variantes `cva`)
 - [ ] **Edge cases** — mínimo de **5** casos em pelo menos 3 categorias
 - [ ] **Critérios de aceite** — todos binários (passa/falha)
@@ -73,7 +73,7 @@ conforme o complexity score documentado.
 ### PRD_COMPLETE (11 seções)
 - [ ] **Visão geral** — Objetivo de negócio, User Story, Métricas de sucesso
 - [ ] **Requisitos de banco de dados** — schema completo com políticas RLS
-- [ ] **Contrato de API** — schemas Zod + respostas de erro
+- [ ] **Contrato de API** — schemas Zod + respostas de erro + **regras de negócio testáveis** (uma bullet por regra — consumidas pelo `@qa-integration` para gerar `it(...)` dedicado)
 - [ ] **Integração com API externa** — se aplicável (endpoints, auth, webhooks)
 - [ ] **Componentes de UI** — referenciando [`design_system/components/CONTRACT.md`](../../design_system/components/CONTRACT.md) + mapeamento de estados (default / hover / active / focus-visible / disabled / loading / error)
 - [ ] **Edge cases** — mínimo de **10** casos cobrindo todas as 7 categorias abaixo
@@ -239,6 +239,7 @@ decision:
 - "Zero valores arbitrários de Tailwind sob `src/` (`p-[17px]`, `w-[350px]`, etc.)" → grep retorna 0 matches → sim/não
 - "Componente renderiza corretamente com `data-theme=\"dark\"` togglado no `<html>`" → sim/não
 - "`npm run build` sai com código 0" → sim/não
+- "`npm test -- --run tests/integration/<module>.test.ts` sai com código 0 e nenhum teste pulado (GATE 4.5)" → sim/não (se o sprint envolve Server Actions)
 - "Comandos `npm run check` e `npm run contrast` em `design_system/build/` saem com código 0" → sim/não (se o PR tocou `design_system/tokens/`)
 
 **Regra prática:** se você não consegue escrever um script ou checkbox que responda o critério com um sim ou não definitivo, ele não é binário.

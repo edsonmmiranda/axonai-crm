@@ -87,6 +87,18 @@ create policy "select_own_org" on public.nome_tabela for select
 
 - **Fonte do valor:** `organization_id` vem exclusivamente de `auth.jwt() ->> 'organization_id'` (custom claim), **nunca** do request body ou de parmetro de funo.
 - **Como popular o custom claim:** via **Supabase Auth Hook** (`custom_access_token_hook`)  caminho oficial desde 2024. **No use triggers em `auth.users`**: triggers no re-executam ao renovar sesso, ento o claim pode ficar desatualizado e a RLS passa a falhar silenciosamente "open".
+
+#### Configurao do Auth Hook (passo nico por projeto)
+
+Sem este passo, **nenhum dado aparece** para usurios autenticados  a RLS fecha por padro quando o claim est ausente.
+
+1. Criar uma funo Postgres `public.custom_access_token_hook(event jsonb) returns jsonb` que:
+   - L o `organization_id` do usurio (normalmente de `profiles.organization_id` ou tabela equivalente)
+   - Retorna `event` com o claim injetado em `event.claims.organization_id`
+   - Deve ser `SECURITY DEFINER` com GRANTS restritos (`supabase_auth_admin` executa; `anon` e `authenticated` revogados)
+2. No dashboard do Supabase: **Auth  Hooks  Custom Access Token  selecionar `custom_access_token_hook`**  Save.
+3. Testar: fazer login, inspecionar o JWT em jwt.io, confirmar que `organization_id` aparece nos claims.
+4. Repetir para cada ambiente (dev, staging, prod) separadamente  cada projeto Supabase tem sua prpria configurao.
 - **Falha-modo crtico:** se o JWT no contiver `organization_id`, a expresso `(auth.jwt() ->> 'organization_id')::uuid` retorna `NULL` e a comparao `organization_id = NULL` retorna `NULL` (tratado como falso pelas policies)  ou seja, nenhum dado aparece. Teste isso explicitamente ao configurar um novo ambiente.
 - **Exceo nica:** tabelas globais read-only (catlogos compartilhados, feature flags do sistema) vivem em schema separado `public_ref`, listado em `standards.md`. Qualquer coisa em `public.*` exige `organization_id`.
 
@@ -329,6 +341,8 @@ O framework no inclui template de upload. Quando um projeto adicionar, **deve** 
 - [ ] `service_role_key` sem `NEXT_PUBLIC_`
 - [ ] Rate limiting configurado
 - [ ] `npm audit` no CI
+- [ ] **Funo `custom_access_token_hook` criada no banco** (via migration) e ativada no **Dashboard  Auth  Hooks  Custom Access Token**. Sem isso, nenhum dado aparece  a RLS fecha quando o claim `organization_id` est ausente do JWT. Ver 2.2 para passo-a-passo.
+- [ ] Testar em jwt.io que um JWT logado tem `organization_id` nos claims (ambiente dev, staging e prod separadamente)
 
 ### Ao implementar file upload
 

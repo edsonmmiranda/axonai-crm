@@ -127,6 +127,30 @@ Estas regras se aplicam ao schema, ao RLS e às Server Actions — **sem exceç�
 
 ---
 
+## Contrato de testes
+
+Toda Server Action produzida pelo `@backend` **deve** ter integration test correspondente produzido pelo `@qa-integration` no mesmo sprint. Este é um contrato duro — enforçado via **GATE 4.5** no workflow (ver [`agents/00_TECH_LEAD.md`](../../agents/00_TECH_LEAD.md)).
+
+1. **Infraestrutura base obrigatória:** `vitest.config.ts`, `tests/setup.ts` (mock centralizado do Supabase server client e do `getSessionContext`). Instalada uma única vez no sprint de bootstrap via [`docs/templates/vitest_setup.md`](../templates/vitest_setup.md).
+2. **Um arquivo de teste por módulo:** `tests/integration/<module>.test.ts`. Nunca fragmentar por action.
+3. **Cobertura mínima por Server Action exportada (não negociável):**
+   - Happy path (`success: true`)
+   - Falha de validação Zod → `success: false` **sem** chamar Supabase
+   - Falha de auth (`getUser` retorna `null`) → `success: false` **sem** chamar Supabase
+   - +1 teste por regra de negócio testável declarada no sprint file / PRD
+4. **Sem mock inline.** Todo mock passa pelo `__mockSupabase` do `tests/setup.ts`. Testes individuais sobrescrevem com `mockResolvedValueOnce`/`mockReturnValueOnce`.
+5. **Sem `it.skip`, `describe.skip`, `it.todo`.** Skip silencioso é violação que faz GATE 4.5 bloquear o commit.
+6. **Integration tests validam a lógica da Server Action** (auth → validação → fluxo → retorno), **não** RLS nem constraints do banco. Validação de RLS continua sendo responsabilidade do `@db-auditor` (on-demand).
+7. **Unit tests, component tests e E2E continuam opcionais** — produzidos apenas pelo `@qa` on-demand quando o usuário pede explicitamente.
+8. **Regras de negócio no PRD se tornam testes.** Toda bullet enumerada como regra testável na seção "Contrato de API" do PRD vira um `it(...)` dedicado no arquivo de teste, com comentário referenciando a fonte (ex.: `// PRD §5.2`).
+
+**Ownership:**
+- `tests/integration/**` → `@qa-integration` (único writer)
+- `tests/unit/**`, `tests/components/**`, `tests/e2e/**` → `@qa` on-demand (único writer)
+- `tests/setup.ts`, `vitest.config.ts`, `playwright.config.ts` → bootstrap sprint / `@qa` on-demand no primeiro setup (com aprovação explícita)
+
+---
+
 ## Regras invioláveis do ambiente
 
 1. **Nunca** modifique `.env.local`
@@ -143,6 +167,9 @@ Estas regras se aplicam ao schema, ao RLS e às Server Actions — **sem exceç�
 | `docs/schema_snapshot.json` | `@db-admin` (após cada introspecção) | Todos lêem; ninguém mais escreve |
 | `docs/APRENDIZADOS.md` | Qualquer agente que descubra algo surpreendente | Todos lêem na fase de planejamento |
 | `docs/conventions/standards.md` | Tech Lead | Todos lêem; ninguém mais escreve |
+| `tests/integration/**` | `@qa-integration` | Todos lêem; ninguém mais escreve |
+| `tests/unit/**`, `tests/components/**`, `tests/e2e/**` | `@qa` on-demand | Todos lêem; ninguém mais escreve |
+| `tests/setup.ts`, `vitest.config.ts` | Bootstrap sprint (setup inicial) | Imutáveis após bootstrap — mudanças exigem sprint dedicado |
 
 ---
 
@@ -162,6 +189,13 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 3. `docs/conventions/crud.md` (se o sprint envolve CRUD)
 4. `agents/skills/error-handling/SKILL.md` (se necessário)
 5. `agents/skills/reference-module-copy/SKILL.md` (se Reference Module especificado)
+
+### Ao adotar `@qa-integration`
+1. `agents/stack/qa-integration.md`
+2. `docs/templates/server_actions_test.md`
+3. `docs/templates/vitest_setup.md` (apenas para conhecer o shape do mock central)
+4. `src/lib/actions/<module>/actions.ts` e `src/lib/actions/<module>/schemas.ts` do módulo sob teste
+5. Sprint file / PRD na seção de regras de negócio
 
 ### Ao adotar `@frontend+`
 1. `agents/stack/frontend-plus.md` — leia primeiro, contém o protocolo de resolução de referência (3 níveis)

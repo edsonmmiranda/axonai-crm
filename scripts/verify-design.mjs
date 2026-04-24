@@ -96,7 +96,7 @@ for (const file of files) {
 // Pulamos rotas públicas marcadas por route groups (public), (marketing), (auth).
 const internalPages = files.filter(f =>
   /^src\/app\/.*\/page\.tsx$/.test(f) &&
-  !/\((public|marketing|auth|admin)\)/.test(f)
+  !/\((public|marketing|auth)\)/.test(f)
 );
 
 for (const page of internalPages) {
