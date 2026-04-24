@@ -26,6 +26,7 @@ O modelo de delegação, a hierarquia de autoridade entre documentos, a ordem de
 PASSO 1: view_file(docs/conventions/standards.md)     → Hierarquia de autoridade, regras invioláveis, modelo de delegação, ordem de leitura
 PASSO 2: view_file(docs/schema_snapshot.json)         → Estado real do schema do banco (única fonte canônica de tabelas/RLS)
 PASSO 3: view_file(docs/APRENDIZADOS.md)              → Armadilhas já descobertas em sprints anteriores (leitura integral obrigatória)
+PASSO 4: view_file(docs/PROJECT_CONTEXT.md)           → Decisões fixadas deste projeto: exceções de banco, UUIDs de produção, pendências operacionais abertas
 ```
 
 **Uso de `APRENDIZADOS.md`:** ao delegar para qualquer sub-agente (`@backend`, `@frontend+`, `@db-admin`, `@api-integrator`, `@guardian`), 

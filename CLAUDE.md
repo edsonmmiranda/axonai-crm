@@ -57,4 +57,5 @@ Quando o usuário pedir auditoria do banco (frases como "audite o banco", "valid
 | Camadas de memória (onde escrever o quê) | [`agents/workflows/memory-layers.md`](agents/workflows/memory-layers.md) |
 | Design system (fonte única) | [`design_system/README.md`](design_system/README.md) |
 | Armadilhas descobertas | [`docs/APRENDIZADOS.md`](docs/APRENDIZADOS.md) |
+| **Decisões fixadas deste projeto** (exceções de banco, UUIDs, pendências operacionais) | [`docs/PROJECT_CONTEXT.md`](docs/PROJECT_CONTEXT.md) ⭐ |
 | Auditoria sob demanda de multi-tenancy no banco | [`agents/on-demand/db-auditor.md`](agents/on-demand/db-auditor.md) |
