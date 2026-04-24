@@ -444,5 +444,7 @@ Decisões diferidas que **cada sprint deve resolver no seu escopo** (não bloque
 ## 6. Próximos passos
 
 1. **Revisar este plano** com Edson. Mudanças estruturais (ordem, granularidade) entram aqui, não no sprint file.
-2. Ao aprovar, disparar `@sprint-creator` para **Sprint 01** — ele consome este plano + o PRD e produz `sprints/active/sprint_01_plans_subscriptions_internal_org.md` com o formato completo (PRD técnico, checklist por agente, seção de recomendação, etc).
+2. Ao aprovar, disparar `@sprint-creator` para **Sprint 01** — ele consome este plano + o PRD e produz `sprints/active/sprint_admin_01_plans_subscriptions_internal_org.md` com o formato completo (PRD técnico, checklist por agente, seção de recomendação, etc).
 3. Rodar `Tech Lead...` no sprint file gerado.
+
+**Convenção de nomenclatura dos sprint files deste plano:** usar o prefixo `sprint_admin_` para distinguir do ciclo anterior (customer app). Padrão: `sprints/active/sprint_admin_XX_[short-name].md`; ao encerrar migra para `sprints/done/sprint_admin_XX_[short-name].md`.
