@@ -28,7 +28,7 @@ export interface CategoryRow {
   name: string;
   slug: string;
   description: string | null;
-  active: boolean;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -51,13 +51,13 @@ const ActiveSchema = z.boolean().optional();
 const CreateCategorySchema = z.object({
   name: NameSchema,
   description: DescriptionSchema,
-  active: ActiveSchema,
+  is_active: ActiveSchema,
 });
 
 const UpdateCategorySchema = z.object({
   name: NameSchema,
   description: DescriptionSchema,
-  active: ActiveSchema,
+  is_active: ActiveSchema,
 });
 
 const ListParamsSchema = z.object({
@@ -124,7 +124,7 @@ export async function getCategoriesAction(
 
     let query = supabase
       .from('categories')
-      .select('id, organization_id, name, slug, description, active, created_at, updated_at', {
+      .select('id, organization_id, name, slug, description, is_active, created_at, updated_at', {
         count: 'exact',
       })
       .eq('organization_id', ctx.organizationId)
@@ -132,7 +132,7 @@ export async function getCategoriesAction(
       .range(from, to);
 
     if (activeOnly) {
-      query = query.eq('active', true);
+      query = query.eq('is_active', true);
     }
     if (search && search.length > 0) {
       query = query.ilike('name', `%${search}%`);
@@ -176,7 +176,7 @@ export async function getCategoryByIdAction(
 
     const { data, error } = await supabase
       .from('categories')
-      .select('id, organization_id, name, slug, description, active, created_at, updated_at')
+      .select('id, organization_id, name, slug, description, is_active, created_at, updated_at')
       .eq('id', parsed.data)
       .eq('organization_id', ctx.organizationId)
       .maybeSingle<CategoryRow>();
@@ -221,9 +221,9 @@ export async function createCategoryAction(
         name: parsed.data.name,
         slug,
         description: parsed.data.description ?? null,
-        active: parsed.data.active ?? true,
+        is_active: parsed.data.is_active ?? true,
       })
-      .select('id, organization_id, name, slug, description, active, created_at, updated_at')
+      .select('id, organization_id, name, slug, description, is_active, created_at, updated_at')
       .single<CategoryRow>();
 
     if (error) {
@@ -296,11 +296,11 @@ export async function updateCategoryAction(
         name: parsed.data.name,
         slug,
         description: parsed.data.description ?? null,
-        active: parsed.data.active ?? true,
+        is_active: parsed.data.is_active ?? true,
       })
       .eq('id', idParsed.data)
       .eq('organization_id', ctx.organizationId)
-      .select('id, organization_id, name, slug, description, active, created_at, updated_at')
+      .select('id, organization_id, name, slug, description, is_active, created_at, updated_at')
       .single<CategoryRow>();
 
     if (error) {

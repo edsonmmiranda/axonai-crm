@@ -92,8 +92,8 @@ export function CategoriesList({ categories, hasFilter }: CategoriesListProps) {
                 {truncate(c.description)}
               </td>
               <td className="px-4 py-3">
-                <Badge variant={c.active ? 'role-admin' : 'status-inactive'}>
-                  {c.active ? 'Ativa' : 'Inativa'}
+                <Badge variant={c.is_active ? 'role-admin' : 'status-inactive'}>
+                  {c.is_active ? 'Ativa' : 'Inativa'}
                 </Badge>
               </td>
               <td className="px-4 py-3 text-text-secondary">

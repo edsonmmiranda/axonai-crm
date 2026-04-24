@@ -30,7 +30,7 @@ const FormSchema = z.object({
     .trim()
     .max(500, 'Descrição deve ter no máximo 500 caracteres')
     .optional(),
-  active: z.boolean(),
+  is_active: z.boolean(),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -58,7 +58,7 @@ export function CategoryForm({ mode, category, isAdmin = false }: CategoryFormPr
     defaultValues: {
       name: category?.name ?? '',
       description: category?.description ?? '',
-      active: category?.active ?? true,
+      is_active: category?.is_active ?? true,
     },
   });
 
@@ -71,7 +71,7 @@ export function CategoryForm({ mode, category, isAdmin = false }: CategoryFormPr
       const payload = {
         name: values.name,
         description: values.description || undefined,
-        active: values.active,
+        is_active: values.is_active,
       };
 
       const res =
@@ -160,7 +160,7 @@ export function CategoryForm({ mode, category, isAdmin = false }: CategoryFormPr
           </div>
           <Controller
             control={control}
-            name="active"
+            name="is_active"
             render={({ field }) => (
               <Switch
                 id="categoryActive"

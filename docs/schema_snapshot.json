@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-23T13:19:28.150Z",
+  "timestamp": "2026-04-23T20:23:10.848Z",
   "tables": [
     {
       "table_name": "categories",
@@ -51,6 +51,10 @@
     },
     {
       "table_name": "profiles",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "signup_intents",
       "table_type": "BASE TABLE"
     },
     {
@@ -1567,6 +1571,98 @@
         {
           "policy_name": "Users can view org profiles",
           "policy_command": "SELECT"
+        }
+      ]
+    },
+    "signup_intents": {
+      "columns": [
+        {
+          "column_name": "email",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "organization_id",
+          "data_type": "uuid",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "role",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "full_name",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "source",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null,
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "invitation_id",
+          "data_type": "uuid",
+          "is_nullable": "YES",
+          "column_default": null,
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "expires_at",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "NO",
+          "column_default": "(now() + '00:30:00'::interval)",
+          "character_maximum_length": null
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "character_maximum_length": null
+        }
+      ],
+      "indexes": [
+        {
+          "index_name": "signup_intents_expires_at_idx",
+          "index_definition": "CREATE INDEX signup_intents_expires_at_idx ON public.signup_intents USING btree (expires_at)"
+        },
+        {
+          "index_name": "signup_intents_organization_id_idx",
+          "index_definition": "CREATE INDEX signup_intents_organization_id_idx ON public.signup_intents USING btree (organization_id)"
+        },
+        {
+          "index_name": "signup_intents_pkey",
+          "index_definition": "CREATE UNIQUE INDEX signup_intents_pkey ON public.signup_intents USING btree (email)"
+        }
+      ],
+      "policies": [
+        {
+          "policy_name": "signup_intents_deny_all_delete",
+          "policy_command": "DELETE"
+        },
+        {
+          "policy_name": "signup_intents_deny_all_insert",
+          "policy_command": "INSERT"
+        },
+        {
+          "policy_name": "signup_intents_deny_all_select",
+          "policy_command": "SELECT"
+        },
+        {
+          "policy_name": "signup_intents_deny_all_update",
+          "policy_command": "UPDATE"
         }
       ]
     },
