@@ -7,7 +7,7 @@ import { Search } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
 const selectClasses =
-  'block rounded-lg border border-field-border bg-field py-2 pl-3 pr-8 text-sm text-field-fg transition-all hover:border-field-border-hover focus-visible:border-field-border-focus focus-visible:outline-none focus-visible:shadow-focus';
+  'block rounded-lg border border-field-border bg-field py-2.5 pl-3 pr-8 text-sm text-field-fg transition-all hover:border-field-border-hover focus-visible:border-field-border-focus focus-visible:outline-none focus-visible:shadow-focus';
 
 export function PlansToolbar() {
   const router = useRouter();
@@ -45,8 +45,8 @@ export function PlansToolbar() {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm">
-      <div className="relative">
+    <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-raised p-4 shadow-sm xl:flex-row xl:items-center">
+      <div className="relative flex-1">
         <Label htmlFor="planSearch" className="sr-only">Buscar plano</Label>
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <Search className="size-5 text-text-secondary" aria-hidden="true" />
@@ -61,12 +61,12 @@ export function PlansToolbar() {
         />
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-row">
         <select
           aria-label="Filtrar por visibilidade"
           value={currentVisibility}
           onChange={(e) => push((p) => { if (e.target.value) p.set('visibility', e.target.value); else p.delete('visibility'); })}
-          className={selectClasses}
+          className={`${selectClasses} w-full lg:w-44`}
         >
           <option value="">Todas as visibilidades</option>
           <option value="public">Públicos</option>
@@ -77,7 +77,7 @@ export function PlansToolbar() {
           aria-label="Mostrar arquivados"
           value={currentArchived}
           onChange={(e) => push((p) => { if (e.target.value) p.set('archived', 'true'); else p.delete('archived'); })}
-          className={selectClasses}
+          className={`${selectClasses} w-full lg:w-44`}
         >
           <option value="">Apenas ativos</option>
           <option value="true">Arquivados</option>

@@ -12,17 +12,23 @@ export default async function NewPlanPage() {
 
   return (
     <AdminShell admin={admin}>
-      <div className="mr-auto flex max-w-page flex-col gap-6 pb-10">
+      <div className="mr-auto flex max-w-4xl flex-col gap-6 pb-10">
         <nav className="flex text-sm font-medium text-text-secondary" aria-label="breadcrumb">
           <ol className="flex items-center gap-2">
             <li>
-              <Link href="/admin/dashboard" className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus">
+              <Link
+                href="/admin/dashboard"
+                className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
+              >
                 Dashboard
               </Link>
             </li>
             <li aria-hidden="true"><ChevronRight className="size-4 text-text-muted" /></li>
             <li>
-              <Link href="/admin/plans" className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus">
+              <Link
+                href="/admin/plans"
+                className="rounded transition-colors hover:text-action-ghost-fg focus-visible:outline-none focus-visible:shadow-focus"
+              >
                 Plans
               </Link>
             </li>
@@ -32,8 +38,10 @@ export default async function NewPlanPage() {
         </nav>
 
         <div className="flex flex-col gap-1">
-          <h2 className="text-3xl font-bold tracking-tight text-text-primary">Criar plano</h2>
-          <p className="text-text-secondary">Defina preços e limites para o novo plano.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">Novo plano</h2>
+          <p className="text-sm text-text-secondary">
+            Defina preços, limites e visibilidade do novo plano comercial.
+          </p>
         </div>
 
         <PlanForm mode="create" />
