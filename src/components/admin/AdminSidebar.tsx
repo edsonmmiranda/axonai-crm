@@ -1,4 +1,4 @@
-import { Building2, LayoutDashboard } from 'lucide-react';
+import { Building2, LayoutDashboard, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 
 export function AdminSidebar() {
@@ -24,6 +24,13 @@ export function AdminSidebar() {
         >
           <Building2 className="size-4" />
           Organizations
+        </Link>
+        <Link
+          href="/admin/plans"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-surface-sunken hover:text-text-primary transition-colors"
+        >
+          <CreditCard className="size-4" />
+          Plans
         </Link>
       </nav>
     </aside>
