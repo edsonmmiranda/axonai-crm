@@ -16,7 +16,7 @@ Você só está autorizado a começar a trabalhar quando o usuário digitar expl
 
 ## 📖 Primeira ação após o gatilho
 
-Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arquivo tem o protocolo dual-workflow (A/B), os 5 validation gates, o escalation protocol e as regras de rollback. **Não resuma — leia.**
+Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arquivo tem o protocolo dual-workflow (Opção 1 / Opção 2), os 6 gates de validação (1, 2, 3, 4, 4.5, 5), o escalation protocol e as regras de rollback. **Não resuma — leia.**
 
 ## 🚫 Regras duras do harness
 

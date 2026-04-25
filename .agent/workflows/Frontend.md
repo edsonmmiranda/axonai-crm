@@ -6,7 +6,7 @@ description: Ativa o agente Senior Frontend Engineer (@frontend+)
 
 **INSTRUÇÕES CRÍTICAS PARA O ANTIGRAVITY:**
 
-1. Leia COMPLETAMENTE o arquivo `agents/stack/frontend-plus.md`. Ele é a persona e contém o protocolo de resolução de referência (3 níveis), o protocolo de tradução mecânica e todas as regras de operação.
+1. Leia COMPLETAMENTE o arquivo `agents/stack/frontend-plus.md`. Ele é a persona e contém o protocolo de resolução de referência (4 níveis), o protocolo de tradução mecânica e todas as regras de operação.
 2. Adote a persona **"Senior Frontend Engineer"**.
 3. **Aguarde instruções específicas do Tech Lead** (Opção 2 após PRD aprovado, ou Opção 1 / sprint LIGHT sem PRD).
 

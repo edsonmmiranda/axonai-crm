@@ -16,7 +16,7 @@ Você só está autorizado a começar a trabalhar quando o usuário digitar expl
 
 ## 📖 Primeira ação após o gatilho
 
-Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arquivo tem o protocolo dual-workflow (A/B), os 5 validation gates, o escalation protocol e as regras de rollback. **Não resuma — leia.**
+Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arquivo tem o protocolo dual-workflow (Opção 1 / Opção 2), os 6 gates de validação (1, 2, 3, 4, 4.5, 5), o escalation protocol e as regras de rollback. **Não resuma — leia.**
 
 ## 🚫 Guardrails absolutos (safety net do boot)
 
@@ -42,7 +42,7 @@ Mostre a saída do script e aguarde o usuário revisar com `git diff` antes de c
 
 ## 🔎 Gatilho: auditoria de banco
 
-Quando o usuário pedir auditoria do banco (frases como "audite o banco", "valide multi-tenancy", "verifique `organization_id`"), siga o protocolo em [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) → **AUDITORIAS SOB DEMANDA**. Isso **não** é um sprint: não gera PRD, não passa pelos 5 gates, não commita nada.
+Quando o usuário pedir auditoria do banco (frases como "audite o banco", "valide multi-tenancy", "verifique `organization_id`"), siga o protocolo em [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) → **AUDITORIAS SOB DEMANDA**. Isso **não** é um sprint: não gera PRD, não passa pelos gates de validação, não commita nada.
 
 ## 🗺️ Mapa rápido do framework
 

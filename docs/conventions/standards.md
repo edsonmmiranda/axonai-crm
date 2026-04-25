@@ -198,7 +198,7 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 5. Sprint file / PRD na seção de regras de negócio
 
 ### Ao adotar `@frontend+`
-1. `agents/stack/frontend-plus.md` — leia primeiro, contém o protocolo de resolução de referência (3 níveis)
+1. `agents/stack/frontend-plus.md` — leia primeiro, contém o protocolo de resolução de referência (4 níveis)
 2. A referência visual resolvida pelo protocolo (tela pronta HTML, módulo de referência, ou design system)
 3. `design_system/components/CONTRACT.md` — **apenas no Nível 3** (quando não existe tela pronta)
 4. `design_system/enforcement/rules.md` — apenas se precisar confirmar regra de lint
