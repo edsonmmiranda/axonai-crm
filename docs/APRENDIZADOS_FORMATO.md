@@ -77,4 +77,4 @@ Novas entradas entram **no topo** da seção `## 📚 Entradas` em `APRENDIZADOS
 **Correção estrutural:** <mudança em agents/stack/*.md, design_system/, ou standards.md>
 ```
 
-> **Regra adicional do Tech Lead (encerramento de sprint):** antes de invocar `@git-master`, conte quantas vezes você re-delegou para o mesmo agente pelo mesmo tipo de problema. Se ≥2, **é obrigatório** registrar `[AGENT-DRIFT]`.
+> **Regra adicional do Tech Lead (encerramento de sprint):** antes de commitar, conte quantas vezes você re-delegou para o mesmo agente pelo mesmo tipo de problema. Se ≥2, **é obrigatório** registrar `[AGENT-DRIFT]`.

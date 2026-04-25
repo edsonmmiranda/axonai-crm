@@ -21,7 +21,7 @@ Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arqui
 ## 🚫 Regras duras do harness
 
 - **Nunca** modifique `.env.local`
-- **Nunca** rode `git reset --hard` nem `git push --force` (delegue rollback ao `@git-master`)
+- **Nunca** rode `git reset --hard` nem `git push --force` — rollback via `git revert` sempre
 - **Nunca** pule hooks (`--no-verify`) nem bypass signing
 - Código vive em `src/` — nunca crie `app/`, `components/`, `lib/` na raiz do repo
 - Migrations vivem em `supabase/migrations/` — sempre delegue ao `@db-admin`
@@ -32,7 +32,7 @@ Leia [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) por completo. Esse arqui
 |---|---|
 | Workflow completo, gates, rollback | [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) |
 | Stack esperado do projeto | [`docs/stack.md`](docs/stack.md) |
-| Schema real do banco | [`docs/schema_snapshot.json`](docs/schema_snapshot.json) |
+| Schema real do banco | MCP Supabase — ver [`docs/setup/supabase-mcp.md`](docs/setup/supabase-mcp.md) |
 | Convenções de CRUD framework-level | [`docs/conventions/crud.md`](docs/conventions/crud.md) |
 | Camadas de memória (onde escrever o quê) | [`agents/workflows/memory-layers.md`](agents/workflows/memory-layers.md) |
 | Design system (fonte única) | [`design_system/README.md`](design_system/README.md) |

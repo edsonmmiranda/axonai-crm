@@ -108,7 +108,7 @@
 ---
 
 ### Opção 1 — SIMPLES (sem PRD)
-- **Fluxo:** Tech Lead → @db-admin → (@api-integrator se aplicável) → @backend → @frontend+ → @guardian → gates → @git-master
+- **Fluxo:** Tech Lead → @db-admin → (@api-integrator se aplicável) → @backend → @frontend+ → @guardian → gates → commit
 - **PRD:** pulado; o próprio sprint file é o contrato
 - **Modelo sugerido:** [Sonnet | Opus] — [razão breve]
 - **Quando faz sentido:** [razão específica baseada na análise acima]
@@ -132,7 +132,7 @@
 
 ## 🔄 Execução
 
-> Esta seção é preenchida durante a execução. Cada agente atualiza sua linha antes de reportar conclusão ao Tech Lead. O Tech Lead atualiza as linhas de `@guardian` e `@git-master`.
+> Esta seção é preenchida durante a execução. Cada agente atualiza sua linha antes de reportar conclusão ao Tech Lead. O Tech Lead atualiza a linha do `@guardian`.
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
@@ -141,6 +141,5 @@
 | Server Actions | `@backend` | ⬜ Pendente | — |
 | Frontend | `@frontend+` | ⬜ Pendente | — |
 | Guardian | `@guardian` | ⬜ Pendente | — |
-| Git | `@git-master` | ⬜ Pendente | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review

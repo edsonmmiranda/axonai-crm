@@ -47,7 +47,7 @@ FRAMEWORK_PATHS=(
 # sprints/active/, sprints/done/ — sprints do projeto
 # prds/ — PRDs gerados pelo @spec-writer (artefato de trabalho)
 # src/, app/, public/, components/ — código da aplicação
-# docs/APRENDIZADOS.md, docs/stack.md, docs/schema_snapshot.json
+# docs/APRENDIZADOS.md, docs/stack.md
 # supabase/migrations/ (exceto bootstrap inicial)
 # design_system/telas_prontas/ — mockups específicos do projeto
 # .env*, package.json, package-lock.json, pnpm-lock.yaml

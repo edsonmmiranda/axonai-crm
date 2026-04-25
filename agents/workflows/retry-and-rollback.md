@@ -27,22 +27,12 @@ Categorize a falha:
 |---|---|---|
 | Mudanças no working tree (não commitadas) | **Tech Lead direto** | `git restore <arquivos>` ou `git restore .` |
 | Arquivos novos não rastreados (criados pelo agente) | **Tech Lead direto** | `git clean -fd <paths>` restrito ao escopo do agente |
-| Commit já feito (precisa de revert) | **Delegar a `@git-master`** | `git revert <hash>` |
-| Múltiplos commits em sequência | **Delegar a `@git-master`** | `git revert` em ordem inversa |
+| Commit já feito (precisa de revert) | **Tech Lead direto** | `git revert <hash>` |
+| Múltiplos commits em sequência | **Tech Lead direto** | `git revert` em ordem inversa (do mais recente ao mais antigo) |
 | Migração criada mas não aplicada | **Tech Lead direto** | `rm supabase/migrations/<timestamp>_bad.sql` |
 | Migração já aplicada ao banco | **Delegar a `@db-admin`** | cria migração inversa |
 
-**Regra:** o `@git-master` só entra em cena quando a história do git já registrou algo (commit) ou a operação é destrutiva/irreversível. Rollback de working tree é trivial e **não** justifica uma troca de persona — o Tech Lead executa direto para evitar fricção.
-
-**Template de delegação ao `@git-master` (apenas nos casos acima):**
-
-```
-@git-master, faça rollback via `git revert` das mudanças do agente [@agent-name]:
-
-SITUAÇÃO: commit <hash> / múltiplos commits da sprint <XX>
-ARQUIVOS AFETADOS: [lista]
-MOTIVO: [descrição da falha]
-```
+**Regra de rollback via git:** sempre `git revert` — gera um novo commit inverso preservando a história. **Nunca** `git reset --hard` nem `git push --force`.
 
 ### Passo 4: RETRY com instruções mais claras
 Re-delegue ao agente com:

@@ -22,27 +22,23 @@ supabase db push
 
 ## Preflight probe
 
-Antes de qualquer sprint, confirme que os helpers estão presentes. **Probe completo** (cobre bootstrap inicial e upgrades do framework):
+Antes de qualquer sprint, confirme que os helpers estão presentes chamando via MCP:
 
-```typescript
-// 1. Bootstrap mínimo presente?
-const { error: baseErr } = await supabase.rpc('get_schema_tables');
-if (baseErr?.message?.includes('does not exist')) {
-  throw new Error(
-    'Framework bootstrap migration not applied. Run `supabase db push` to install the helper RPCs.'
-  );
-}
-
-// 2. Helpers de auditoria presentes? (adicionados após o bootstrap inicial)
-const { error: auditErr } = await supabase.rpc('get_rls_status', { p_table_name: 'nonexistent' });
-if (auditErr?.message?.includes('does not exist')) {
-  throw new Error(
-    'Framework bootstrap is outdated (missing audit helpers). Run `supabase db push` to upgrade.'
-  );
-}
+```
+-- 1. Bootstrap mínimo presente?
+mcp__supabase__execute_sql: "SELECT * FROM get_schema_tables() LIMIT 1"
 ```
 
-Se qualquer probe falhar com `function ... does not exist`, pare e peça ao usuário para aplicar/atualizar o bootstrap antes de continuar.
+Se retornar erro `function get_schema_tables() does not exist` → bootstrap não aplicado. Pare e peça ao usuário para rodar `supabase db push`.
+
+```
+-- 2. Helpers de auditoria presentes? (adicionados após o bootstrap inicial)
+mcp__supabase__execute_sql: "SELECT * FROM get_rls_status('nonexistent') LIMIT 1"
+```
+
+Se retornar erro `function get_rls_status() does not exist` → bootstrap desatualizado. Pare e peça ao usuário para rodar `supabase db push`.
+
+Se qualquer probe falhar, **não prossiga** — helpers ausentes invalidam toda introspecção.
 
 ---
 
@@ -158,28 +154,31 @@ $$;
 
 ## Uso típico (introspecção antes de migração)
 
-```typescript
-import { createClient } from '@supabase/supabase-js';
+Chame via MCP, **somente o necessário** para o sprint em andamento:
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-// 1. Listar tabelas
-const { data: tables } = await supabase.rpc('get_schema_tables');
-
-// 2. Detalhes de uma tabela
-const { data: columns } = await supabase.rpc('get_table_columns', { p_table_name: 'leads' });
-const { data: indexes } = await supabase.rpc('get_table_indexes', { p_table_name: 'leads' });
-const { data: policies } = await supabase.rpc('get_table_policies', { p_table_name: 'leads' });
-
-// 3. Analisar estado atual
-const tableExists  = tables.some(t => t.table_name === 'leads');
-const columnExists = columns?.some(c => c.column_name === 'notes');
-const indexExists  = indexes?.some(i => i.index_name === 'idx_leads_email');
-const policyExists = policies?.some(p => p.policy_name === 'users_own_leads');
 ```
+-- 1. Listar tabelas existentes
+mcp__supabase__execute_sql: "SELECT * FROM get_schema_tables()"
+-- Retorna: [{ table_name: "leads", table_type: "BASE TABLE" }, ...]
+
+-- 2. Colunas de uma tabela específica
+mcp__supabase__execute_sql: "SELECT * FROM get_table_columns('leads')"
+-- Retorna: [{ column_name, data_type, is_nullable, column_default, character_maximum_length }, ...]
+
+-- 3. Índices de uma tabela
+mcp__supabase__execute_sql: "SELECT * FROM get_table_indexes('leads')"
+-- Retorna: [{ index_name, index_definition }, ...]
+
+-- 4. Políticas RLS de uma tabela
+mcp__supabase__execute_sql: "SELECT * FROM get_table_policies('leads')"
+-- Retorna: [{ policy_name, policy_definition, policy_command }, ...]
+```
+
+Com os resultados em mãos, analise o estado atual antes de gerar qualquer migration:
+
+- `table_name` presente na lista → tabela existe
+- `column_name` presente nas colunas → coluna existe (não use `ADD COLUMN`, use `ADD COLUMN IF NOT EXISTS` de todo jeito)
+- `index_name` presente nos índices → índice já existe
 
 ---
 
@@ -219,40 +218,16 @@ END $$;
 
 ---
 
-## Snapshot local (cache offline)
+## Fallback (se MCP offline)
 
-Após leitura bem-sucedida do banco, salve snapshot em `docs/schema_snapshot.json`:
+**Não há cache local.** Se o MCP Supabase não responder, pare e reporte ao Tech Lead:
 
-```typescript
-const schemaSnapshot = {
-  timestamp: new Date().toISOString(),
-  tables,
-  tableDetails: {} as Record<string, unknown>,
-};
-
-for (const table of tables) {
-  const [{ data: columns }, { data: indexes }, { data: policies }] = await Promise.all([
-    supabase.rpc('get_table_columns', { p_table_name: table.table_name }),
-    supabase.rpc('get_table_indexes', { p_table_name: table.table_name }),
-    supabase.rpc('get_table_policies', { p_table_name: table.table_name }),
-  ]);
-  schemaSnapshot.tableDetails[table.table_name] = { columns, indexes, policies };
-}
-
-import { writeFileSync } from 'node:fs';
-writeFileSync('docs/schema_snapshot.json', JSON.stringify(schemaSnapshot, null, 2));
+```
+MCP Supabase indisponível — não consigo introspectar o schema.
+Veja docs/setup/supabase-mcp.md para diagnóstico.
 ```
 
----
-
-## Fallback (se a conexão falhar)
-
-Use `docs/schema_snapshot.json` como única fonte cacheada. Sempre adicione aviso na migração gerada a partir de cache:
-
-```sql
--- WARNING: Generated from cached schema (last updated: <timestamp>)
--- Verify schema before applying migration
-```
+Não gere migration sem introspecção real — schema assumido é schema errado.
 
 ---
 

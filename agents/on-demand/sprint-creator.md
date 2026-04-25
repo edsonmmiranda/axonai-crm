@@ -206,7 +206,7 @@ Está correto? (Sim/Não/Ajustar)
 
 **Não reinvente a estrutura** — os templates são a fonte da verdade. Substitua placeholders pelas respostas coletadas e **mantenha o marcador `**Nível:** LIGHT` ou `**Nível:** STANDARD` no topo intacto** — o Sanity Checker lê esse marcador.
 
-**Naming:** `sprints/active/sprint_[number]_[short-name].md` (ambos os níveis — o nível é detectado pelo marcador, não pelo nome do arquivo). Quando o sprint for concluído, o `@git-master` ou o Tech Lead move o arquivo para `sprints/done/`.
+**Naming:** `sprints/active/sprint_[number]_[short-name].md` (ambos os níveis — o nível é detectado pelo marcador, não pelo nome do arquivo). Quando o sprint for concluído, o Tech Lead move o arquivo para `sprints/done/` via `git mv` antes do commit final.
 
 ## Step 4.5: preencher a Recomendação de Execução
 
@@ -382,9 +382,9 @@ Siga [`agents/conventions/on-demand.md`](../conventions/on-demand.md):
 - Invocação explícita do usuário
 - Intenção descrita em linguagem natural
 - Opcionalmente: referência a reference module
-- Para contexto de schema (quando a sprint envolve tabelas existentes): [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json)
+- Para contexto de schema (quando a sprint envolve tabelas existentes): consulte via MCP (`mcp__supabase__list_tables`) somente se necessário.
 
-> ⛔ **NUNCA leia `supabase/migrations/`** para escrever o sprint. Migrations são histórico write-only. Use apenas o snapshot para referenciar estado atual do banco.
+> ⛔ **NUNCA leia `supabase/migrations/`** para escrever o sprint. Migrations são histórico write-only.
 
 **Outputs:**
 - Sprint file em `sprints/active/sprint_[N]_[name].md` usando o template correto

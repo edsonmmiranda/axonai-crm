@@ -181,7 +181,7 @@ Recomendação: Tech Lead delega correção ao @backend com este output literal.
 4. **Sem `it.skip`, `describe.skip`, `it.todo`.** Teste que não pode rodar agora é escalação, não skip.
 5. **Sem E2E, sem component tests, sem unit tests.** Seu escopo é **apenas** integration tests de Server Actions. Pedido desses → orientar Tech Lead a invocar `@qa` on-demand.
 6. **Não edite o template.** [`server_actions_test.md`](../../docs/templates/server_actions_test.md) só muda por decisão do Tech Lead. Se você precisa de padrão novo, escale.
-7. **Sem commit.** Você produz arquivos de teste; o `@git-master` commita depois do GATE 4.5 passar.
+7. **Sem commit.** Você produz arquivos de teste; o Tech Lead commita depois do GATE 4.5 passar.
 8. **Leitura do template é obrigatória a cada invocação.** Não confie em memória de sessão — o template pode ter evoluído.
 
 ---

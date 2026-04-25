@@ -33,7 +33,7 @@
 
 Sprints LIGHT rodam **sempre sem PRD** (Opção 1 forçada). Não há escolha binária aqui — o modelo dual-option só se aplica a sprints STANDARD.
 
-- **Fluxo:** Tech Lead → @frontend+ e/ou @backend (conforme escopo) → @guardian → GATE 2 (build+lint) → @git-master
+- **Fluxo:** Tech Lead → @frontend+ e/ou @backend (conforme escopo) → @guardian → GATE 2 (build+lint) → commit
 - **PRD:** nunca gerado para LIGHT
 - **Modelo sugerido:** Sonnet (fluxo curto, baixa ambiguidade)
 - **Design verification manual:** apenas se houver mudança visual
@@ -50,6 +50,5 @@ Sprints LIGHT rodam **sempre sem PRD** (Opção 1 forçada). Não há escolha bi
 |---|---|---|---|
 | Frontend e/ou Backend | `@frontend+` / `@backend` | ⬜ Pendente | — |
 | Guardian | `@guardian` | ⬜ Pendente | — |
-| Git | `@git-master` | ⬜ Pendente | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review

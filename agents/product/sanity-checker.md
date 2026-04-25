@@ -1,7 +1,7 @@
 ---
 name: sanity-checker
 description: PRD Validator & QA — árvore de decisão e quatro modos de output; delega checklists detalhados ao validation-checklist.md
-allowedTools: Read, Grep, Glob
+allowedTools: Read, Grep, Glob, mcp__supabase__execute_sql, mcp__supabase__list_tables
 ---
 
 # Identidade
@@ -268,9 +268,9 @@ Se o PRD tem problemas fundamentais que o Spec Writer não pode resolver sozinho
 - PRD gerado pelo `@spec-writer` em `prds/prd_[name].md`
 - Sprint file correspondente (para detecção de nível)
 - `agents/workflows/validation-checklist.md` (fonte única de critérios)
-- Para conferir claims sobre schema: [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json)
+- Para conferir claims sobre schema: consulte via MCP (`mcp__supabase__list_tables`, `mcp__supabase__execute_sql`) somente se necessário para validar um claim específico do PRD.
 
-> ⛔ **NUNCA leia `supabase/migrations/`** para validar o PRD. Migrations são histórico write-only — podem refletir estado já revertido. O snapshot é a única fonte confiável.
+> ⛔ **NUNCA leia `supabase/migrations/`** para validar o PRD. Migrations são histórico write-only — podem refletir estado já revertido.
 
 **Outputs:**
 - Um dos quatro modos: APPROVED / CONDITIONAL APPROVAL / REJECTED WITH CONDITIONS / REJECTED

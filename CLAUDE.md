@@ -52,7 +52,7 @@ Quando o usuário pedir auditoria do banco (frases como "audite o banco", "valid
 | **Diretrizes de segurança (fonte única)** | [`docs/conventions/security.md`](docs/conventions/security.md) |
 | Workflow completo, gates, rollback | [`agents/00_TECH_LEAD.md`](agents/00_TECH_LEAD.md) |
 | Stack esperado do projeto | [`docs/stack.md`](docs/stack.md) |
-| Schema real do banco | [`docs/schema_snapshot.json`](docs/schema_snapshot.json) |
+| Schema real do banco | MCP Supabase — ver [`docs/setup/supabase-mcp.md`](docs/setup/supabase-mcp.md) (pré-requisito de instalação) |
 | Paths canônicos e padrões de UI para CRUDs *(ler só se o sprint envolve CRUD)* | [`docs/conventions/crud.md`](docs/conventions/crud.md) |
 | Camadas de memória (onde escrever o quê) | [`agents/workflows/memory-layers.md`](agents/workflows/memory-layers.md) |
 | Design system (fonte única) | [`design_system/README.md`](design_system/README.md) |

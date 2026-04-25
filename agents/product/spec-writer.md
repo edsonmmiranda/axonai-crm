@@ -1,7 +1,7 @@
 ---
 name: spec-writer
 description: Technical Product Manager (TPM) — traduz sprints em PRDs técnicos estritos com template adequado à complexidade
-allowedTools: Read, Write, Grep, Glob
+allowedTools: Read, Write, Grep, Glob, mcp__supabase__execute_sql, mcp__supabase__list_tables
 ---
 
 # Identidade
@@ -13,10 +13,10 @@ allowedTools: Read, Write, Grep, Glob
 
 - **Sprint file:** lógica de negócio.
 - **Design refs:** estrutura de UI (se fornecida em `design_refs/`).
-- **Schema real do banco:** [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json) — fonte única da verdade para tabelas, colunas, índices e policies RLS.
+- **Schema real do banco:** consulte via MCP (`mcp__supabase__list_tables`, `mcp__supabase__execute_sql`) **somente se o sprint exige saber quais tabelas/colunas já existem**. Não carregue preventivamente.
 - **Estrutura atual do código:** descoberta via `Glob`/`Grep` em `src/app/`, `src/components/`, `src/lib/integrations/`.
 
-> ⛔ **NUNCA leia `supabase/migrations/`.** Migrations são histórico write-only — podem mostrar estado já revertido ou inconsistente. O único retrato confiável do banco é `schema_snapshot.json`. Se o snapshot parece desatualizado, reporte ao Tech Lead para que `@db-admin` re-rode introspecção; não tente reconstruir o schema a partir dos arquivos SQL.
+> ⛔ **NUNCA leia `supabase/migrations/`.** Migrations são histórico write-only — podem mostrar estado já revertido. Se o MCP não responder, reporte ao Tech Lead e veja `docs/setup/supabase-mcp.md`.
 
 ---
 
@@ -170,7 +170,7 @@ Se o sprint tem ambiguidade, informação faltando ou requisitos conflitantes, *
 **Inputs:**
 - Sprint file (`sprints/active/sprint_XX_*.md`)
 - Design refs (se disponíveis)
-- Estado atual do sistema (`docs/schema_snapshot.json` + descoberta em `src/` via Glob/Grep)
+- Estado atual do sistema (descoberta em `src/` via Glob/Grep; schema via MCP quando necessário)
 
 **Outputs:**
 - PRD salvo em `prds/prd_[name].md` usando `prd_standard.md` (score 0-8) ou `prd_complete.md` (score 9+)

@@ -156,7 +156,7 @@ Toda Server Action produzida pelo `@backend` **deve** ter integration test corre
 1. **Nunca** modifique `.env.local`
 2. **Nunca** rode `git reset --hard` nem `git push --force`
 3. **Nunca** pule hooks (`--no-verify`) nem bypass signing
-4. **Migrations** vivem em `supabase/migrations/` — único writer é `@db-admin`. Nunca leia como fonte de estado: são histórico write-only (podem refletir estado revertido). Estado real vem de `docs/schema_snapshot.json`.
+4. **Migrations** vivem em `supabase/migrations/` — único writer é `@db-admin`. Nunca leia como fonte de estado: são histórico write-only (podem refletir estado revertido). Estado real vem do banco via MCP (`mcp__supabase__list_tables`, `mcp__supabase__execute_sql`). Veja `docs/setup/supabase-mcp.md`.
 
 ---
 
@@ -164,7 +164,6 @@ Toda Server Action produzida pelo `@backend` **deve** ter integration test corre
 
 | Arquivo | Único writer | Outros agentes |
 |---|---|---|
-| `docs/schema_snapshot.json` | `@db-admin` (após cada introspecção) | Todos lêem; ninguém mais escreve |
 | `docs/APRENDIZADOS.md` | Qualquer agente que descubra algo surpreendente | Todos lêem na fase de planejamento |
 | `docs/conventions/standards.md` | Tech Lead | Todos lêem; ninguém mais escreve |
 | `tests/integration/**` | `@qa-integration` | Todos lêem; ninguém mais escreve |
@@ -182,6 +181,7 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 1. `agents/ops/db-admin.md`
 2. `docs/templates/db_introspection.md`
 3. `docs/conventions/security.md` §2 (RLS e isolamento de dados)
+4. Confirmar que MCP Supabase está conectado antes de qualquer introspecção (`docs/setup/supabase-mcp.md`)
 
 ### Ao adotar `@backend`
 1. `agents/stack/backend.md`
@@ -219,9 +219,6 @@ Leia **apenas** os arquivos listados como pré-requisito no arquivo do agente. N
 ### Ao adotar `@sanity-checker`
 1. `agents/product/sanity-checker.md`
 2. `agents/workflows/validation-checklist.md`
-
-### Ao adotar `@git-master`
-1. `agents/ops/git-master.md`
 
 ### Ao adotar `@api-integrator`
 1. `agents/integrations/api-integrator.md`

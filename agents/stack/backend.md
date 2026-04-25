@@ -121,10 +121,10 @@ Se encontrar bloqueio (schema real diverge do PRD, ambiguidade em regra de negó
 
 **Inputs:**
 - PRD (Opção 2) ou sprint file (Opção 1 / LIGHT)
-- Schema real do banco: [`docs/schema_snapshot.json`](../../docs/schema_snapshot.json) — fonte única da verdade (tabelas, colunas, RLS)
+- Schema real do banco: consulte via MCP (`mcp__supabase__list_tables`, `mcp__supabase__execute_sql`) **somente se o sprint exige conhecer tabelas/colunas existentes**. Não carregue preventivamente.
 - Reference module (se especificado)
 
-> ⛔ **NUNCA leia `supabase/migrations/`.** Migrations são histórico write-only e podem mostrar estado já revertido. Se o snapshot parece desatualizado, reporte ao Tech Lead para que `@db-admin` re-rode introspecção.
+> ⛔ **NUNCA leia `supabase/migrations/`.** Migrations são histórico write-only e podem mostrar estado já revertido. Se o MCP não responder, reporte ao Tech Lead e veja `docs/setup/supabase-mcp.md`.
 
 **Outputs:**
 - Server Actions em `src/lib/actions/[module].ts`
