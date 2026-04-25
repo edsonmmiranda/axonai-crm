@@ -1,3 +1,24 @@
 @import 'tailwindcss';
 @import '../../design_system/generated/variables.css';
 @config '../../tailwind.config.ts';
+
+/* ── Admin area theme overrides ─────────────────────────────────────────
+ * Applied to the [data-admin] wrapper in src/app/(admin)/layout.tsx.
+ * Replaces the blue action-primary with neutral-700 (slate) so the admin
+ * area is visually distinct from the customer app (D-4).
+ * Paired variants defined for both light and dark to honour dark mode.
+ * ─────────────────────────────────────────────────────────────────────── */
+[data-admin] {
+  --ds-action-primary-bg:        var(--ds-color-neutral-700);   /* 45 67 92  */
+  --ds-action-primary-bg-hover:  var(--ds-color-neutral-600);   /* 61 90 122 */
+  --ds-action-primary-bg-active: var(--ds-color-neutral-800);   /* 26 42 61  */
+  --ds-action-primary-fg:        var(--ds-color-neutral-0);     /* white     */
+  --ds-surface-inverse:          var(--ds-color-neutral-950);   /* deepest slate for brand panel */
+  --ds-shadow-focus:             0 0 0 3px rgb(var(--ds-color-neutral-700) / 0.40);
+}
+
+[data-admin][data-theme="dark"] {
+  --ds-action-primary-bg:        var(--ds-color-neutral-500);   /* 76 115 154 */
+  --ds-action-primary-bg-hover:  var(--ds-color-neutral-400);   /* 159 178 199 */
+  --ds-action-primary-bg-active: var(--ds-color-neutral-600);   /* 61 90 122 */
+}

@@ -96,6 +96,18 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-25 · [NEXT] Route groups não adicionam prefixo de URL — conflito de paths
+
+**Regra:** `src/app/(admin)/login/` resolve para `/login`, conflitando com `src/app/(auth)/login/`. Para prefixar rotas admin em `/admin/*`, usar pasta real `src/app/admin/` — não route group `(admin)`.
+
+### 2026-04-25 · [NEXT] `process.env[variável]` não funciona em Client Components
+
+**Regra:** Next.js só substitui `NEXT_PUBLIC_*` com acesso literal (`process.env.NEXT_PUBLIC_X`). Acesso dinâmico via `process.env[name]` funciona server-side mas retorna `undefined` no bundle do browser. `src/lib/supabase/client.ts` precisou de refactor para usar acesso literal.
+
+### 2026-04-25 · [NEXT] Redirecionamentos cruzados entre páginas MFA criam loop
+
+**Regra:** Páginas de MFA (enroll ↔ challenge) com redirecionamentos automáticos bidirecionais criam loop quando há estado inconsistente (ex: fator unverified). O roteamento correto pertence ao login form (via `getAuthenticatorAssuranceLevel`), não às páginas de MFA. Páginas de MFA devem exibir erro + link manual, nunca redirecionar automaticamente entre si.
+
 ### 2026-04-24 · [TIPO] Grep por `role === 'member'` não captura `Record<SessionRole, string>` com chave literal
 
 **Regra:** Em refactors de SessionRole, grepar só por comparações (`=== 'member'`) deixa escapar `Record<Role, string>` com chave literal e Zod `z.enum(['admin', 'member'])`. O TypeScript break-on-build é o catch-all real — não depender só do grep, depender do build como segunda passagem.

@@ -2,9 +2,19 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import process from 'node:process';
 
-const PROTECTED_IMPORT = '@/lib/auth/platformAdmin';
 const SCAN_ROOTS = ['src/app/(app)', 'src/lib/actions'];
-const IMPORT_RE = /(?:from\s+['"]|require\(\s*['"])@\/lib\/auth\/platformAdmin\b/;
+
+// Patterns forbidden in imports from customer-app files
+const FORBIDDEN = [
+  {
+    re: /(?:from\s+['"]|require\(\s*['"])@\/lib\/auth\/platformAdmin\b/,
+    label: '@/lib/auth/platformAdmin',
+  },
+  {
+    re: /(?:from\s+['"]|require\(\s*['"])[^'"]*\(admin\)[^'"]*['"]/,
+    label: 'src/app/(admin)/**',
+  },
+];
 
 async function walk(dir, out = []) {
   try {
@@ -25,15 +35,19 @@ for (const root of SCAN_ROOTS) {
   const files = await walk(root);
   for (const f of files) {
     const content = await readFile(f, 'utf8');
-    if (IMPORT_RE.test(content)) {
-      violations.push(relative(process.cwd(), f));
+    for (const { re, label } of FORBIDDEN) {
+      if (re.test(content)) {
+        violations.push({ file: relative(process.cwd(), f), label });
+      }
     }
   }
 }
 
 if (violations.length > 0) {
-  console.error('❌ check-admin-isolation: customer-app files must not import @/lib/auth/platformAdmin');
-  for (const v of violations) console.error(`  - ${v}`);
+  console.error('❌ check-admin-isolation: customer-app files must not import admin-only modules');
+  for (const { file, label } of violations) {
+    console.error(`  - ${file}  (forbidden: ${label})`);
+  }
   process.exit(1);
 }
-console.log(`✅ check-admin-isolation: ${SCAN_ROOTS.join(', ')} — clean of ${PROTECTED_IMPORT}`);
+console.log(`✅ check-admin-isolation: ${SCAN_ROOTS.join(', ')} — clean`);

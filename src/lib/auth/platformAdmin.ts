@@ -13,6 +13,7 @@ export interface PlatformAdminSnapshot {
   role: PlatformAdminRole;
   isActive: boolean;
   createdAt: string;
+  email: string;
 }
 
 export const getPlatformAdmin = cache(async (): Promise<PlatformAdminSnapshot | null> => {
@@ -38,6 +39,7 @@ export const getPlatformAdmin = cache(async (): Promise<PlatformAdminSnapshot | 
     role: row.role as PlatformAdminRole,
     isActive: row.is_active as boolean,
     createdAt: row.created_at as string,
+    email: user.email ?? '',
   };
 });
 
