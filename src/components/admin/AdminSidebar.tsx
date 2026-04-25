@@ -1,38 +1,89 @@
-import { Building2, LayoutDashboard, CreditCard } from 'lucide-react';
+'use client';
+
+import { Building2, CreditCard, LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+
+import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
+
+interface NavItem {
+  href: string;
+  label: string;
+  Icon: typeof LayoutDashboard;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { href: '/admin/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
+  { href: '/admin/organizations', label: 'Organizations', Icon: Building2 },
+  { href: '/admin/plans', label: 'Plans', Icon: CreditCard },
+];
+
+const NAV_BASE =
+  'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:shadow-focus';
+const NAV_INACTIVE =
+  'text-text-secondary hover:bg-surface-sunken hover:text-action-ghost-fg';
+const NAV_ACTIVE =
+  'bg-action-primary/10 border border-action-primary/20 text-action-primary hover:bg-action-primary/20';
 
 export function AdminSidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  function isActive(href: string): boolean {
+    if (href === '/admin/dashboard') return pathname === href;
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/admin/login');
+    router.refresh();
+  }
+
   return (
-    <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-border bg-surface-raised h-full">
-      <div className="flex items-center gap-2.5 px-4 py-4 border-b border-border">
-        <div className="bg-action-primary rounded-lg size-8 flex items-center justify-center shrink-0">
-          <LayoutDashboard className="size-4 text-action-primary-fg" />
+    <aside className="hidden md:flex flex-col w-64 h-full border-r border-border bg-surface-raised flex-shrink-0 z-30 shadow-sm">
+      <div className="p-6 pb-2">
+        <div className="flex gap-3 items-center">
+          <div className="bg-action-primary rounded-xl size-10 shadow-lg flex items-center justify-center">
+            <LayoutDashboard className="size-5 text-action-primary-fg" />
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-text-primary text-base font-bold leading-tight tracking-tight">
+              Axon Admin
+            </h1>
+            <p className="text-text-secondary text-xs font-normal">Plataforma</p>
+          </div>
         </div>
-        <span className="font-bold text-text-primary text-sm tracking-tight">Axon Admin</span>
       </div>
-      <nav className="flex-1 p-3 space-y-0.5">
-        <Link
-          href="/admin/dashboard"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-surface-sunken hover:text-text-primary transition-colors"
-        >
-          <LayoutDashboard className="size-4" />
-          Dashboard
-        </Link>
-        <Link
-          href="/admin/organizations"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-surface-sunken hover:text-text-primary transition-colors"
-        >
-          <Building2 className="size-4" />
-          Organizations
-        </Link>
-        <Link
-          href="/admin/plans"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-surface-sunken hover:text-text-primary transition-colors"
-        >
-          <CreditCard className="size-4" />
-          Plans
-        </Link>
+
+      <nav className="flex-1 flex flex-col gap-2 px-4 py-6 overflow-y-auto">
+        {NAV_ITEMS.map(({ href, label, Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className={cn(NAV_BASE, isActive(href) ? NAV_ACTIVE : NAV_INACTIVE)}
+          >
+            <Icon className="size-5" />
+            <p className="text-sm font-medium">{label}</p>
+          </Link>
+        ))}
       </nav>
+
+      <div className="p-4 border-t border-border">
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-surface-sunken transition-colors text-left group focus-visible:outline-none focus-visible:shadow-focus"
+          aria-label="Sair"
+        >
+          <LogOut className="size-5 text-text-secondary group-hover:text-action-ghost-fg" />
+          <span className="text-text-secondary text-sm font-medium group-hover:text-action-ghost-fg">
+            Sair
+          </span>
+        </button>
+      </div>
     </aside>
   );
 }

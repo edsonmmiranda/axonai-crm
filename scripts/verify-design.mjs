@@ -91,17 +91,23 @@ for (const file of files) {
   }
 }
 
-// Page-level: pages internas em src/app/**/page.tsx devem ter AppLayout
-// (direto no page.tsx ou em algum layout.tsx ancestor).
-// Pulamos rotas públicas marcadas por route groups (public), (marketing), (auth).
+// Page-level: pages internas em src/app/**/page.tsx devem ter um shell (AppLayout
+// para o app cliente, AdminShell para o app admin), direto no page.tsx ou em
+// algum layout.tsx ancestor. Pulamos rotas públicas marcadas por route groups
+// (public), (marketing), (auth) e telas admin de fluxo de autenticação que são
+// standalone (login, mfa-enroll, mfa-challenge, unauthorized).
+const SHELL_RE = /\b(AppLayout|AdminShell)\b/;
+const ADMIN_STANDALONE_RE = /^src\/app\/admin\/(login|mfa-enroll|mfa-challenge|unauthorized)\/page\.tsx$/;
+
 const internalPages = files.filter(f =>
   /^src\/app\/.*\/page\.tsx$/.test(f) &&
-  !/\((public|marketing|auth)\)/.test(f)
+  !/\((public|marketing|auth)\)/.test(f) &&
+  !ADMIN_STANDALONE_RE.test(f)
 );
 
 for (const page of internalPages) {
   const content = readFileSync(page, 'utf8');
-  if (/\bAppLayout\b/.test(content)) continue;
+  if (SHELL_RE.test(content)) continue;
 
   let cursor = page.replace(/\/page\.tsx$/, '');
   let found = false;
@@ -110,7 +116,7 @@ for (const page of internalPages) {
     if (existsSync(layoutPath)) {
       try {
         const c = readFileSync(layoutPath, 'utf8');
-        if (/\bAppLayout\b/.test(c)) { found = true; break; }
+        if (SHELL_RE.test(c)) { found = true; break; }
       } catch {}
     }
     const next = cursor.slice(0, cursor.lastIndexOf('/'));
@@ -124,7 +130,7 @@ for (const page of internalPages) {
       line: 1,
       rule: 'missing-applayout',
       snippet: '(page.tsx)',
-      desc: 'Página interna sem AppLayout (nem direto, nem via layout.tsx ancestor).',
+      desc: 'Página interna sem shell (AppLayout/AdminShell), nem direto, nem via layout.tsx ancestor.',
     });
   }
 }
