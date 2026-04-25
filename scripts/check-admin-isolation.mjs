@@ -4,6 +4,9 @@ import process from 'node:process';
 
 const SCAN_ROOTS = ['src/app/(app)', 'src/lib/actions'];
 
+// Directories that are intentionally admin-only — excluded from isolation scan
+const EXCLUDED_PREFIXES = ['src/lib/actions/admin'];
+
 // Patterns forbidden in imports from customer-app files
 const FORBIDDEN = [
   {
@@ -34,10 +37,13 @@ const violations = [];
 for (const root of SCAN_ROOTS) {
   const files = await walk(root);
   for (const f of files) {
+    const rel = relative(process.cwd(), f).replace(/\\/g, '/');
+    // Skip files that live in admin-only directories
+    if (EXCLUDED_PREFIXES.some((p) => rel.startsWith(p))) continue;
     const content = await readFile(f, 'utf8');
     for (const { re, label } of FORBIDDEN) {
       if (re.test(content)) {
-        violations.push({ file: relative(process.cwd(), f), label });
+        violations.push({ file: rel, label });
       }
     }
   }

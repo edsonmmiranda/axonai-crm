@@ -35,7 +35,7 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 
 | # | Decisão | Escolha | Sprint |
 |---|---|---|---|
-| D-1 | Onboarding de cliente | **Admin-gated.** `/signup` público desativado via feature flag `enable_public_signup=false`. Self-service retorna na fase 2. | 01 |
+| D-1 | Onboarding de cliente | **Admin-gated entregue.** CRUD de organizations operacional no Sprint 05: admin cria org, gera link de convite para primeiro admin. Self-service retorna na fase 2. | 05 ✅ |
 | D-2 | Transição de status de subscription | **Lazy-check no middleware admin** + **pg_cron horário** que reavalia `trial`/`past_due`/`cancelada`. Customer app lê `status` derivado. | 13 |
 | D-3 | Origin isolation | **Subdomínio dedicado** `admin.<host>`. Customer host recusa qualquer rota `(admin)`. | 13 |
 | D-4 | Branding admin | **"Axon Admin"**, paleta neutra escura. Tokens definidos no Sprint 04. | 04 |
@@ -55,7 +55,16 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 
 ---
 
-## 5. Convenções específicas deste projeto
+## 5. Estado de schema (sprint_admin_05, 2026-04-25)
+
+- Coluna `organizations.plan` **removida** — todos os callers usam `getOrgPlan()` / `get_current_subscription`.
+- `pg_trgm` instalado — índice GIN em `organizations.name` para busca por nome.
+- `is_calling_org_active()` ativa — 55 políticas customer bloqueiam orgs suspensas via RLS.
+- RPCs: `admin_create_organization`, `admin_suspend_organization`, `admin_reactivate_organization` (todas SECURITY DEFINER, anon revogado).
+
+---
+
+## 6. Convenções específicas deste projeto
 
 - **Prefixo de sprint files do ciclo admin:** `sprint_admin_XX_` (ex: `sprint_admin_03_audit_log.md`).
 - **Audit log:** toda mutation sensível admin chama `audit_write` dentro da mesma transação. Ver `docs/conventions/audit.md`.

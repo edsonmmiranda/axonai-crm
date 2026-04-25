@@ -377,13 +377,13 @@ Score 15 dispara Opção 2 forçada (item 1 da árvore). Lógica de negócio nov
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
-| PRD Técnico (Implementation Plan) | `@spec-writer` | ⬜ Pendente | — |
-| Sanity Check | `@sanity-checker` | ⬜ Pendente | — |
-| Banco de dados | `@db-admin` | ⬜ Pendente | — |
-| Server Actions | `@backend` | ⬜ Pendente | — |
-| Integration tests | `@qa-integration` | ⬜ Pendente | — |
-| Frontend | `@frontend+` | ⬜ Pendente | — |
-| Guardian | `@guardian` | ⬜ Pendente | — |
-| Git | `@git-master` | ⬜ Pendente | — |
+| PRD Técnico (Implementation Plan) | `@spec-writer` | ✅ Concluído | `prds/prd_admin_05_organizations_crud.md` |
+| Sanity Check | `@sanity-checker` | ✅ Concluído (APROVAÇÃO CONDICIONAL — estimativas de tempo e edge case de rede aplicados durante execução) | — |
+| Banco de dados | `@db-admin` | ✅ Concluído | `supabase/migrations/20260425100000_admin_05_organizations_crud.sql` · `docs/conventions/audit.md` · `docs/PROJECT_CONTEXT.md` |
+| Server Actions | `@backend` | ✅ Concluído | `src/lib/actions/admin/organizations.ts` · `src/lib/actions/admin/organizations.schemas.ts` · `src/middleware.ts` |
+| Integration tests | `@qa-integration` | ✅ Concluído | `tests/integration/admin-organizations.test.ts` — 25 testes, 0 falhas |
+| Frontend | `@frontend+` | ✅ Concluído | `src/app/admin/organizations/` (3 páginas) · `src/app/(app)/conta-suspensa/page.tsx` · `src/components/admin/organizations/` (7 componentes) · `src/components/admin/AdminSidebar.tsx` · `scripts/check-admin-isolation.mjs` |
+| Guardian | `@guardian` | ✅ Concluído (APROVADO — 1 violação corrigida: nameValue unused em OrganizationCreateForm) | — |
+| Git | `@git-master` | ▶️ Em andamento | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review · n/a — não aplicável

@@ -1,4 +1,4 @@
-import { LayoutDashboard } from 'lucide-react';
+import { Building2, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 
 export function AdminSidebar() {
@@ -18,7 +18,13 @@ export function AdminSidebar() {
           <LayoutDashboard className="size-4" />
           Dashboard
         </Link>
-        {/* Navigation items will be added by sprints 05+ */}
+        <Link
+          href="/admin/organizations"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-text-secondary hover:bg-surface-sunken hover:text-text-primary transition-colors"
+        >
+          <Building2 className="size-4" />
+          Organizations
+        </Link>
       </nav>
     </aside>
   );

@@ -96,4 +96,6 @@ Atualizada por cada sprint. O `@spec-writer` appenda as ações novas no encerra
 
 | action slug | target_type | sprint | descrição |
 |---|---|---|---|
-| *(primeiras ações no Sprint 05)* | | | |
+| `org.create` | `organization` | admin_05 | Onboarding de nova org cliente via admin |
+| `org.suspend` | `organization` | admin_05 | Suspensão administrativa de org |
+| `org.reactivate` | `organization` | admin_05 | Reativação de org previamente suspensa |

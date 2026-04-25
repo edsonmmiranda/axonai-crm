@@ -15,6 +15,13 @@ function getEnv(name: string): string {
 
 const CUSTOMER_PROTECTED_PREFIXES = ['/dashboard'];
 
+const SUSPENSION_BYPASS_PATHS = [
+  '/conta-suspensa',
+  '/login',
+  '/logout',
+  '/admin',
+];
+
 const ADMIN_PUBLIC_PATHS = [
   '/admin/login',
   '/admin/mfa-enroll',
@@ -63,6 +70,30 @@ export async function middleware(request: NextRequest) {
     url.search = '';
     url.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(url);
+  }
+
+  // ── Org suspension check ─────────────────────────────────────────────────
+  // If user is authenticated and the route is a customer route (not admin, not
+  // suspension page, not auth pages), check if their org is suspended.
+  const isSuspensionBypass = SUSPENSION_BYPASS_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+  if (user && !isSuspensionBypass) {
+    const orgId = user.app_metadata?.organization_id as string | undefined;
+    if (orgId) {
+      const { data: org } = await supabase
+        .from('organizations')
+        .select('is_active')
+        .eq('id', orgId)
+        .maybeSingle();
+
+      if (org && (org as { is_active: boolean }).is_active === false) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/conta-suspensa';
+        url.search = '';
+        return NextResponse.redirect(url);
+      }
+    }
   }
 
   // ── Admin area protection ────────────────────────────────────────────────
