@@ -2,6 +2,13 @@
 @import '../../design_system/generated/variables.css';
 @config '../../tailwind.config.ts';
 
+/* image-rendering: pixelated — for crisp QR codes at small sizes.
+ * No native Tailwind utility for this CSS property; declared here so
+ * components can use className="image-pixelated" without inline style. */
+@utility image-pixelated {
+  image-rendering: pixelated;
+}
+
 /* ── Admin area theme overrides ─────────────────────────────────────────
  * Applied to the [data-admin] wrapper in src/app/(admin)/layout.tsx.
  * Replaces the blue action-primary with neutral-700 (slate) so the admin

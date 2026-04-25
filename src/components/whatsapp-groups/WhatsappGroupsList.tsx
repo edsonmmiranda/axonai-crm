@@ -131,7 +131,7 @@ export function WhatsappGroupsList({ groups, hasFilter, metadata }: WhatsappGrou
                     {group.name}
                   </Link>
                 </td>
-                <td className="max-w-[200px] truncate px-3 py-4 text-text-secondary" /* layout exception */>
+                <td className="max-w-52 truncate px-3 py-4 text-text-secondary">
                   {group.description || '—'}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-text-secondary">

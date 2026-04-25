@@ -150,8 +150,7 @@ export function AdminMfaEnrollForm() {
               <img
                 src={qrCode}
                 alt="QR Code MFA"
-                className="size-48 sm:size-52"
-                style={{ imageRendering: 'pixelated' }}
+                className="size-48 sm:size-52 image-pixelated"
               />
             </div>
           </div>
