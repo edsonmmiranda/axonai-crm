@@ -32,6 +32,53 @@ if (files.length === 0) {
   process.exit(0);
 }
 
+// Shells reconhecidos pelo verificador de página interna.
+// Default: AppLayout. Projetos com áreas adicionais (admin, parceiro, embed)
+// registram shells extras via verify-design.config.json ou
+// package.json#verifyDesign.shells. Doc: docs/conventions/verify-design.md
+function loadShells() {
+  const VALID_NAME = /^[A-Z]\w*$/;
+
+  function pick(list, source) {
+    if (!Array.isArray(list) || list.length === 0) return null;
+    const valid = list.filter(s => typeof s === 'string' && VALID_NAME.test(s));
+    const dropped = list.filter(s => !valid.includes(s));
+    if (dropped.length) {
+      console.warn(`verify-design: ignorando shells inválidos em ${source}: ${dropped.join(', ')} (nome deve ser PascalCase)`);
+    }
+    return valid.length ? valid : null;
+  }
+
+  if (existsSync('verify-design.config.json')) {
+    try {
+      const cfg = JSON.parse(readFileSync('verify-design.config.json', 'utf8'));
+      const fromFile = pick(cfg.shells, 'verify-design.config.json');
+      if (fromFile) return fromFile;
+    } catch (e) {
+      console.warn(`verify-design: ignorando verify-design.config.json inválido (${e.message})`);
+    }
+  }
+
+  if (existsSync('package.json')) {
+    try {
+      const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+      if (pkg.verifyDesign !== undefined) {
+        const fromPkg = pick(pkg.verifyDesign?.shells, 'package.json#verifyDesign.shells');
+        if (fromPkg) return fromPkg;
+      }
+    } catch (e) {
+      console.warn(`verify-design: ignorando package.json inválido (${e.message})`);
+    }
+  }
+
+  return ['AppLayout'];
+}
+
+const SHELLS = loadShells();
+const SHELL_RE = new RegExp(
+  `\\b(${SHELLS.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`
+);
+
 const violations = [];
 
 const LINE_RULES = [
@@ -91,9 +138,11 @@ for (const file of files) {
   }
 }
 
-// Page-level: pages internas em src/app/**/page.tsx devem ter AppLayout
-// (direto no page.tsx ou em algum layout.tsx ancestor).
-// Pulamos rotas públicas marcadas por route groups (public), (marketing), (auth).
+// Page-level: pages internas em src/app/**/page.tsx devem ter um shell
+// registrado (default: AppLayout; projetos podem registrar outros via
+// verify-design.config.json ou package.json#verifyDesign.shells), direto
+// no page.tsx ou em algum layout.tsx ancestor. Pulamos rotas marcadas por
+// route groups (public), (marketing), (auth).
 const internalPages = files.filter(f =>
   /^src\/app\/.*\/page\.tsx$/.test(f) &&
   !/\((public|marketing|auth)\)/.test(f)
@@ -101,7 +150,7 @@ const internalPages = files.filter(f =>
 
 for (const page of internalPages) {
   const content = readFileSync(page, 'utf8');
-  if (/\bAppLayout\b/.test(content)) continue;
+  if (SHELL_RE.test(content)) continue;
 
   let cursor = page.replace(/\/page\.tsx$/, '');
   let found = false;
@@ -110,7 +159,7 @@ for (const page of internalPages) {
     if (existsSync(layoutPath)) {
       try {
         const c = readFileSync(layoutPath, 'utf8');
-        if (/\bAppLayout\b/.test(c)) { found = true; break; }
+        if (SHELL_RE.test(c)) { found = true; break; }
       } catch {}
     }
     const next = cursor.slice(0, cursor.lastIndexOf('/'));
@@ -124,7 +173,7 @@ for (const page of internalPages) {
       line: 1,
       rule: 'missing-applayout',
       snippet: '(page.tsx)',
-      desc: 'Página interna sem AppLayout (nem direto, nem via layout.tsx ancestor).',
+      desc: `Página interna sem shell registrado (${SHELLS.join('/')}), nem direto, nem via layout.tsx ancestor.`,
     });
   }
 }
