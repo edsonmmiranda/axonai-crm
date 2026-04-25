@@ -5,6 +5,9 @@
   "engines": {
     "node": ">=20.0.0"
   },
+  "verifyDesign": {
+    "shells": ["AppLayout", "AdminShell"]
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
