@@ -38,7 +38,7 @@ export const CreateOrgSchema = z.object({
   slug:            slugSchema,
   planId:          z.string().uuid('Plano obrigatório'),
   firstAdminEmail: z.string().email('E-mail inválido'),
-  trialDays:       z.number().int().min(1).max(365).default(14),
+  trialDays:       z.number().int().min(1).max(365).optional(),
 });
 
 export const SuspendOrgSchema = z.object({

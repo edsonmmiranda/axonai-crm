@@ -124,6 +124,20 @@ async function getRequestMeta(): Promise<{ ip: string | null; ua: string | null 
   return { ip, ua };
 }
 
+// Reads trial_default_days from platform_settings. Falls back to 14 if absent.
+async function getTrialDefaultDays(supabase: Awaited<ReturnType<typeof createClient>>): Promise<number> {
+  const { data, error } = await supabase
+    .from('platform_settings')
+    .select('value_int')
+    .eq('key', 'trial_default_days')
+    .maybeSingle();
+  if (error || data?.value_int == null) {
+    console.warn('[admin:orgs] trial_default_days unavailable, falling back to 14');
+    return 14;
+  }
+  return data.value_int as number;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Server Actions                                                     */
 /* ------------------------------------------------------------------ */
@@ -360,13 +374,14 @@ export async function createOrganizationAction(
     const { ip, ua } = await getRequestMeta();
 
     const { name, slug, planId, firstAdminEmail, trialDays } = parsed.data;
+    const resolvedTrialDays = trialDays ?? await getTrialDefaultDays(supabase);
 
     const { data: newOrgId, error } = await supabase.rpc('admin_create_organization', {
       p_name:              name,
       p_slug:              slug,
       p_plan_id:           planId,
       p_first_admin_email: firstAdminEmail,
-      p_trial_days:        trialDays,
+      p_trial_days:        resolvedTrialDays,
       p_ip_address:        ip,
       p_user_agent:        ua,
     });

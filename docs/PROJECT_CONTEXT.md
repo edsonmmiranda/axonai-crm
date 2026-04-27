@@ -70,6 +70,17 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 - Hard-enforcement ativo em **7 Server Actions customer** (leads, products, funnels, invitations, whatsapp-groups, product-images, product-documents) via helper `src/lib/limits/enforceLimit.ts`. Convenção `// enforce_limit: not-applicable — <razão>` obrigatória em qualquer nova Server Action de criação de recurso contável que escolha não chamar.
 - RF-LIMIT-1 / T-21 entregues. Sprint 09 traz cache de consumo via materialized view (queries `count(*)`/`SUM` em `enforce_limit` rodam direto por enquanto).
 
+## 5c. Estado de schema (sprint_admin_09, 2026-04-27)
+
+- Tabelas globais novas (sem `organization_id` — exceção documentada em §2): `platform_settings`, `feature_flags`, `legal_policies`, `platform_metrics_snapshot`. Todas FORCE RLS, writes apenas via RPCs SECURITY DEFINER.
+- **`platform_settings`**: key/value tipado com CHECK exatidão (`platform_settings_exactly_one_value`). Seeds: `trial_default_days=14`, `past_due_grace_days=7`, `signup_link_offline_fallback_enabled=true`.
+- **`feature_flags`**: registry canônico em `src/lib/featureFlags/registry.ts` + `get_registered_feature_flag_keys()` (SQL) — **manter sincronizados**. Seeds: `enable_public_signup=false`, `enable_ai_summarization=false`.
+- **`legal_policies`**: append-only por trigger deny UPDATE/DELETE/TRUNCATE (mesmo padrão `audit_log`). Trigger `legal_policies_set_version` (BEFORE INSERT) calcula version via `pg_advisory_xact_lock`. UNIQUE `(kind, version)`.
+- **`platform_metrics_snapshot`**: singleton (id=1). Refresh manual + lazy (>15min). Debounce de audit: pula se mesmo ator refrescou <60s atrás.
+- **`createOrganizationAction`** (Sprint 05) atualizado: lê `trial_default_days` de `platform_settings` com fallback 14. RPC `admin_create_organization` já aceitava `p_trial_days` — mudança foi no Server Action.
+- `audit_write` aceita `target_id=NULL` para tabelas com PK text/int (setting.update, feature_flag.set, metrics.refresh) — key/id vai em `metadata`.
+- RPCs novas: `admin_set_setting`, `admin_set_feature_flag`, `get_registered_feature_flag_keys`, `get_active_feature_flags`, `admin_create_legal_policy`, `get_active_legal_policy`, `refresh_platform_metrics`.
+
 ---
 
 ## 6. Convenções específicas deste projeto

@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, CreditCard, LayoutDashboard, LogOut } from 'lucide-react';
+import { Building2, CreditCard, Flag, Gavel, LayoutDashboard, LogOut, Settings, Timer } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -17,6 +17,12 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/admin/organizations', label: 'Organizations', Icon: Building2 },
   { href: '/admin/plans', label: 'Plans', Icon: CreditCard },
+];
+
+const SETTINGS_ITEMS: NavItem[] = [
+  { href: '/admin/settings/feature-flags', label: 'Feature flags', Icon: Flag },
+  { href: '/admin/settings/trial', label: 'Trial & billing', Icon: Timer },
+  { href: '/admin/settings/legal', label: 'Políticas legais', Icon: Gavel },
 ];
 
 const NAV_BASE =
@@ -69,6 +75,24 @@ export function AdminSidebar() {
             <p className="text-sm font-medium">{label}</p>
           </Link>
         ))}
+
+        {/* Configurações */}
+        <div className="mt-4 flex flex-col gap-1">
+          <div className="flex items-center gap-2 px-3 py-1.5">
+            <Settings className="size-3.5 text-text-muted" />
+            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Configurações</p>
+          </div>
+          {SETTINGS_ITEMS.map(({ href, label, Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(NAV_BASE, isActive(href) ? NAV_ACTIVE : NAV_INACTIVE)}
+            >
+              <Icon className="size-5" />
+              <p className="text-sm font-medium">{label}</p>
+            </Link>
+          ))}
+        </div>
       </nav>
 
       <div className="p-4 border-t border-border">
