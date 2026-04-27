@@ -155,7 +155,7 @@ Antes de submeter, verifique conforme o tipo de template:
 ## Para PRD_STANDARD e PRD_COMPLETE
 
 - [ ] API contract com schemas Zod
-- [ ] Componentes de UI referenciando o contract do design system em [`design_system/components/CONTRACT.md`](../../design_system/components/CONTRACT.md) — tokens semânticos, Radix primitives, variantes `cva`, composição a partir de `src/components/ui/`. Nunca referencie literais hex, classes de cor primitivas (`bg-blue-500`) nem nomes default do ShadcnUI (`bg-background`, `text-foreground`) — esses tokens não existem no nosso sistema.
+- [ ] Componentes de UI: cada componente da seção UI lista **"Componentes do design system usados"** com nome, path (`src/components/ui/[x]`) e variant/size, e **"Tokens semânticos usados"** com os tokens de background, text e border esperados. Isso evita que o `@frontend+` precise vasculhar `design_system/` em tempo de execução. Nunca referencie literais hex, classes primitivas (`bg-blue-500`) nem tokens default do ShadcnUI (`bg-background`, `text-foreground`) — esses tokens não existem neste sistema.
 - [ ] Edge cases mínimos atendidos (5 para STANDARD, 10 para COMPLETE)
 
 ## Para PRD_COMPLETE

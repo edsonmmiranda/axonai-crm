@@ -99,6 +99,15 @@ interface Props {
 }
 ```
 
+**Componentes do design system usados:**
+- `[ComponentName]` from `src/components/ui/[component]` (variant: `[variant]`, size: `[size]`)
+- `[ComponentName]` from `src/components/ui/[component]`
+
+**Tokens semânticos usados:**
+- Background: `bg-[token]` ([propósito])
+- Text: `text-[token]` ([propósito])
+- Border: `border-[token]` ([propósito])
+
 **Estado:**
 - [state]: [propósito]
 
@@ -106,7 +115,7 @@ interface Props {
 - On mount: [ação]
 - On submit: [ação]
 
-> 🎨 **Regras de design system**: componentes seguem [`design_system/components/CONTRACT.md`](../../design_system/components/CONTRACT.md) — Radix + `cva` + tokens semânticos. Não redeclare regras neste PRD; apenas referencie os componentes de `src/components/ui/` usados e liste os tokens semânticos esperados (`bg-surface-raised`, `text-text-primary`, etc.).
+> 🎨 Não redeclare as regras do design system aqui. Liste apenas os componentes de `src/components/ui/` e tokens semânticos que este componente consome — o `@frontend+` usa essas assinaturas como contrato, sem precisar vasculhar `design_system/`.
 
 ---
 

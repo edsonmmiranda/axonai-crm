@@ -84,6 +84,14 @@ git rev-parse --is-inside-work-tree 2>/dev/null
 
 Se o output não é `true`, este diretório não é um repositório git. Pare e informe ao usuário: "Este projeto precisa de `git init` antes de iniciar um sprint. Deseja que eu inicialize?"
 
+## Passo 0.5 — `.env.local` está no `.gitignore`
+
+```bash
+git check-ignore -q .env.local || echo "WARN: .env.local NOT in .gitignore"
+```
+
+Se o output contém `WARN`: adicione `.env.local` ao `.gitignore` imediatamente e commite essa alteração antes de prosseguir. Não continue o sprint com segredos potencialmente versionáveis.
+
 ## Passo 1 — git limpo
 
 ```bash
@@ -98,9 +106,11 @@ Se o output não é vazio, há mudanças uncommitted. Pare e peça ao usuário p
 ls package.json src/ 2>/dev/null
 ```
 
-Se qualquer um ausente → este é um sprint de bootstrap. O trabalho é criar Next.js, instalar deps, configurar Supabase client, layout base. Gates que dependem de `npm` (GATE 2) ficam adiados. Pule para o workflow sem rodar o Passo 4.
+Se qualquer um ausente → este é um sprint de bootstrap. Gates que dependem de `npm` (GATE 2) ficam adiados. Pule para o workflow sem rodar o Passo 4. Execute as ações abaixo **nesta ordem exata** — cada passo depende do anterior:
 
-**Primeira ação obrigatória de qualquer sprint de bootstrap:** gerar `.env.example` na raiz copiando de [`docs/templates/env.example`](../docs/templates/env.example). É arquivo versionado, documentado, que o humano usa como referência para criar o próprio `.env.local`.
+**Passo B1 — scaffold do projeto:** crie o projeto Next.js e instale as dependências base (Supabase client, layout base). Este passo precede tudo — sem `package.json` nenhum comando `npm` funciona.
+
+**Passo B2 — gerar `.env.example`:** após o scaffold existir, copie de [`docs/templates/env.example`](../docs/templates/env.example). É arquivo versionado que o humano usa como referência para criar o próprio `.env.local`.
 
 ⛔ **Crítico:** o Tech Lead nunca cria nem edita `.env.local` — só `.env.example`.
 
@@ -108,10 +118,12 @@ Se qualquer um ausente → este é um sprint de bootstrap. O trabalho é criar N
 test -f .env.example || cp docs/templates/env.example .env.example
 ```
 
-**Segunda ação obrigatória do bootstrap:** instalar a infra de testes seguindo [`docs/templates/vitest_setup.md`](../docs/templates/vitest_setup.md). Isso cria `vitest.config.ts`, `tests/setup.ts`, adiciona scripts em `package.json` e instala Vitest. Essa infra é pré-requisito para o GATE 4.5 dos sprints subsequentes — sem ela, sprints de CRUD não passam do code review.
+**Passo B3 — instalar infra de testes:** seguindo [`docs/templates/vitest_setup.md`](../docs/templates/vitest_setup.md). Isso cria `vitest.config.ts`, `tests/setup.ts`, adiciona scripts em `package.json` e instala Vitest. Essa infra é pré-requisito para o GATE 4.5 dos sprints subsequentes — sem ela, sprints de CRUD não passam do code review.
+
+**Passo B4 — validação:** apenas depois do Passo B3 (package.json e scripts já existem):
 
 ```bash
-# Validação pós-setup: deve sair sem erro mesmo sem testes ainda
+# Deve sair sem erro mesmo sem testes ainda
 npm run test:run
 ```
 
@@ -179,6 +191,44 @@ Se qualquer variável falha → pare e reporte:
 ## Passo 4 — bootstrap do framework de DB
 
 Se o projeto já tem `supabase/migrations/`, execute a probe do bootstrap migration (ver [`agents/ops/db-admin.md`](ops/db-admin.md) → Protocolo de introspeção). Se `get_schema_tables` não existe no banco, pare e peça `supabase db push`.
+
+## Passo 5 — modo de dispatch
+
+Antes do roteamento (Opção 1 / Opção 2) e antes de qualquer trabalho real, **sempre pergunte** ao usuário qual modo de execução. Isso vale para todo gatilho de execução — sprint file, retomada, pedido direto sem sprint file. Não vale para auditorias sob demanda (que têm preflight próprio mais enxuto).
+
+> **Output template** — `dispatch-mode-prompt`:
+> ```
+> Modo de execução para esta sprint:
+>
+> 1. Persona (default) — todos os agentes na mesma sessão (fluxo padrão)
+> 2. Agent SDK (híbrido) — agentes com suporte rodam isolados via handoff files;
+>    os demais continuam como persona na sessão principal
+>
+> Agentes com suporte a SDK hoje: @guardian
+>
+> Responda: "persona" ou "agent"
+> ```
+
+**Comportamento conforme resposta:**
+
+- `"persona"` (ou ausência de candidato SDK no fluxo) → comportamento atual em todo o sprint. Pule para roteamento.
+
+- `"agent"` → modo híbrido. Para todo agente cujo frontmatter declare `mode: [persona, agent]` e `ownsGate: <gate>`:
+    1. **Antes do primeiro dispatch SDK do sprint:** leia [`agents/workflows/handoff-format.md`](workflows/handoff-format.md) por completo. Apenas uma vez por sessão.
+    2. **Antes de cada dispatch:** crie o diretório `sprints/handoffs/<sprint-id>/` se não existir. Gere o arquivo `<agent>_input.md` conforme o formato canônico, pré-filtrando `docs/APRENDIZADOS.md` pelas tags declaradas em `aprendizadosTags`.
+    3. **Despacho:** invoque o sub-agente com instrução: "Você foi invocado em agent mode. Sua primeira ação obrigatória é ler `<caminho do input>`. Ao concluir, escreva `<caminho do output>` no formato canônico."
+    4. **Após conclusão:** leia `<agent>_result.md`. Decida próxima ação pelo campo `Status`:
+       - `success` → próximo passo do workflow
+       - `blocked` → retry (máx 2 conforme retry-and-rollback) com contexto adicional no input
+       - `escalation` → siga [`agents/workflows/escalation-protocol.md`](workflows/escalation-protocol.md)
+       - `pendingHumanApproval` → pause, apresente ao usuário, re-despache após aprovação
+    5. **Não execute o gate declarado em `ownsGate`** — o sub-agente já o rodou e reportou no result file. Em persona mode, comportamento atual permanece (Tech Lead roda os gates).
+
+  Agentes sem `mode: [persona, agent]` no frontmatter continuam em persona dentro da mesma sessão (modo híbrido genuíno).
+
+- Resposta vazia ou ambígua → assuma `persona` (default seguro) e informe ao usuário a escolha aplicada.
+
+**Salve a escolha como estado da sessão** — não pergunte novamente até que o sprint encerre.
 
 # Protocolo de ambiguidade
 
@@ -374,6 +424,17 @@ Preflight pode ser enxuto:
    - **Passo 3.5 (Integration tests — quando o sprint produziu Server Actions):**
      Comande `@qa-integration` imediatamente após o `@backend` concluir. Mesmas regras da Opção 2 (Passo 3.5): testes falhando → delegar correção ao `@backend`, máximo 3 retries, GATE 4.5 re-executa após o code review.
      > **Pular apenas quando:** o sprint não produziu Server Actions novas nem modificações (ex.: bugfix de UI, ajuste de texto). Nesse caso, registre "n/a — sprint sem Server Actions" na linha do `@qa-integration`.
+   - ⏸️ **Checkpoint pré-frontend (quando o sprint produziu backend E UI):**
+     O contexto acumulado carrega logs de DB, debug de Server Actions e output do Vitest. Iniciar o `@frontend+` numa sessão limpa evita que esse ruído polua a geração de UI.
+     > **Output template** — `engine-frontend-handoff`:
+     > ```
+     > Engine concluída (DB + Backend + Testes). Iniciar frontend nesta sessão ou em sessão limpa?
+     > - "continuar" → prossiga para @frontend+ nesta sessão
+     > - "limpar contexto" → pause aqui; retome em nova sessão com "Retomar sprint_XX"
+     > ```
+     - Se "continuar": siga para o Passo 3.6 normalmente.
+     - Se "limpar contexto": confirme que as linhas `@backend` e `@qa-integration` estão `✅ Concluído` no sprint file e encerre com: *"Sprint pausado. Inicie uma nova sessão e diga `Retomar sprint_XX` para continuar do `@frontend+`."*
+     - **Pular quando:** o sprint não envolveu backend (ex.: ajuste visual puro). Nesse caso, não há contexto de engine para isolar.
    - **Passo 3.6 (Frontend):** comande `@frontend+` para UI (se o sprint envolve UI).
    - ⏸️ **Checkpoint pós-frontend (quando o sprint envolveu UI):**
      Antes de prosseguir para o `@guardian`, pause e pergunte:
@@ -397,6 +458,11 @@ Preflight pode ser enxuto:
      git mv sprints/active/sprint_XX_[name].md sprints/done/sprint_XX_[name].md
      ```
      Pule este passo em pedidos diretos sem sprint file.
+   - **Limpeza de handoffs (apenas se o sprint rodou em agent mode):** remova o diretório efêmero do sprint:
+     ```bash
+     rm -rf sprints/handoffs/sprint_XX_[name]/
+     ```
+     Pule se a pasta não existe (sprint rodou só em persona).
    - Reporte: "Build Complete & Memory Updated."
 4. **Controle de versão (Tech Lead executa direto):**
    - `git status` — confirmar arquivos a commitar
@@ -431,6 +497,17 @@ Usado quando: sprint STANDARD + usuário escolheu `"execute opção 2"` (ou acei
      Comande `@qa-integration` imediatamente após o `@backend` concluir. Esse agente produz `tests/integration/<module>.test.ts` seguindo o template canônico e roda `npm test`. Se algum teste falhar, delegue correção ao `@backend` com o output literal — máximo 3 retries antes de escalar.
      > **Justificativa:** testar a Server Action antes do frontend evita desperdício de contexto construindo UI sobre lógica quebrada.
      > **Pular apenas quando:** o sprint não produziu Server Actions novas nem modificações. Nesse caso, registre "n/a — sprint sem Server Actions" na linha do `@qa-integration`.
+   - ⏸️ **Checkpoint pré-frontend (quando o sprint produziu backend E UI):**
+     O contexto acumulado carrega logs de DB, debug de Server Actions e output do Vitest. Iniciar o `@frontend+` numa sessão limpa evita que esse ruído polua a geração de UI.
+     > **Output template** — `engine-frontend-handoff`:
+     > ```
+     > Engine concluída (DB + Backend + Testes). Iniciar frontend nesta sessão ou em sessão limpa?
+     > - "continuar" → prossiga para @frontend+ nesta sessão
+     > - "limpar contexto" → pause aqui; retome em nova sessão com "Retomar sprint_XX"
+     > ```
+     - Se "continuar": siga para o Passo 3.6 normalmente.
+     - Se "limpar contexto": confirme que as linhas `@backend` e `@qa-integration` estão `✅ Concluído` no sprint file e encerre com: *"Sprint pausado. Inicie uma nova sessão e diga `Retomar sprint_XX` para continuar do `@frontend+`."*
+     - **Pular quando:** o sprint não envolveu backend (ex.: ajuste visual puro). Nesse caso, não há contexto de engine para isolar.
    - **Passo 3.6 (Frontend):** comande `@frontend+` para UI.
    - ⏸️ **Checkpoint pós-frontend (quando o sprint envolveu UI):**
      Antes de prosseguir para o `@guardian`, pause e pergunte:
@@ -456,6 +533,11 @@ Usado quando: sprint STANDARD + usuário escolheu `"execute opção 2"` (ou acei
      ```bash
      git mv sprints/active/sprint_XX_[name].md sprints/done/sprint_XX_[name].md
      ```
+   - **Limpeza de handoffs (apenas se o sprint rodou em agent mode):** remova o diretório efêmero do sprint:
+     ```bash
+     rm -rf sprints/handoffs/sprint_XX_[name]/
+     ```
+     Pule se a pasta não existe.
    - Reporte: "Build Complete & Memory Updated."
 
 8. **Controle de versão (Tech Lead executa direto):**
@@ -511,17 +593,20 @@ Se não existe, reporte. Se existe, continue.
 
 ### Passo 4 — RLS em tabelas novas
 
-Para cada `CREATE TABLE` na migration, verifique que existe `ENABLE ROW LEVEL SECURITY` correspondente:
+Para cada `CREATE TABLE` na migration, verifique que existe `ENABLE ROW LEVEL SECURITY` correspondente. Exclua linhas de comentário SQL antes de contar para evitar falsos positivos:
 
 ```bash
-grep -c "CREATE TABLE" supabase/migrations/[timestamp]_*.sql
-grep -c "ENABLE ROW LEVEL SECURITY" supabase/migrations/[timestamp]_*.sql
+MIGRATION=supabase/migrations/[timestamp]_*.sql
+create_count=$(grep -v "^[[:space:]]*--" "$MIGRATION" | grep -c "CREATE TABLE")
+rls_count=$(grep -v "^[[:space:]]*--" "$MIGRATION" | grep -c "ENABLE ROW LEVEL SECURITY")
+echo "CREATE TABLE: $create_count | ENABLE RLS: $rls_count"
 ```
 
-- Se há `CREATE TABLE` sem RLS correspondente:
-  - Pare. Reporte ao `@db-admin`: "Tabela [nome] criada sem RLS. Toda tabela com dados de usuário deve ter RLS habilitado (ver `docs/conventions/security.md` §2)."
+- Se `create_count > rls_count`:
+  - Pare. Extraia os nomes das tabelas criadas sem RLS via `grep -v "^[[:space:]]*--" "$MIGRATION" | grep "CREATE TABLE"`.
+  - Reporte ao `@db-admin`: "Tabela(s) [nomes] criadas sem RLS. Toda tabela com dados de usuário deve ter RLS habilitado (ver `docs/conventions/security.md` §2)."
   - Comande retry com adição de RLS.
-- Se os contadores batem (ou não há `CREATE TABLE`): ✅ passou.
+- Se `create_count == rls_count` (ou `create_count == 0`): ✅ passou.
 
 ## GATE 2 — Frontend / Backend
 
@@ -539,7 +624,11 @@ npm run build
 
 - Se o build falha:
   - Pare a execução
-  - Faça parse da mensagem de erro e identifique o arquivo problemático
+  - **Truncar o output:** não injete o stack trace completo. Extraia apenas a primeira linha de erro (`error TS…` ou `Error:`) e as linhas do stack que apontem para arquivos em `src/` — limite a 20 linhas. Se o output exceder isso, use:
+    ```bash
+    npm run build 2>&1 | grep -E "(Error|error TS|src/)" | head -20
+    ```
+  - Faça parse da mensagem truncada e identifique o arquivo problemático
   - Reporte ao usuário:
     > **Output template** — `gate-2-failed`:
     > ```
@@ -547,7 +636,7 @@ npm run build
     >
     > Agente: [@frontend+ ou @backend]
     > Arquivo: [filename]
-    > Erro: [mensagem]
+    > Erro: [mensagem — máx 20 linhas]
     >
     > Problemas comuns:
     > - Import faltando
@@ -652,7 +741,11 @@ npm test -- --run tests/integration/
 
 - Se algum teste está em estado `failed`:
   - Pare a execução
-  - Faça parse do output: identifique qual action, qual asserção falhou, qual arquivo/linha
+  - **Truncar o output:** extraia apenas as linhas `FAIL`, `AssertionError`, `Expected` e `Received` — limite a 20 linhas. Se o output exceder isso, use:
+    ```bash
+    npm test -- --run tests/integration/ 2>&1 | grep -E "(FAIL|✗|AssertionError|Expected|Received|at .*\.test\.ts)" | head -20
+    ```
+  - Faça parse do output truncado: identifique qual action, qual asserção falhou, qual arquivo/linha
   - Reporte ao usuário:
     > **Output template** — `gate-4.5-failed`:
     > ```
@@ -668,7 +761,7 @@ npm test -- --run tests/integration/
     >
     > Delegando correção ao @backend.
     > ```
-  - Delegue correção ao `@backend` com o output literal do teste
+  - Delegue correção ao `@backend` com o output truncado do teste
   - Após correção, re-rode o GATE 4.5 desde o Passo 3 (não re-criar testes)
   - Máximo 3 retries. No 4º, escale via [`escalation-protocol.md`](workflows/escalation-protocol.md)
 
