@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, CreditCard, Flag, Gavel, LayoutDashboard, LogOut, Settings, Timer } from 'lucide-react';
+import { Building2, CreditCard, Flag, Gavel, LayoutDashboard, LogOut, Mail, Settings, Timer } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -23,6 +23,7 @@ const SETTINGS_ITEMS: NavItem[] = [
   { href: '/admin/settings/feature-flags', label: 'Feature flags', Icon: Flag },
   { href: '/admin/settings/trial', label: 'Trial & billing', Icon: Timer },
   { href: '/admin/settings/legal', label: 'Políticas legais', Icon: Gavel },
+  { href: '/admin/settings/integrations/email', label: 'Integrações · Email', Icon: Mail },
 ];
 
 const NAV_BASE =

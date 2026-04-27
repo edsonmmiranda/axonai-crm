@@ -24,6 +24,8 @@ Toda tabela em `public.*` deve ter `organization_id` para isolamento de tenant v
 | `public.plans` | Catálogo comercial compartilhado; ligação com org é via `subscriptions.plan_id` | `admin_01` (2026-04-24) | RLS FORCE + policy SELECT só para planos públicos não arquivados + sem policies de mutação; writes via RPC `SECURITY DEFINER` |
 | `public.platform_admins` | Catálogo de operadores Axon; escopado à org interna via FK `profile_id → profiles(id)` com `is_internal=true` | `admin_02` (2026-04-24) | RLS FORCE + policy SELECT restrita a `profile_id = auth.uid()` + sem policies de mutação; writes via RPC `SECURITY DEFINER` |
 | `public.audit_log` | Log imutável de eventos da plataforma; `target_organization_id` é alvo do evento, não tenant do ator | `admin_03` (2026-04-24) | RLS FORCE + policy SELECT só para platform admins ativos + REVOKE de writes diretos + triggers de deny (UPDATE/DELETE/TRUNCATE) que bloqueiam inclusive `service_role`; writes via RPC `audit_write` SECURITY DEFINER |
+| `public.platform_integration_credentials` | Catálogo global de credenciais cifradas (SMTP no MVP); secret real em `vault.secrets`. Credencial é da plataforma — sem org-tenant | `admin_10` (2026-04-27) | RLS FORCE + policy SELECT só para platform admins ativos + sem policies de mutação; writes via 3 RPCs `SECURITY DEFINER` (`admin_create/rotate/revoke_integration_credential`); `get_integration_credential_plaintext` é service-role-only (REVOKE nominal de `public`/`anon`/`authenticated`; GRANT só para `service_role`) e consumido só por `src/lib/email/getCredential.ts` |
+| `public.email_delivery_log` | Rastro operacional de envios transacionais admin (incluindo fallback offline); evento da plataforma, não do tenant | `admin_10` (2026-04-27) | RLS FORCE + policy SELECT só para platform admins ativos + sem policies de mutação; writes via RPC `log_email_delivery` SECURITY DEFINER (service-role only). **Sem trigger de deny UPDATE/DELETE** — log operacional, não evidência forense (diferente de `audit_log`) |
 
 **Para adicionar nova exceção:** justificativa + proteção compensatória obrigatórias. Registrar aqui E documentar no header da migration.
 
@@ -80,6 +82,27 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 - **`createOrganizationAction`** (Sprint 05) atualizado: lê `trial_default_days` de `platform_settings` com fallback 14. RPC `admin_create_organization` já aceitava `p_trial_days` — mudança foi no Server Action.
 - `audit_write` aceita `target_id=NULL` para tabelas com PK text/int (setting.update, feature_flag.set, metrics.refresh) — key/id vai em `metadata`.
 - RPCs novas: `admin_set_setting`, `admin_set_feature_flag`, `get_registered_feature_flag_keys`, `get_active_feature_flags`, `admin_create_legal_policy`, `get_active_legal_policy`, `refresh_platform_metrics`.
+
+## 5d. Estado de schema (sprint_admin_10, 2026-04-27)
+
+- Tabelas globais novas (sem `organization_id` — exceções documentadas em §2): `platform_integration_credentials`, `email_delivery_log`. Ambas FORCE RLS, writes apenas via RPCs SECURITY DEFINER.
+- **Cifragem em repouso via Supabase Vault** (extension `supabase_vault` v0.3.1, já habilitada). Decisão Vault vs pgsodium: Vault tem chave gerenciada pelo Supabase e está pré-instalado; pgsodium exigiria setup de master key + privilégios extras. Secrets vivem em `vault.secrets`; decifragem via `vault.decrypted_secrets` apenas dentro de RPC `SECURITY DEFINER`.
+- **`platform_integration_credentials`**: 1 ativa por kind (UNIQUE parcial `(kind) WHERE revoked_at IS NULL`). Hint mascarado (`****` + 4 chars finais) na coluna `hint`; nunca permite reconstrução do plaintext. Audit em create/rotate/revoke contém apenas `{kind, label, hint}` — **nunca plaintext nem `vault_secret_id`** (G-14).
+- **`email_delivery_log`**: rastro operacional (sem trigger de deny UPDATE/DELETE — admin pode purgar antigos). Audit row apenas em `source='offline_fallback'` (alta frequência inflaria audit). CHECK composto enforça combinações válidas `(source, status)`: `platform_setting|env_var × sent|error` ou `offline_fallback × fallback_offline`.
+- **7 RPCs novas** (todas `SECURITY DEFINER`, `SET search_path=public`, REVOKE nominal de `public`/`anon`/`authenticated` — APRENDIZADO 2026-04-24):
+  - `admin_create_integration_credential` / `admin_rotate_integration_credential` / `admin_revoke_integration_credential` — owner-only via `requirePlatformAdminRole(['owner'])` no Server Action; RPC re-valida.
+  - `admin_list_integration_credentials` — projeção sem `vault_secret_id` (defesa em profundidade).
+  - `get_integration_credential_plaintext` — **⛔ único caminho** ao plaintext fora do Vault. GRANT EXECUTE apenas para `service_role`. Consumido só por `src/lib/email/getCredential.ts`.
+  - `mark_credential_used` — UPDATE `last_used_at`; permite UPDATE em soft-revoked (envio em flight conclui).
+  - `log_email_delivery` — service-role only; trunca `error_message` a 1000 chars.
+- **Fallback chain de email** (`src/lib/email/getCredential.ts`, cacheado por request via React `cache()`):
+  1. **DB/Vault** via RPC `get_integration_credential_plaintext`.
+  2. **Env vars** `BOOTSTRAP_EMAIL_HOST/USER/PASSWORD` (todos os 3 obrigatórios; `PORT/FROM/SECURE` com defaults).
+  3. **Offline fallback** gated por setting `signup_link_offline_fallback_enabled` (Sprint 09). Caller passa `offlineLink` pré-construído — sender NÃO gera signed URLs.
+- **Contrato `EmailDeliveryResult`** (em `src/lib/email/sender.ts`) é discriminated union: `{status: 'sent' | 'fallback_offline' | 'error', deliveryLogId, ...}`. Sprint 11 (CRUD platform admins + convite single-use) consumirá `sendEmail()` para enviar tokens de convite.
+- **Server-only enforcement:** `import 'server-only'` no topo de `getCredential.ts`/`sender.ts`/`getEmailSourceStatus.ts`. `nodemailer` (`@types/nodemailer`) importado APENAS em `sender.ts`.
+- **Banner global "Email não configurado"** renderizado pelo `AdminShell` em todas as rotas `/admin/*` quando ambas DB e env vars estão vazias: warning amarelo se fallback ativo; danger vermelho se desativado.
+- **Dep nova:** `nodemailer` + `@types/nodemailer` adicionados ao `package.json`.
 
 ---
 
