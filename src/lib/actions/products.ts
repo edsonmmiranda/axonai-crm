@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
+import { enforceLimit } from '@/lib/limits/enforceLimit';
 import {
   PRODUCT_PAGE_SIZES,
   PRODUCT_SORT_KEYS,
@@ -414,6 +415,15 @@ export async function createProductAction(
     const gate = assertRole(ctx, ['owner', 'admin']);
     if (!gate.ok) {
       return { success: false, error: gate.error };
+    }
+
+    const enforced = await enforceLimit({
+      organizationId: ctx.organizationId,
+      limitKey: 'products',
+      delta: 1,
+    });
+    if (!enforced.ok) {
+      return { success: false, error: enforced.error };
     }
 
     const supabase = await createClient();

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Users, Calendar, Activity, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { Shield, Users, Calendar, Activity, Clock, CreditCard, Gift } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -156,6 +157,27 @@ export function OrgDetailView({ org, adminRole }: Props) {
           </ul>
         </div>
       )}
+
+      {/* Ferramentas administrativas */}
+      <div className="rounded-xl border border-border bg-surface-raised p-6 shadow-sm">
+        <h3 className="text-sm font-semibold text-text-primary mb-4">Ferramentas administrativas</h3>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href={`/admin/organizations/${org.id}/subscription`}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-sunken px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:shadow-focus"
+          >
+            <CreditCard className="size-4" />
+            Subscription
+          </Link>
+          <Link
+            href={`/admin/organizations/${org.id}/grants`}
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-sunken px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:shadow-focus"
+          >
+            <Gift className="size-4" />
+            Grants
+          </Link>
+        </div>
+      </div>
 
       {/* Ações (owner apenas, não interna, ativa) */}
       {isOwner && !org.isInternal && org.isActive && (

@@ -62,6 +62,14 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 - `is_calling_org_active()` ativa — 55 políticas customer bloqueiam orgs suspensas via RLS.
 - RPCs: `admin_create_organization`, `admin_suspend_organization`, `admin_reactivate_organization` (todas SECURITY DEFINER, anon revogado).
 
+## 5b. Estado de schema (sprint_admin_07, 2026-04-26)
+
+- Tabela `public.plan_grants` criada (FORCE RLS, append-only via RPCs SECURITY DEFINER, policy SELECT só para platform admins ativos).
+- RPCs: `enforce_limit(org_id, limit_key, delta)` (chamada por Server Actions customer; raise `plan_limit_exceeded` P0001 com DETAIL JSON), `admin_grant_limit`, `admin_revoke_grant` (todas SECURITY DEFINER, anon revogado).
+- **Coluna `organization_id` confirmada como direta** em `product_images` e `product_documents` (denormalização não documentada nas migrations versionadas — apenas na introspecção viva).
+- Hard-enforcement ativo em **7 Server Actions customer** (leads, products, funnels, invitations, whatsapp-groups, product-images, product-documents) via helper `src/lib/limits/enforceLimit.ts`. Convenção `// enforce_limit: not-applicable — <razão>` obrigatória em qualquer nova Server Action de criação de recurso contável que escolha não chamar.
+- RF-LIMIT-1 / T-21 entregues. Sprint 09 traz cache de consumo via materialized view (queries `count(*)`/`SUM` em `enforce_limit` rodam direto por enquanto).
+
 ---
 
 ## 6. Convenções específicas deste projeto

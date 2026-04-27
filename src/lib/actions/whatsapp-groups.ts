@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
+import { enforceLimit } from '@/lib/limits/enforceLimit';
 import { WHATSAPP_GROUP_SORT_KEYS } from '@/lib/whatsapp-groups/constants';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
@@ -199,6 +200,17 @@ export async function createWhatsappGroupAction(
     const gate = assertRole(ctx, ['owner', 'admin']);
     if (!gate.ok) {
       return { success: false, error: gate.error };
+    }
+
+    if (parsed.data.is_active !== false) {
+      const enforced = await enforceLimit({
+        organizationId: ctx.organizationId,
+        limitKey: 'active_integrations',
+        delta: 1,
+      });
+      if (!enforced.ok) {
+        return { success: false, error: enforced.error };
+      }
     }
 
     const supabase = await createClient();

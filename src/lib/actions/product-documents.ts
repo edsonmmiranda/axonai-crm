@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
+import { enforceLimit } from '@/lib/limits/enforceLimit';
 import { buildStoragePath } from '@/lib/storage/paths';
 import { getSignedUrl } from '@/lib/storage/signed-urls';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
@@ -120,6 +121,15 @@ export async function uploadProductDocumentAction(
         success: false,
         error: `Limite de ${MAX_DOCUMENTS_PER_PRODUCT} documentos por produto atingido.`,
       };
+    }
+
+    const enforced = await enforceLimit({
+      organizationId: ctx.organizationId,
+      limitKey: 'storage_mb',
+      delta: Math.ceil(file.size / 1048576),
+    });
+    if (!enforced.ok) {
+      return { success: false, error: enforced.error };
     }
 
     const storagePath = buildStoragePath({

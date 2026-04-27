@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { enforceLimit } from '@/lib/limits/enforceLimit';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
@@ -203,36 +204,13 @@ export async function createInvitationAction(
       };
     }
 
-    const { data: org, error: orgError } = await service
-      .from('organizations')
-      .select('max_users')
-      .eq('id', ctx.organizationId)
-      .single<{ max_users: number }>();
-
-    if (orgError || !org) {
-      console.error('[invitations:create] read org', orgError);
-      return { success: false, error: 'Não foi possível validar o limite do plano.' };
-    }
-
-    const [{ count: memberCount }, { count: pendingCount }] = await Promise.all([
-      service
-        .from('profiles')
-        .select('id', { count: 'exact', head: true })
-        .eq('organization_id', ctx.organizationId),
-      service
-        .from('invitations')
-        .select('id', { count: 'exact', head: true })
-        .eq('organization_id', ctx.organizationId)
-        .is('accepted_at', null)
-        .gt('expires_at', nowIso),
-    ]);
-
-    const totalSeats = (memberCount ?? 0) + (pendingCount ?? 0);
-    if (totalSeats >= org.max_users) {
-      return {
-        success: false,
-        error: `Limite de usuários (${org.max_users}) atingido para o plano atual.`,
-      };
+    const enforced = await enforceLimit({
+      organizationId: ctx.organizationId,
+      limitKey: 'users',
+      delta: 1,
+    });
+    if (!enforced.ok) {
+      return { success: false, error: enforced.error };
     }
 
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();

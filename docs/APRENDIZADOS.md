@@ -96,6 +96,16 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-26 · [SUPABASE] `error instanceof Error` é falso para `PostgrestError` retornado por `supabase.rpc()`
+
+**Regra:** o helper `rpcErrorMessage(error: unknown)` que faz `error instanceof Error ? error.message : String(error)` retorna `'[object Object]'` para erros de RPC — `PostgrestError` é um plain object com `.message`/`.details`/`.code`/`.hint`, não uma instance de `Error`. Mapping de codes (`'org_not_found'`, `'plan_limit_exceeded'`, etc.) deve extrair `.message` via narrowing tipado:
+```ts
+if (error !== null && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+  msg = error.message;
+}
+```
+Este mesmo bug existe em `src/lib/actions/admin/plans.ts` (Sprint 06) — só não foi exercitado por testes lá. Auditar `src/lib/actions/admin/*.ts` ao tocar.
+
 ### 2026-04-25 · [NEXT] Route groups não adicionam prefixo de URL — conflito de paths
 
 **Regra:** `src/app/(admin)/login/` resolve para `/login`, conflitando com `src/app/(auth)/login/`. Para prefixar rotas admin em `/admin/*`, usar pasta real `src/app/admin/` — não route group `(admin)`.

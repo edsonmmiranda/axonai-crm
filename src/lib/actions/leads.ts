@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { assertRole } from '@/lib/actions/_shared/assertRole';
 import type { StageRole } from '@/lib/actions/funnels';
+import { enforceLimit } from '@/lib/limits/enforceLimit';
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
 
@@ -444,6 +445,16 @@ export async function createLeadAction(
 
   try {
     const ctx = await getSessionContext();
+
+    const enforced = await enforceLimit({
+      organizationId: ctx.organizationId,
+      limitKey: 'leads',
+      delta: 1,
+    });
+    if (!enforced.ok) {
+      return { success: false, error: enforced.error };
+    }
+
     const supabase = await createClient();
 
     const { tagIds, ...leadData } = parsed.data;
