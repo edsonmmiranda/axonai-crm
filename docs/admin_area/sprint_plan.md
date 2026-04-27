@@ -140,7 +140,7 @@ Decisões diferidas que **cada sprint deve resolver no seu escopo** (não bloque
 
 **Código (`@backend`):**
 - Helper `src/lib/audit/write.ts` → wrapper de `audit_write` que recebe `ctx` (request) e extrai IP/UA de headers.
-- **Contrato para todos os sprints seguintes:** qualquer Server Action sensível chama `writeAudit(...)` **dentro da mesma transação** da mutation. Documentado em `docs/conventions/audit.md`.
+- **Contrato para todos os sprints seguintes:** qualquer Server Action sensível chama `writeAudit(...)` **dentro da mesma transação** da mutation (ver `docs/conventions/standards.md` INV-6).
 
 **Gates cobertos:** G-03 (transacional — teste que força falha do `audit_write` e valida rollback); G-10 (append-only — teste que tenta UPDATE/DELETE e recebe erro).
 
