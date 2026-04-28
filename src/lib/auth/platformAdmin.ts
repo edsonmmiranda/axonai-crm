@@ -6,6 +6,16 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
 export type PlatformAdminRole = 'owner' | 'support' | 'billing';
+export type AdminThemePreference = 'light' | 'dark' | 'system';
+
+const VALID_ADMIN_THEMES: readonly AdminThemePreference[] = ['light', 'dark', 'system'] as const;
+
+function normalizeAdminTheme(raw: unknown): AdminThemePreference {
+  if (typeof raw === 'string' && (VALID_ADMIN_THEMES as readonly string[]).includes(raw)) {
+    return raw as AdminThemePreference;
+  }
+  return 'light';
+}
 
 export interface PlatformAdminSnapshot {
   id: string;
@@ -14,6 +24,7 @@ export interface PlatformAdminSnapshot {
   isActive: boolean;
   createdAt: string;
   email: string;
+  adminTheme: AdminThemePreference;
 }
 
 export const getPlatformAdmin = cache(async (): Promise<PlatformAdminSnapshot | null> => {
@@ -25,9 +36,14 @@ export const getPlatformAdmin = cache(async (): Promise<PlatformAdminSnapshot | 
 
   if (!user) return null;
 
-  const { data, error } = await supabase.rpc('is_platform_admin', {
-    target_profile_id: user.id,
-  });
+  const [{ data, error }, { data: profileRow }] = await Promise.all([
+    supabase.rpc('is_platform_admin', { target_profile_id: user.id }),
+    supabase
+      .from('profiles')
+      .select('preferences')
+      .eq('id', user.id)
+      .maybeSingle<{ preferences: Record<string, unknown> | null }>(),
+  ]);
 
   if (error || !data || (Array.isArray(data) && data.length === 0)) return null;
 
@@ -40,6 +56,7 @@ export const getPlatformAdmin = cache(async (): Promise<PlatformAdminSnapshot | 
     isActive: row.is_active as boolean,
     createdAt: row.created_at as string,
     email: user.email ?? '',
+    adminTheme: normalizeAdminTheme(profileRow?.preferences?.adminTheme),
   };
 });
 

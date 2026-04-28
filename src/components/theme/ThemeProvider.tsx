@@ -22,8 +22,6 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'theme';
-
 function resolveTheme(theme: ThemePreference): ResolvedTheme {
   if (theme === 'system') {
     if (typeof window === 'undefined') return 'light';
@@ -35,9 +33,10 @@ function resolveTheme(theme: ThemePreference): ResolvedTheme {
 interface ThemeProviderProps {
   children: ReactNode;
   initialTheme: ThemePreference;
+  storageKey?: string;
 }
 
-export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
+export function ThemeProvider({ children, initialTheme, storageKey = 'theme' }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<ThemePreference>(initialTheme);
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
     resolveTheme(initialTheme)
@@ -64,11 +63,11 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
   const setTheme = useCallback((next: ThemePreference) => {
     setThemeState(next);
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(storageKey, next);
     } catch {
       // ignore (private mode, quota)
     }
-  }, []);
+  }, [storageKey]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({ theme, resolvedTheme, setTheme }),

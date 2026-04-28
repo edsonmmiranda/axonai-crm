@@ -23,19 +23,25 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
   { value: 'system', label: 'Sistema', icon: Monitor },
 ] as const;
 
+type PersistAction = (input: { theme: ThemePreference }) => Promise<{ success: boolean; error?: string }>;
+
+interface ThemeToggleProps {
+  persistAction?: PersistAction;
+}
+
 function getTriggerIcon(theme: ThemePreference, resolved: 'light' | 'dark'): LucideIcon {
   if (theme === 'system') return Monitor;
   return resolved === 'dark' ? Moon : Sun;
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ persistAction = updateThemePreferenceAction }: ThemeToggleProps = {}) {
   const { theme, resolvedTheme, setTheme } = useTheme();
   const [, startTransition] = useTransition();
 
   const handleSelect = (next: ThemePreference) => {
     setTheme(next);
     startTransition(async () => {
-      const result = await updateThemePreferenceAction({ theme: next });
+      const result = await persistAction({ theme: next });
       if (!result.success) {
         toast.error(result.error ?? 'Não foi possível salvar tema');
       }

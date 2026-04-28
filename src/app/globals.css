@@ -24,7 +24,7 @@
   --ds-shadow-focus:             0 0 0 3px rgb(var(--ds-color-neutral-700) / 0.40);
 }
 
-[data-admin][data-theme="dark"] {
+[data-theme="dark"] [data-admin] {
   --ds-action-primary-bg:        var(--ds-color-neutral-500);   /* 76 115 154 */
   --ds-action-primary-bg-hover:  var(--ds-color-neutral-400);   /* 159 178 199 */
   --ds-action-primary-bg-active: var(--ds-color-neutral-600);   /* 61 90 122 */

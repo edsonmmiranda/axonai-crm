@@ -1,5 +1,6 @@
 import { Bell, Menu, Search, Settings } from 'lucide-react';
 
+import { AdminThemeToggle } from '@/components/admin/AdminThemeToggle';
 import type { PlatformAdminRole, PlatformAdminSnapshot } from '@/lib/auth/platformAdmin';
 
 const ROLE_LABEL: Record<PlatformAdminRole, string> = {
@@ -55,6 +56,7 @@ export function AdminTopbar({ admin }: Props) {
         >
           <Bell className="size-5" />
         </button>
+        <AdminThemeToggle />
         <button
           type="button"
           aria-label="Configurações"
