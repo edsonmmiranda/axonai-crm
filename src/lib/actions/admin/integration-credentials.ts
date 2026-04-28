@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { requirePlatformAdmin, requirePlatformAdminRole } from '@/lib/auth/platformAdmin';
-import { createServiceClient } from '@/lib/supabase/service';
+import { createClient } from '@/lib/supabase/server';
 
 import {
   CreateIntegrationCredentialSchema,
@@ -92,7 +92,7 @@ function revalidateAll() {
 export async function listIntegrationCredentialsAction(): Promise<ActionResponse<IntegrationCredentialView[]>> {
   try {
     await requirePlatformAdmin();
-    const supabase = createServiceClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.rpc('admin_list_integration_credentials');
     if (error) {
       console.error('[admin:integration-credentials:list]', error);
@@ -116,7 +116,7 @@ export async function createIntegrationCredentialAction(
 
   try {
     await requirePlatformAdminRole(['owner']);
-    const supabase = createServiceClient();
+    const supabase = await createClient();
     const { ip, ua } = await getRequestMeta();
     const { kind, label, metadata, secretPlaintext } = parsed.data;
 
@@ -157,7 +157,7 @@ export async function rotateIntegrationCredentialAction(
 
   try {
     await requirePlatformAdminRole(['owner']);
-    const supabase = createServiceClient();
+    const supabase = await createClient();
     const { ip, ua } = await getRequestMeta();
     const { id, newSecretPlaintext, newMetadata } = parsed.data;
 
@@ -197,7 +197,7 @@ export async function revokeIntegrationCredentialAction(
 
   try {
     await requirePlatformAdminRole(['owner']);
-    const supabase = createServiceClient();
+    const supabase = await createClient();
     const { ip, ua } = await getRequestMeta();
     const { id, confirmKind } = parsed.data;
 

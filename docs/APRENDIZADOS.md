@@ -96,6 +96,10 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-28 · [SUPABASE] RPC `SECURITY DEFINER` que usa `auth.uid()` deadlock com service-role client
+
+**Regra:** se a RPC autoriza internamente via `auth.uid()` (ex.: `WHERE profile_id = auth.uid()`), ela só funciona chamada com user-JWT client (`createClient()`), nunca com `createServiceClient()` — service role não tem JWT, `auth.uid()` retorna NULL, check falha → `RAISE 'unauthorized'`. Conceda `GRANT EXECUTE ... TO authenticated` (defense em profundidade vem do check interno + `requirePlatformAdmin*` no app). Erro `PostgrestError` aparece como `{}` no console por props non-enumerable — não confundir com "RPC não existe".
+
 ### 2026-04-28 · [TIPO] Supabase MFA `data.totp` exclui factors `unverified` por type narrowing
 
 **Regra:** `supabase.auth.mfa.listFactors()` tipa `data.totp[i].status` como `'verified'` apenas — quem precisa varrer factors `unverified` (ex.: limpar enroll incompleto antes de re-enrollar) deve usar `data.all` com filtro `f.factor_type === 'totp' && f.status === 'unverified'`. Filtrar `data.totp` por `status === 'unverified'` quebra build com TS2367 ("comparison appears to be unintentional").

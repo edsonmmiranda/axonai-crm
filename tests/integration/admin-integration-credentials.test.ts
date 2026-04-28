@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { __mockSupabase } from '../setup';
 
 vi.mock('next/headers', () => ({
   cookies: vi.fn(() => ({ get: vi.fn(), set: vi.fn(), getAll: vi.fn(() => []) })),
@@ -8,17 +9,6 @@ vi.mock('next/headers', () => ({
 vi.mock('@/lib/auth/platformAdmin', () => ({
   requirePlatformAdmin:     vi.fn(),
   requirePlatformAdminRole: vi.fn(),
-}));
-
-const { __mockServiceClient } = vi.hoisted(() => ({
-  __mockServiceClient: {
-    rpc:  vi.fn().mockResolvedValue({ data: null, error: null }),
-    from: vi.fn(),
-  },
-}));
-
-vi.mock('@/lib/supabase/service', () => ({
-  createServiceClient: vi.fn(() => __mockServiceClient),
 }));
 
 import {
@@ -67,15 +57,15 @@ function makeFromQuery(result: { data: unknown; error: unknown }) {
 beforeEach(() => {
   vi.mocked(requirePlatformAdmin).mockReset().mockResolvedValue(FAKE_ADMIN);
   vi.mocked(requirePlatformAdminRole).mockReset().mockResolvedValue(FAKE_ADMIN);
-  __mockServiceClient.rpc.mockReset().mockResolvedValue({ data: null, error: null });
-  __mockServiceClient.from.mockReset();
+  __mockSupabase.rpc.mockReset().mockResolvedValue({ data: null, error: null });
+  __mockSupabase.from.mockReset();
 });
 
 // ── listIntegrationCredentialsAction ──────────────────────────────────────────
 
 describe('listIntegrationCredentialsAction', () => {
   it('happy path — qualquer admin lista credenciais (projeção sem vault_secret_id)', async () => {
-    __mockServiceClient.rpc.mockResolvedValue({ data: [FAKE_ROW], error: null });
+    __mockSupabase.rpc.mockResolvedValue({ data: [FAKE_ROW], error: null });
     const result = await listIntegrationCredentialsAction();
     expect(result.success).toBe(true);
     expect(result.data).toHaveLength(1);
@@ -101,7 +91,7 @@ describe('createIntegrationCredentialAction', () => {
   };
 
   it('happy owner — cria, retorna metadata sem plaintext, audit sem plaintext', async () => {
-    __mockServiceClient.rpc.mockResolvedValue({ data: FAKE_ROW, error: null });
+    __mockSupabase.rpc.mockResolvedValue({ data: FAKE_ROW, error: null });
     const result = await createIntegrationCredentialAction(validInput);
     expect(result.success).toBe(true);
     expect(result.data?.id).toBe(FAKE_ROW.id);
@@ -110,7 +100,7 @@ describe('createIntegrationCredentialAction', () => {
     expect(json).not.toContain(PLAINTEXT);
     expect(json).not.toContain('vault_secret_id');
     expect(json).not.toContain('secretPlaintext');
-    expect(__mockServiceClient.rpc).toHaveBeenCalledWith(
+    expect(__mockSupabase.rpc).toHaveBeenCalledWith(
       'admin_create_integration_credential',
       expect.objectContaining({
         p_kind: 'email_smtp',
@@ -124,13 +114,13 @@ describe('createIntegrationCredentialAction', () => {
     vi.mocked(requirePlatformAdminRole).mockRejectedValue(new Error('Acesso negado'));
     const result = await createIntegrationCredentialAction(validInput);
     expect(result.success).toBe(false);
-    expect(__mockServiceClient.rpc).not.toHaveBeenCalled();
+    expect(__mockSupabase.rpc).not.toHaveBeenCalled();
   });
 
   it('Zod fail — secretPlaintext vazio → success: false sem chamar RPC', async () => {
     const result = await createIntegrationCredentialAction({ ...validInput, secretPlaintext: '' });
     expect(result.success).toBe(false);
-    expect(__mockServiceClient.rpc).not.toHaveBeenCalled();
+    expect(__mockSupabase.rpc).not.toHaveBeenCalled();
   });
 
   it('Zod fail — metadata sem host', async () => {
@@ -139,7 +129,7 @@ describe('createIntegrationCredentialAction', () => {
       metadata: { ...validInput.metadata, host: '' },
     });
     expect(result.success).toBe(false);
-    expect(__mockServiceClient.rpc).not.toHaveBeenCalled();
+    expect(__mockSupabase.rpc).not.toHaveBeenCalled();
   });
 
   it('Zod fail — kind fora do enum', async () => {
@@ -152,7 +142,7 @@ describe('createIntegrationCredentialAction', () => {
   });
 
   it('RPC retorna credential_kind_already_active → mensagem amigável tipada', async () => {
-    __mockServiceClient.rpc.mockResolvedValue({ data: null, error: { message: 'credential_kind_already_active' } });
+    __mockSupabase.rpc.mockResolvedValue({ data: null, error: { message: 'credential_kind_already_active' } });
     const result = await createIntegrationCredentialAction(validInput);
     expect(result.success).toBe(false);
     expect(result.error).toContain('Já existe credencial ativa');
@@ -171,7 +161,7 @@ describe('rotateIntegrationCredentialAction', () => {
 
   it('happy — rotaciona, audit recebe diff de hint mascarado', async () => {
     const rotated = { ...FAKE_ROW, hint: '****9999', rotated_at: '2026-04-27T01:00:00Z', metadata_jsonb: validInput.newMetadata };
-    __mockServiceClient.rpc.mockResolvedValue({ data: rotated, error: null });
+    __mockSupabase.rpc.mockResolvedValue({ data: rotated, error: null });
     const result = await rotateIntegrationCredentialAction(validInput);
     expect(result.success).toBe(true);
     expect(result.data?.hint).toBe('****9999');
@@ -187,7 +177,7 @@ describe('rotateIntegrationCredentialAction', () => {
   });
 
   it('RPC retorna credential_not_found → mensagem amigável', async () => {
-    __mockServiceClient.rpc.mockResolvedValue({ data: null, error: { message: 'credential_not_found' } });
+    __mockSupabase.rpc.mockResolvedValue({ data: null, error: { message: 'credential_not_found' } });
     const result = await rotateIntegrationCredentialAction(validInput);
     expect(result.success).toBe(false);
     expect(result.error).toContain('não encontrada');
@@ -203,14 +193,14 @@ describe('revokeIntegrationCredentialAction', () => {
   };
 
   it('happy — revoga após verificar confirmKind contra registro real', async () => {
-    __mockServiceClient.from.mockReturnValue(makeFromQuery({
+    __mockSupabase.from.mockReturnValue(makeFromQuery({
       data: { kind: 'email_smtp', revoked_at: null }, error: null,
     }));
-    __mockServiceClient.rpc.mockResolvedValue({ data: null, error: null });
+    __mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
     const result = await revokeIntegrationCredentialAction(validInput);
     expect(result.success).toBe(true);
-    expect(__mockServiceClient.rpc).toHaveBeenCalledWith(
+    expect(__mockSupabase.rpc).toHaveBeenCalledWith(
       'admin_revoke_integration_credential',
       expect.objectContaining({ p_id: validInput.id }),
     );
@@ -219,23 +209,23 @@ describe('revokeIntegrationCredentialAction', () => {
   it('confirm mismatch — kind real não bate com confirmKind → confirm_kind_mismatch', async () => {
     // No banco existe email_smtp, mas usuário confirmou outro kind no input
     // (forçando o mismatch via type-cast — em produção Zod já bloquearia kind inválido).
-    __mockServiceClient.from.mockReturnValue(makeFromQuery({
+    __mockSupabase.from.mockReturnValue(makeFromQuery({
       data: { kind: 'sms_twilio', revoked_at: null }, error: null,
     }));
     const result = await revokeIntegrationCredentialAction(validInput);
     expect(result.success).toBe(false);
     expect(result.error).toContain('Confirmação não bate');
-    expect(__mockServiceClient.rpc).not.toHaveBeenCalled();
+    expect(__mockSupabase.rpc).not.toHaveBeenCalled();
   });
 
   it('credencial já revogada → credential_not_found', async () => {
-    __mockServiceClient.from.mockReturnValue(makeFromQuery({
+    __mockSupabase.from.mockReturnValue(makeFromQuery({
       data: { kind: 'email_smtp', revoked_at: '2026-04-27T00:00:00Z' }, error: null,
     }));
     const result = await revokeIntegrationCredentialAction(validInput);
     expect(result.success).toBe(false);
     expect(result.error).toContain('não encontrada');
-    expect(__mockServiceClient.rpc).not.toHaveBeenCalled();
+    expect(__mockSupabase.rpc).not.toHaveBeenCalled();
   });
 
   it('RBAC — non-owner não pode revogar', async () => {
