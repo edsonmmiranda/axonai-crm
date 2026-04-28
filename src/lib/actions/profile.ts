@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { getSessionContext } from '@/lib/supabase/getSessionContext';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 
 interface ActionResponse<T = unknown> {
   success: boolean;
@@ -104,7 +105,7 @@ export async function updateThemePreferenceAction(
 
   try {
     const ctx = await getSessionContext();
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     const { data: existing, error: readError } = await supabase
       .from('profiles')
