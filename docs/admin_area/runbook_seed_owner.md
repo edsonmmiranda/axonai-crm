@@ -3,6 +3,8 @@
 > **Sprint:** admin_02 · **Data:** 2026-04-24
 > **Contexto:** executa após a migration `20260424170000_platform_admins_rbac.sql` ser aplicada em staging/prod.
 > **Ferramenta:** Supabase Studio SQL Editor (precisará de acesso como `service_role`).
+>
+> **⚠️ Pós-Sprint 11 (2026-04-28):** este runbook só se aplica ao **bootstrap inicial** (primeiro owner do projeto, antes de existir qualquer linha em `platform_admins`) ou a **recovery via break-glass** (Sprint 12). A partir do Sprint 11, owners adicionais são convidados via UI em `/admin/admins/invite` (RPC `admin_create_platform_admin_invitation`). Tentar usar `seed_initial_platform_admin_owner()` quando já há admin seedado falha com `platform_admins_already_seeded`.
 
 ---
 

@@ -27,6 +27,7 @@ const ADMIN_PUBLIC_PATHS = [
   '/admin/mfa-enroll',
   '/admin/mfa-challenge',
   '/admin/unauthorized',
+  '/admin/accept-invite',
 ];
 
 export async function middleware(request: NextRequest) {
@@ -116,6 +117,25 @@ export async function middleware(request: NextRequest) {
       url.pathname =
         aal?.nextLevel === 'aal2' ? '/admin/mfa-challenge' : '/admin/mfa-enroll';
       url.search = '';
+      return NextResponse.redirect(url);
+    }
+
+    // ── MFA re-enroll required (Sprint 11) ─────────────────────────────────
+    // Set by mark_admin_password_reset (after admin password reset) or by
+    // admin_approve_mfa_reset (step-up). Forces re-enroll before any /admin/*
+    // route is served. Cleared by complete_admin_mfa_reenroll or
+    // consume_admin_mfa_reset on successful re-enroll.
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('mfa_reset_required')
+      .eq('id', user.id)
+      .maybeSingle<{ mfa_reset_required: boolean }>();
+
+    if (profile?.mfa_reset_required) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/admin/mfa-enroll';
+      url.search = '';
+      url.searchParams.set('reenroll', 'true');
       return NextResponse.redirect(url);
     }
   }

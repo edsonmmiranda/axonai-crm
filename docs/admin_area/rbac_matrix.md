@@ -61,11 +61,22 @@ Legenda: `✓` = permitido · `—` = negado · `R` = read-only
 | CRUD de `platform_integration_credentials` (email/SMS) | 10 | ✓ | — | — |
 | Rotação de credenciais | 10 | ✓ | — | — |
 | `get_credential(id)` (via server-side whitelist) | 10 | ✓ | — | — |
-| **Sprint 11 — Platform admins** | | | | |
-| `admin_create_platform_admin_invitation(email, role)` | 11 | ✓ | — | — |
-| `admin_deactivate_platform_admin(admin_id)` | 11 | ✓ | — | — |
-| `admin_change_platform_admin_role(admin_id, new_role)` | 11 | ✓ | — | — |
-| Listagem de `platform_admins` (read) | 11 | R | R (sem metadata sensível) | R (sem metadata sensível) |
+| **Sprint 11 — Platform admins (CRUD + invite + MFA reset)** | | | | |
+| `admin_create_platform_admin_invitation(email, role, ...)` | 11 | ✓ | — | — |
+| `admin_revoke_platform_admin_invitation(id, ...)` | 11 | ✓ | — | — |
+| `admin_consume_platform_admin_invitation(token, profile_id, ...)` (público com token) | 11 | n/a (caller é o convidado) | n/a | n/a |
+| `admin_change_platform_admin_role(admin_id, new_role, ...)` | 11 | ✓ | — | — |
+| `admin_deactivate_platform_admin(admin_id, ...)` | 11 | ✓ | — | — |
+| `admin_request_mfa_reset(target_admin_id, reason, ...)` | 11 | ✓ | — | — |
+| `admin_approve_mfa_reset(request_id, ...)` (≠ requester ≠ target) | 11 | ✓ | — | — |
+| `admin_revoke_mfa_reset_request(request_id, ...)` | 11 | ✓ | — | — |
+| `consume_admin_mfa_reset(request_id, target_profile_id, ...)` (caller = target) | 11 | n/a (caller é o próprio target) | n/a | n/a |
+| `mark_admin_password_reset(profile_id, ...)` (auto pós password reset) | 11 | n/a (auto via Supabase Auth) | n/a | n/a |
+| `complete_admin_mfa_reenroll(profile_id, ...)` (caller = self) | 11 | ✓ | ✓ | ✓ |
+| Listagem de `platform_admins` (read) | 11 | R | R | R |
+| Listagem de `platform_admin_invitations` (read) | 11 | R | R | R |
+| Listagem de `platform_admin_mfa_reset_requests` (read) | 11 | R | R | R |
+| `get_invitation_by_token(token)` (público com token) | 11 | n/a | n/a | n/a |
 | Password reset + re-enroll MFA (self) | 11 | ✓ | ✓ | ✓ |
 | **Sprint 12 — Audit UI, Rate limit, Break-glass** | | | | |
 | Visualizar `audit_log` (UI) | 12 | R | R | R (escopo billing apenas) |

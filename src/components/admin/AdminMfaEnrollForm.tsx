@@ -5,13 +5,20 @@ import { useRouter } from 'next/navigation';
 import { Copy, Check, Loader2, ShieldCheck } from 'lucide-react';
 
 import { createClient } from '@/lib/supabase/client';
+import { completeAdminMfaReenrollAction } from '@/lib/actions/admin/admin-auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 type Step = 'loading' | 'qr' | 'verify' | 'error';
 
-export function AdminMfaEnrollForm() {
+export type MfaEnrollMode = 'standard' | 'first' | 'reenroll';
+
+interface Props {
+  mode?: MfaEnrollMode;
+}
+
+export function AdminMfaEnrollForm({ mode = 'standard' }: Props) {
   const router = useRouter();
   const [step, setStep] = useState<Step>('loading');
   const [factorId, setFactorId] = useState<string | null>(null);
@@ -32,11 +39,30 @@ export function AdminMfaEnrollForm() {
     setError(null);
     const supabase = createClient();
 
+    // For re-enroll/first-enroll mode, clear stale unverified TOTP factors so the
+    // fresh enroll below doesn't collide. data.totp contains only verified factors;
+    // we filter data.all to find unverified ones.
+    if (mode === 'reenroll' || mode === 'first') {
+      const { data: factorsList } = await supabase.auth.mfa.listFactors();
+      const stale = (factorsList?.all ?? []).filter(
+        (f) => f.factor_type === 'totp' && f.status === 'unverified',
+      );
+      for (const f of stale) {
+        await supabase.auth.mfa.unenroll({ factorId: f.id });
+      }
+    }
+
     const { data, error: enrollError } = await supabase.auth.mfa.enroll({ factorType: 'totp' });
 
     if (enrollError) {
       if (enrollError.message.includes('already') || enrollError.message.includes('existing')) {
-        setError('Você já possui MFA configurado. Acesse a página de verificação para continuar.');
+        if (mode === 'reenroll') {
+          setError(
+            'Já existe um TOTP verificado nesta conta. Faça logout e login novamente para iniciar o reset.',
+          );
+        } else {
+          setError('Você já possui MFA configurado. Acesse a página de verificação para continuar.');
+        }
         setStep('error');
         return;
       }
@@ -78,6 +104,30 @@ export function AdminMfaEnrollForm() {
       setChallengeId(currentChallengeId);
     }
 
+    if (mode === 'reenroll' || mode === 'first') {
+      // Re-enroll/first-enroll path: server action verifies, unenrolls old factors,
+      // and clears mfa_reset_required flag (consuming pending request if any).
+      const result = await completeAdminMfaReenrollAction({
+        factorId,
+        challengeId: currentChallengeId,
+        code,
+      });
+
+      setIsSubmitting(false);
+
+      if (!result.success || !result.data) {
+        setChallengeId(null);
+        setError(result.error ?? 'Não foi possível concluir o re-enroll.');
+        setCode('');
+        return;
+      }
+
+      router.refresh();
+      router.push(result.data.redirectTo);
+      return;
+    }
+
+    // Standard enroll path: verify directly via client SDK.
     const { error: verifyError } = await supabase.auth.mfa.verify({
       factorId,
       challengeId: currentChallengeId,

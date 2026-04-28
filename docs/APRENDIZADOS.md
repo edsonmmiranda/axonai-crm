@@ -96,6 +96,10 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-28 · [TIPO] Supabase MFA `data.totp` exclui factors `unverified` por type narrowing
+
+**Regra:** `supabase.auth.mfa.listFactors()` tipa `data.totp[i].status` como `'verified'` apenas — quem precisa varrer factors `unverified` (ex.: limpar enroll incompleto antes de re-enrollar) deve usar `data.all` com filtro `f.factor_type === 'totp' && f.status === 'unverified'`. Filtrar `data.totp` por `status === 'unverified'` quebra build com TS2367 ("comparison appears to be unintentional").
+
 ### 2026-04-26 · [SUPABASE] `error instanceof Error` é falso para `PostgrestError` retornado por `supabase.rpc()`
 
 **Regra:** o helper `rpcErrorMessage(error: unknown)` que faz `error instanceof Error ? error.message : String(error)` retorna `'[object Object]'` para erros de RPC — `PostgrestError` é um plain object com `.message`/`.details`/`.code`/`.hint`, não uma instance de `Error`. Mapping de codes (`'org_not_found'`, `'plan_limit_exceeded'`, etc.) deve extrair `.message` via narrowing tipado:
