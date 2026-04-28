@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { __mockSupabase } from '../setup';
 
 vi.mock('next/headers', () => ({
   cookies: vi.fn(() => ({ get: vi.fn(), set: vi.fn(), getAll: vi.fn(() => []) })),
@@ -8,6 +7,14 @@ vi.mock('next/headers', () => ({
 
 vi.mock('@/lib/auth/platformAdmin', () => ({
   requirePlatformAdmin: vi.fn(),
+}));
+
+const { __mockServiceClient } = vi.hoisted(() => ({
+  __mockServiceClient: { from: vi.fn() },
+}));
+
+vi.mock('@/lib/supabase/service', () => ({
+  createServiceClient: vi.fn(() => __mockServiceClient),
 }));
 
 import { updateAdminThemePreferenceAction } from '@/lib/actions/admin/preferences';
@@ -39,7 +46,7 @@ function makeProfilesQuery(opts: {
 
 beforeEach(() => {
   vi.mocked(requirePlatformAdmin).mockReset().mockResolvedValue(FAKE_ADMIN);
-  __mockSupabase.from.mockReset();
+  __mockServiceClient.from.mockReset();
 });
 
 describe('updateAdminThemePreferenceAction', () => {
@@ -50,7 +57,7 @@ describe('updateAdminThemePreferenceAction', () => {
         error: null,
       },
     });
-    __mockSupabase.from.mockReturnValue(query);
+    __mockServiceClient.from.mockReturnValue(query);
 
     const result = await updateAdminThemePreferenceAction({ theme: 'dark' });
     expect(result.success).toBe(true);
@@ -69,7 +76,7 @@ describe('updateAdminThemePreferenceAction', () => {
     const query = makeProfilesQuery({
       selectResult: { data: { preferences: null }, error: null },
     });
-    __mockSupabase.from.mockReturnValue(query);
+    __mockServiceClient.from.mockReturnValue(query);
 
     const result = await updateAdminThemePreferenceAction({ theme: 'system' });
     expect(result.success).toBe(true);
@@ -82,21 +89,21 @@ describe('updateAdminThemePreferenceAction', () => {
     vi.mocked(requirePlatformAdmin).mockRejectedValue(new Error('Unauthorized'));
     const result = await updateAdminThemePreferenceAction({ theme: 'light' });
     expect(result.success).toBe(false);
-    expect(__mockSupabase.from).not.toHaveBeenCalled();
+    expect(__mockServiceClient.from).not.toHaveBeenCalled();
   });
 
   it('Zod fail — theme fora do enum → success: false sem chamar Supabase', async () => {
     // @ts-expect-error testando rejeição de valor inválido
     const result = await updateAdminThemePreferenceAction({ theme: 'sepia' });
     expect(result.success).toBe(false);
-    expect(__mockSupabase.from).not.toHaveBeenCalled();
+    expect(__mockServiceClient.from).not.toHaveBeenCalled();
   });
 
   it('read fail → mensagem amigável', async () => {
     const query = makeProfilesQuery({
       selectResult: { data: null, error: { message: 'db dead' } },
     });
-    __mockSupabase.from.mockReturnValue(query);
+    __mockServiceClient.from.mockReturnValue(query);
 
     const result = await updateAdminThemePreferenceAction({ theme: 'dark' });
     expect(result.success).toBe(false);
@@ -108,7 +115,7 @@ describe('updateAdminThemePreferenceAction', () => {
       selectResult: { data: { preferences: {} }, error: null },
       updateResult: { error: { message: 'constraint violation' } },
     });
-    __mockSupabase.from.mockReturnValue(query);
+    __mockServiceClient.from.mockReturnValue(query);
 
     const result = await updateAdminThemePreferenceAction({ theme: 'dark' });
     expect(result.success).toBe(false);

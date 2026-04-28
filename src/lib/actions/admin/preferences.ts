@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { requirePlatformAdmin } from '@/lib/auth/platformAdmin';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 
 interface ActionResponse<T = unknown> {
   success: boolean;
@@ -28,7 +28,7 @@ export async function updateAdminThemePreferenceAction(
 
   try {
     const admin = await requirePlatformAdmin();
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     const { data: existing, error: readError } = await supabase
       .from('profiles')
