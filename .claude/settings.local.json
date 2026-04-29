@@ -31,7 +31,11 @@
       "Bash(git check-ignore *)",
       "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); deps={**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}; print\\('tsx:', deps.get\\('tsx','MISSING'\\)\\); print\\('@supabase/supabase-js:', deps.get\\('@supabase/supabase-js','MISSING'\\)\\); print\\('scripts:'\\); [print\\(f'  {k}: {v}'\\) for k,v in d.get\\('scripts',{}\\).items\\(\\)]\")",
       "Bash(npm install *)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(supabase db *)",
+      "Bash(npx --no-install supabase --version)",
+      "Read(//c/Users/Edson/.config/**)",
+      "Bash(git commit *)"
     ]
   }
 }
