@@ -156,6 +156,7 @@ export async function uploadProductImageAction(
     const { data: inserted, error: insertError } = await supabase
       .from('product_images')
       .insert({
+        organization_id: ctx.organizationId,
         product_id: idParsed.data,
         url: storagePath,
         file_name: file.name || 'image',

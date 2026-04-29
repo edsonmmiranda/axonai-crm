@@ -153,6 +153,7 @@ export async function uploadProductDocumentAction(
     const { data: inserted, error: insertError } = await supabase
       .from('product_documents')
       .insert({
+        organization_id: ctx.organizationId,
         product_id: idParsed.data,
         url: storagePath,
         file_name: file.name || 'document',

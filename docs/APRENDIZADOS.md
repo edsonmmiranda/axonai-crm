@@ -96,6 +96,10 @@ Novas entradas entram **no topo** (ordem cronológica reversa), usando este form
 
 ## 📚 Entradas
 
+### 2026-04-29 · [SUPABASE] INSERT em tabela multi-tenant precisa de `organization_id` explícito
+
+**Regra:** tabelas com `organization_id NOT NULL` (sem default/trigger) exigem que toda Server Action passe `organization_id: ctx.organizationId` no `.insert()` — RLS WITH CHECK não preenche, e o erro vira toast genérico após cleanup do Storage. Auditar todos os `.insert()` em `src/lib/actions/*.ts` antes de mergear módulo novo.
+
 ### 2026-04-28 · [SUPABASE] RPC `SECURITY DEFINER` que usa `auth.uid()` deadlock com service-role client
 
 **Regra:** se a RPC autoriza internamente via `auth.uid()` (ex.: `WHERE profile_id = auth.uid()`), ela só funciona chamada com user-JWT client (`createClient()`), nunca com `createServiceClient()` — service role não tem JWT, `auth.uid()` retorna NULL, check falha → `RAISE 'unauthorized'`. Conceda `GRANT EXECUTE ... TO authenticated` (defense em profundidade vem do check interno + `requirePlatformAdmin*` no app). Erro `PostgrestError` aparece como `{}` no console por props non-enumerable — não confundir com "RPC não existe".
