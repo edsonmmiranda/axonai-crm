@@ -6,14 +6,22 @@ import { headers } from 'next/headers';
 
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import {
+  assertAdminLoginRateLimit,
+  recordAdminLoginAttempt,
+  RateLimitError,
+} from '@/lib/rateLimit/adminLogin';
 
 import {
   CompleteMfaReenrollSchema,
   CompletePasswordResetSchema,
+  SignInAdminSchema,
   type CompleteMfaReenrollInput,
   type CompleteMfaReenrollResult,
   type CompletePasswordResetInput,
   type CompletePasswordResetResult,
+  type SignInAdminInput,
+  type SignInAdminResult,
 } from './admin-auth.schemas';
 
 interface ActionResponse<T = unknown> {
@@ -192,5 +200,105 @@ export async function completeAdminMfaReenrollAction(
   } catch (err) {
     console.error('[admin:auth:mfa-reenroll] unexpected', err);
     return { success: false, error: 'Erro interno. Tente novamente.' };
+  }
+}
+
+/**
+ * Sprint admin_12 — Server Action de login admin com rate limit + audit.
+ *
+ * Substitui a chamada direta a `supabase.auth.signInWithPassword` que estava
+ * no AdminLoginForm (Sprint 04). Wrapping para enforçar:
+ *   - rate limit pré-flight (5/email + 20/IP em 10min) — fail-closed
+ *   - audit `auth.login_admin_success` em sucesso (RF-AUDIT-1)
+ *   - registro em login_attempts_admin (sucesso+falha) — fail-open
+ *
+ * Após sucesso: cliente recebe `redirectTo` e faz `router.push`. Lógica idêntica
+ * ao Sprint 04: AAL2 → /admin/mfa-challenge, sem AAL2 → /admin/mfa-enroll.
+ */
+export async function signInAdminAction(
+  input: SignInAdminInput,
+): Promise<ActionResponse<SignInAdminResult>> {
+  const parsed = SignInAdminSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: 'E-mail ou senha incorretos.' };
+  }
+
+  const { ip, ua } = await getRequestMeta();
+  const ipSafe = ip ?? '0.0.0.0';
+  const email  = parsed.data.email.toLowerCase().trim();
+
+  // 1. Rate limit pré-flight (fail-closed — decisão (b))
+  try {
+    await assertAdminLoginRateLimit({ email, ip: ipSafe, userAgent: ua });
+  } catch (err) {
+    if (err instanceof RateLimitError) {
+      return { success: false, error: 'Muitas tentativas. Aguarde alguns minutos.' };
+    }
+    console.error('[admin:auth:signin:rate-limit-unexpected]', err);
+    return { success: false, error: 'Erro ao fazer login. Tente novamente.' };
+  }
+
+  // 2. Sign-in real
+  let signInError: { message: string } | null = null;
+  try {
+    const supabase = await createClient();
+    const result = await supabase.auth.signInWithPassword({
+      email:    parsed.data.email,
+      password: parsed.data.password,
+    });
+    signInError = result.error;
+
+    // 3. Record attempt (fail-open — decisão (b))
+    await recordAdminLoginAttempt({
+      email,
+      ip:        ipSafe,
+      userAgent: ua,
+      success:   !signInError,
+    });
+
+    if (signInError) {
+      const msg = signInError.message ?? '';
+      if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials')) {
+        return { success: false, error: 'E-mail ou senha incorretos.' };
+      }
+      if (msg.includes('Email not confirmed')) {
+        return { success: false, error: 'Confirme seu e-mail antes de continuar.' };
+      }
+      console.error('[admin:auth:signin]', signInError);
+      return { success: false, error: 'Erro ao fazer login. Tente novamente.' };
+    }
+
+    // 4. Audit success (RF-AUDIT-1)
+    const service = createServiceClient();
+    const { error: auditErr } = await service.rpc('audit_login_admin_event', {
+      p_email:      email,
+      p_ip:         ipSafe,
+      p_user_agent: ua,
+      p_action:     'auth.login_admin_success',
+      p_metadata:   {},
+    });
+    if (auditErr) console.error('[admin:auth:signin:audit]', auditErr); // fail-open audit
+
+    // 5. Determinar próximo passo (lógica idêntica ao Sprint 04 AdminLoginForm)
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    const redirectTo: SignInAdminResult['redirectTo'] =
+      aal?.nextLevel === 'aal2' ? '/admin/mfa-challenge' : '/admin/mfa-enroll';
+
+    return { success: true, data: { redirectTo } };
+  } catch (err) {
+    // Falha em getRequestMeta, createClient, etc.
+    console.error('[admin:auth:signin] unexpected', err);
+    // Best-effort record
+    try {
+      await recordAdminLoginAttempt({
+        email,
+        ip:        ipSafe,
+        userAgent: ua,
+        success:   false,
+      });
+    } catch {
+      // ignore — já estamos em erro
+    }
+    return { success: false, error: 'Erro ao fazer login. Tente novamente.' };
   }
 }

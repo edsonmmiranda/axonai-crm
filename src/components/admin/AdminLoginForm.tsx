@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 
-import { createClient } from '@/lib/supabase/client';
+import { signInAdminAction } from '@/lib/actions/admin/admin-auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,32 +24,16 @@ export function AdminLoginForm() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    const res = await signInAdminAction({ email, password });
 
-    if (signInError) {
+    if (!res.success || !res.data) {
       setIsLoading(false);
-      if (
-        signInError.message.includes('Invalid login credentials') ||
-        signInError.message.includes('invalid_credentials')
-      ) {
-        setError('E-mail ou senha incorretos.');
-      } else if (signInError.message.includes('Email not confirmed')) {
-        setError('Confirme seu e-mail antes de continuar.');
-      } else {
-        setError('Erro ao fazer login. Tente novamente.');
-      }
+      setError(res.error ?? 'Erro ao fazer login. Tente novamente.');
       return;
     }
 
-    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     router.refresh();
-
-    if (aal?.nextLevel === 'aal2') {
-      router.push('/admin/mfa-challenge');
-    } else {
-      router.push('/admin/mfa-enroll');
-    }
+    router.push(res.data.redirectTo);
   }
 
   return (

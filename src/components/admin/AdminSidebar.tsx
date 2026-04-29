@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, CreditCard, Flag, Gavel, LayoutDashboard, LogOut, Mail, Settings, Timer, Users } from 'lucide-react';
+import { Building2, CreditCard, Flag, Gavel, History, LayoutDashboard, LogOut, Mail, Settings, Timer, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/organizations', label: 'Organizations', Icon: Building2 },
   { href: '/admin/plans', label: 'Plans', Icon: CreditCard },
   { href: '/admin/admins', label: 'Administradores', Icon: Users },
+  { href: '/admin/audit', label: 'Audit log', Icon: History },
 ];
 
 const SETTINGS_ITEMS: NavItem[] = [

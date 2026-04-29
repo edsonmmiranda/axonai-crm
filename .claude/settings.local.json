@@ -18,7 +18,20 @@
       "mcp__supabase__list_migrations",
       "Bash(awk '/\"profiles\": \\\\{/,/^    \\\\}/' docs/schema_snapshot.json)",
       "Bash(python -c ' *)",
-      "Bash(node scripts/check-admin-isolation.mjs)"
+      "Bash(node scripts/check-admin-isolation.mjs)",
+      "Bash(command -v supabase)",
+      "Bash(supabase --version)",
+      "Bash(npm test *)",
+      "Bash(git -C d:/AiProjects/axonai-crm status --porcelain)",
+      "Bash(git -C d:/AiProjects/axonai-crm diff --name-only HEAD)",
+      "Bash(git -C d:/AiProjects/axonai-crm ls-files --others --exclude-standard)",
+      "Bash(git push *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git add *)",
+      "Bash(git check-ignore *)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); deps={**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}; print\\('tsx:', deps.get\\('tsx','MISSING'\\)\\); print\\('@supabase/supabase-js:', deps.get\\('@supabase/supabase-js','MISSING'\\)\\); print\\('scripts:'\\); [print\\(f'  {k}: {v}'\\) for k,v in d.get\\('scripts',{}\\).items\\(\\)]\")",
+      "Bash(npm install *)",
+      "Bash(git mv *)"
     ]
   }
 }

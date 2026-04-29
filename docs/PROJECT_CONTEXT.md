@@ -28,6 +28,7 @@ Toda tabela em `public.*` deve ter `organization_id` para isolamento de tenant v
 | `public.email_delivery_log` | Rastro operacional de envios transacionais admin (incluindo fallback offline); evento da plataforma, não do tenant | `admin_10` (2026-04-27) | RLS FORCE + policy SELECT só para platform admins ativos + sem policies de mutação; writes via RPC `log_email_delivery` SECURITY DEFINER (service-role only). **Sem trigger de deny UPDATE/DELETE** — log operacional, não evidência forense (diferente de `audit_log`) |
 | `public.platform_admin_invitations` | Convites single-use de novos platform admins (token UUID opaco, TTL 72h, consumo atômico via `UPDATE ... WHERE consumed_at IS NULL ... RETURNING *`); catálogo da plataforma admin escopado à org `slug='axon'` por convenção | `admin_11` (2026-04-28) | RLS FORCE + policy SELECT só para platform admin ativo + sem policies de mutação; writes via 3 RPCs SECURITY DEFINER (service-role only). 6 CHECKs de coerência (consume/revoke/terminal-state-xor) + UNIQUE parcial 1 pendente por email |
 | `public.platform_admin_mfa_reset_requests` | Step-up duplo para reset de MFA de admin (A solicita, C aprova, B consume — A≠B≠C); catálogo da plataforma admin | `admin_11` (2026-04-28) | RLS FORCE + policy SELECT só para platform admin ativo + sem policies de mutação; writes via 4 RPCs SECURITY DEFINER (service-role only). 8 CHECKs anti-bypass: `pamr_no_self_request`, `pamr_approver_distinct`, etc. — defesa em profundidade contra acesso direto via service_role |
+| `public.login_attempts_admin` | Append-only de tentativas de login na rota `/admin/login` (sucesso+falha); evento pré-autenticação — admin ainda não identificado quando login falha, mesmo no sucesso é evento da plataforma e não do tenant | `admin_12` (2026-04-28) | RLS FORCE + policy SELECT só para platform admin ativo `role IN ('owner','support')` (billing **não** lê — fora do escopo) + sem policies de mutação; writes via RPC `record_admin_login_attempt` SECURITY DEFINER (service-role only). **Sem trigger de deny UPDATE/DELETE** — log operacional, não evidência forense (purge eventual em fase 2) |
 
 **Para adicionar nova exceção:** justificativa + proteção compensatória obrigatórias. Registrar aqui E documentar no header da migration.
 
@@ -45,7 +46,7 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 | D-4 | Branding admin | **"Axon Admin"**, paleta neutra escura. Tokens definidos no Sprint 04. | 04 |
 | D-5 | `profiles.role` no código | **`'owner' \| 'admin' \| 'user' \| 'viewer'`** — alinhado ao DB. `'member'` foi removido do código no Sprint 02 (mantido só como legacy-mapping transitório em `normalizeRole`). | 02 ✅ |
 | D-6 | Matriz RBAC platform admin | Definida em `docs/admin_area/rbac_matrix.md`. Papéis: owner/support/billing. Ortogonal a `profiles.role`. | 02 ✅ |
-| D-7 | Retenção de audit log | A decidir antes do Sprint 12 ir pra prod. Coluna `retention_expires_at` reservada. | 12 |
+| D-7 | Retenção de audit log | **MVP retém indefinidamente.** Coluna `audit_log.retention_expires_at` criada e reservada (NULL = indefinido). Defaults sugeridos para fase 2: compliance/maioria 7 anos, `inspect.*` 90 dias, `auth.*` 1 ano, `break_glass.*` indefinido. Purge job é fase 2 (exige bypass dos triggers `audit_log_deny_*` via função SECURITY DEFINER dedicada). | 12 ✅ |
 | D-8 | Duração da sessão admin | **8h inatividade, 12h absoluta.** Configurado via Supabase auth settings no Sprint 04. | 04 |
 | D-9 | SLA de transição automática | **≤15min** da expiração ao bloqueio. pg_cron horário = máx 60min; lazy-check fecha a janela. | 13 |
 
@@ -122,6 +123,22 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 - **Server-only enforcement:** `import 'server-only'` no topo de `getCredential.ts`/`sender.ts`/`getEmailSourceStatus.ts`. `nodemailer` (`@types/nodemailer`) importado APENAS em `sender.ts`.
 - **Banner global "Email não configurado"** renderizado pelo `AdminShell` em todas as rotas `/admin/*` quando ambas DB e env vars estão vazias: warning amarelo se fallback ativo; danger vermelho se desativado.
 - **Dep nova:** `nodemailer` + `@types/nodemailer` adicionados ao `package.json`.
+
+## 5f. Estado de schema (sprint_admin_12, 2026-04-28)
+
+- **1 tabela nova `public.login_attempts_admin`** (sem `organization_id` — exceção §2): registro append-only de tentativas de login admin (sucesso+falha). FORCE RLS + policy SELECT só para platform admin `role IN ('owner','support')`. Sem trigger de deny UPDATE/DELETE (purge eventual em fase 2). 3 índices: `(email, occurred_at DESC)`, `(ip_address, occurred_at DESC)`, `(occurred_at DESC)`. Coluna `email_hash bytea` derivada via `digest(lower(email),'sha256')` no INSERT-time pela RPC.
+- **1 coluna nova `audit_log.retention_expires_at timestamptz NULL`** — reservada para D-7 (decisão fixada §3: MVP retém indefinidamente). Sem enforcement no MVP — purge job é fase 2.
+- **5 RPCs novas** (todas `SECURITY DEFINER`, `set search_path=public`, REVOKE explícito de `public/anon/authenticated`, GRANT só `service_role` — APRENDIZADO 2026-04-24):
+  - `record_admin_login_attempt(p_email, p_ip, p_user_agent, p_success)` — INSERT em `login_attempts_admin`. Sem audit row (volume).
+  - `count_admin_login_failures(p_email, p_ip, p_window)` STABLE — `jsonb_build_object('by_email', ..., 'by_ip', ...)` para sliding-window. Sem `FOR UPDATE` (decisão (a) — tolerância ~10ms aceitável).
+  - `audit_login_admin_event(p_email, p_ip, p_user_agent, p_action, p_metadata)` — emite linha em `audit_log`. Whitelist de actions (`auth.login_admin_success` | `auth.login_rate_limited`). Resolve `actor_profile_id` apenas em sucesso (rate-limited = atacante anônimo). INSERT direto em `audit_log` para retornar id (em vez de chamar wrapper `audit_write`).
+  - `get_break_glass_secret_hash()` STABLE — read do hash em `platform_settings.value_text` com `key='break_glass_secret_hash'` e `value_type='text'`. Retorna NULL se setting não seedado (CLI falha com mensagem clara).
+  - `break_glass_recover_owner(p_email, p_operator, p_origin_host)` — operação atômica em transação: SELECT FOR UPDATE em `platform_admins` + UPSERT manual (UPDATE existente OR INSERT novo, role='owner', is_active=true, deactivated_at=NULL) + UPDATE `profiles.mfa_reset_required=true` + INSERT em `audit_log` com `action='break_glass.recover_owner'` + metadata (`operator`, `origin_host`, `platform_admin_id`, `restored_role`). MFA factor invalidation NÃO acontece no RPC — é responsabilidade do CLI via Auth Admin API JS (decisão (d)).
+- **3 action slugs novos no audit_log:** `auth.login_admin_success`, `auth.login_rate_limited`, `break_glass.recover_owner`.
+- **Idempotência do break-glass:** RPC é idempotente (rerun seguro — UPSERT manual + UPDATE flag). Auth Admin API (deletar TOTP factors) também idempotente (rerun com lista vazia = no-op). Estado convergente em qualquer ordem.
+- **Trade-off de volume:** login admin success **emite** audit row (RF-AUDIT-1 lista login admin como ação sensível); login admin failure **não** emite audit (volume em ataque seria proibitivo) — apenas `login_attempts_admin`. Rate limit triggered emite audit (alta-sinal/baixo-volume).
+- **Limitação documentada:** `audit_log` SELECT policy permissiva para qualquer platform admin ativo (Sprint 03 design); RBAC para `billing` (regex `^(plan|subscription|grant|org)\.`) é enforced **apenas application-level** na Server Action `listAuditLogAction`. Defesa em profundidade adicional (RLS por role) é fora-de-escopo MVP.
+- **Triggers preservados** (G-10): `audit_log_deny_truncate` + `audit_log_deny_update_delete` ainda ativos. Sprint 12 NÃO modifica triggers nem indexes existentes de `audit_log` — apenas adiciona coluna reservada.
 
 ---
 

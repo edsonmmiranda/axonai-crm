@@ -13,8 +13,14 @@ export const CompleteMfaReenrollSchema = z.object({
   code:        z.string().regex(/^\d{6}$/, 'Código TOTP deve ter 6 dígitos'),
 });
 
+export const SignInAdminSchema = z.object({
+  email:    z.string().email('E-mail inválido').max(320),
+  password: z.string().min(1, 'Senha obrigatória').max(128),
+});
+
 export type CompletePasswordResetInput = z.input<typeof CompletePasswordResetSchema>;
 export type CompleteMfaReenrollInput   = z.input<typeof CompleteMfaReenrollSchema>;
+export type SignInAdminInput           = z.input<typeof SignInAdminSchema>;
 
 export interface CompletePasswordResetResult {
   redirectTo: '/admin/login';
@@ -22,4 +28,8 @@ export interface CompletePasswordResetResult {
 
 export interface CompleteMfaReenrollResult {
   redirectTo: '/admin/dashboard';
+}
+
+export interface SignInAdminResult {
+  redirectTo: '/admin/mfa-challenge' | '/admin/mfa-enroll';
 }
