@@ -125,6 +125,21 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 - **Banner global "Email não configurado"** renderizado pelo `AdminShell` em todas as rotas `/admin/*` quando ambas DB e env vars estão vazias: warning amarelo se fallback ativo; danger vermelho se desativado.
 - **Dep nova:** `nodemailer` + `@types/nodemailer` adicionados ao `package.json`.
 
+## 5g. Estado de schema (sprint_admin_13, 2026-04-29)
+
+- **Trigger `prevent_slug_change`** em `public.organizations` (BEFORE UPDATE OF slug). Slug é **imutável desde a criação** (decisão simplificada 2026-04-29 — versão original com `first_login_at` foi descartada). UPDATE no-op (mesmo slug) é permitido para idempotência. Mudança operacional exige runbook fora da UI (DROP TRIGGER → UPDATE → recreate).
+- **Função estendida `is_calling_org_active()`**: além de `organizations.is_active`, agora retorna `false` quando existe subscription da org com `status IN ('trial_expired','suspensa')`. Cron + lazy garantem que status reflete realidade dentro do SLA de 15min (D-9). 55 policies customer continuam usando `is_calling_org_active()` — bloqueio agora cobre subscriptions vencidas automaticamente.
+- **3 RPCs novas** (todas `SECURITY DEFINER`, `SET search_path=public`, REVOKE público/anon/authenticated, GRANT só `service_role` — APRENDIZADO 2026-04-24):
+  - `_apply_subscription_transitions(p_org_id uuid DEFAULT NULL, p_source text DEFAULT 'cron')` — função privada que aplica as 3 transições (trial→trial_expired; past_due+grace→suspensa; cancelada+vencido→suspensa) + audit por linha. `FOR UPDATE SKIP LOCKED` evita contenção entre cron e lazy. Source whitelist: `cron | lazy_middleware | manual_admin`.
+  - `admin_transition_subscriptions()` — wrapper para o pg_cron job (NULL = todas as orgs).
+  - `admin_transition_subscription_for_org(p_org_id uuid)` — wrapper para o lazy-check do middleware admin.
+- **Extensão `pg_cron` 1.6.4** instalada. Job `admin_transition_subscriptions_hourly` agendado em `0 * * * *` (top of hour), active=true. Idempotência: migration faz `unschedule + reschedule` se job já existe.
+- **3 action slugs novos no audit_log:** `subscription.auto_expire`, `subscription.auto_block_past_due`, `subscription.auto_block_cancelled`. Todas com `metadata->>'source'` indicando origem (`cron` ou `lazy_middleware`). `actor_profile_id=NULL` quando chamado por cron — `audit_write` já lida via `auth.uid()` que retorna NULL fora de JWT context.
+- **Hostname gate em `src/middleware.ts`** (Sprint 13): hostnames vêm de `NEXT_PUBLIC_ADMIN_HOST` e `NEXT_PUBLIC_CUSTOMER_HOST`. `<customer>/admin/*` → 404; `<admin>/<non-admin>` → 404; dev (localhost/127.0.0.1) → permissivo com warning único. Em prod sem env vars, hard-fail 503 em `/admin/*`. Lógica em `src/lib/middleware/hostnameGate.ts` (função pura testável).
+- **Cookies de sessão isolados** (Sprint 13): `setAll` do `createServerClient` no middleware injeta `domain` = host atual + `SameSite=Strict` quando host não inclui `localhost`/`127.0.0.1`. Sessão admin emitida em `admin.<host>` não vaza para customer host. Docs operacionais em `docs/admin_area/runbook_origin_isolation.md`.
+- **Server Action nova:** `triggerLazyTransitionAction` em `src/lib/actions/admin/subscription-transitions.ts`. Chama RPC `admin_transition_subscription_for_org` via service client. Defesa em profundidade: `requirePlatformAdmin()` + check `isActive` antes do RPC. Revalida `/admin/organizations/{id}` e `.../subscription` quando `transitioned > 0`.
+- **`triggerLazyTransitionAction` ainda não está integrada ao middleware admin** (não havia ponto natural de chamada sem refactor). Próxima oportunidade: invocar de Server Component em `(admin)/organizations/[id]/page.tsx` (ou layout) — fica como follow-up operacional.
+
 ## 5f. Estado de schema (sprint_admin_12, 2026-04-28)
 
 - **1 tabela nova `public.login_attempts_admin`** (sem `organization_id` — exceção §2): registro append-only de tentativas de login admin (sucesso+falha). FORCE RLS + policy SELECT só para platform admin `role IN ('owner','support')`. Sem trigger de deny UPDATE/DELETE (purge eventual em fase 2). 3 índices: `(email, occurred_at DESC)`, `(ip_address, occurred_at DESC)`, `(occurred_at DESC)`. Coluna `email_hash bytea` derivada via `digest(lower(email),'sha256')` no INSERT-time pela RPC.

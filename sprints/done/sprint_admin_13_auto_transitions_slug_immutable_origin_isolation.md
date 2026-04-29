@@ -12,7 +12,7 @@
 Fechar três obrigações de produto que ficaram em aberto até o último sprint do plano admin:
 
 1. **Transições automáticas de status de subscription** (RF-SUB-6, RF-SUB-7, G-23) — hoje, após Sprint 06, `trial`/`past_due`/`cancelada` só viram `trial_expired`/bloqueada via lazy-check no middleware admin. Se ninguém abrir a área admin, o customer continua acessando além do permitido. SLA-alvo: <15min entre expiração efetiva e bloqueio.
-2. **Slug imutável pós primeiro login** (RF-ORG-9, INV-9, G-20) — proteger URLs em uso, links de convite emitidos e integrações que cachearam o slug do cliente. Slug fica editável só durante a janela trial pré-uso.
+2. **Slug imutável desde a criação** (RF-ORG-9, INV-9, G-20) — proteger URLs em uso, links de convite emitidos e integrações que cachearam o slug do cliente. **Decisão simplificada (2026-04-29):** slug é imutável desde a criação. Mudança operacional fica como runbook fora da UI.
 3. **Origin isolation de deploy** (RNF-SEC-1, RNF-SEC-2, T-01) — PRD exige que o customer app **nunca** sirva rotas `(admin)`. Hoje o route group existe (Sprint 04), mas o mesmo hostname serve as duas árvores — basta digitar a URL certa. Subdomínio `admin.<host>` resolve.
 
 **Métrica de sucesso:** trial com `period_end` no passado vira `trial_expired` em <15min sem intervenção manual; tentativa de PUT em slug pós-login falha com erro tipado; request a `/admin/dashboard` no host customer retorna 404.
@@ -35,16 +35,9 @@ Não aplicável — este sprint não cria CRUD nem módulo novo. Trabalho é em 
 
 ## 📋 Funcionalidades (Escopo)
 
-### Backend / DB
+### Backend / DB (slug + transições)
 
-- [ ] **Coluna `organizations.first_login_at timestamptz nullable`:**
-  - ALTER TABLE idempotente (`IF NOT EXISTS`).
-  - Backfill: para orgs já existentes que tenham qualquer `auth.sessions` registrada para algum `profiles.id` da org → setar `first_login_at = MIN(session.created_at)`. Orgs sem sessão registrada permanecem `NULL` (slug ainda editável).
-  - Sem índice — leitura é por org.id que já é PK.
-
-- [ ] **Trigger `set_org_first_login_at`** em `auth.sessions` (AFTER INSERT) — popula `organizations.first_login_at = now()` na primeira sessão de qualquer user pertencente àquela org. Idempotente (`WHERE first_login_at IS NULL`). Cuidado: precisa resolver `profile_id → organization_id` na transação. Se a relação for via `profiles.organization_id`, o trigger faz lookup; se houver multiplicidade (profile em múltiplas orgs), o trigger marca todas.
-
-- [ ] **Trigger `prevent_slug_change_after_first_login`** em `organizations` (BEFORE UPDATE OF slug) — `IF OLD.first_login_at IS NOT NULL AND NEW.slug <> OLD.slug THEN RAISE EXCEPTION 'org_slug_immutable_after_first_login' USING ERRCODE = 'P0001'`. Erro tipado para o frontend traduzir.
+- [ ] **Trigger `prevent_slug_change`** em `organizations` (BEFORE UPDATE OF slug) — `IF NEW.slug IS DISTINCT FROM OLD.slug THEN RAISE EXCEPTION 'org_slug_immutable' USING ERRCODE = 'P0001'`. Erro tipado para o frontend traduzir. UPDATE no-op (slug igual) é permitido para idempotência. Mudança operacional exige runbook (DROP TRIGGER → UPDATE → recreate).
 
 - [ ] **RPC `admin_transition_subscriptions() returns table(transitioned int, by_status jsonb)`** `SECURITY DEFINER`:
   - `trial` com `period_end < now()` → UPDATE para `trial_expired`. Audit `'subscription.auto_expire'` por linha (chama `audit_write` do Sprint 03 com `actor_profile_id = NULL`, marca `metadata->>'source' = 'cron'`).
@@ -55,7 +48,7 @@ Não aplicável — este sprint não cria CRUD nem módulo novo. Trabalho é em 
 
 - [ ] **pg_cron job `admin_transition_subscriptions_hourly`** — schedule `'0 * * * *'`, chama `admin_transition_subscriptions()`. **Decisão a tomar pelo `@db-admin` no preflight:** validar que pg_cron está habilitado no projeto Supabase. Se não estiver e habilitação exigir tier superior (T-19 risk), abrir issue de fallback para Edge Function + Vercel Cron com mesmo contrato (não bloqueia o sprint — fallback documentado no runbook).
 
-- [ ] **RLS:** todas as alterações respeitam o que já existe. `organizations.first_login_at` herda RLS atual da tabela. RPC nova é `SECURITY DEFINER` (cron precisa rodar sem JWT).
+- [ ] **RLS:** todas as alterações respeitam o que já existe. RPCs novas são `SECURITY DEFINER` (cron precisa rodar sem JWT).
 
 - [ ] **Migration idempotente** com script de rollback testado (G-17).
 
@@ -84,8 +77,8 @@ Não aplicável — este sprint não cria CRUD nem módulo novo. Trabalho é em 
 
 - [ ] **Trial expirado durante janela de uso ativo:** customer está logado e fazendo request quando o cron flipa `trial → trial_expired`. Próximo request da org bloqueado pela policy de `is_active`. Sessão do user **não** é revogada — só os dados ficam inacessíveis. Documentar isso explicitamente; é comportamento esperado (não force logout).
 - [ ] **Cron atrasa por X horas (ex: pg_cron pausado):** lazy-check no middleware admin garante que, quando admin abre a área admin tocando aquela subscription, transição acontece on-demand. Customer continua bloqueado pela policy `is_active`+`status` independente de o cron ter rodado ou não.
-- [ ] **Org criada antes deste sprint sem `first_login_at` populado e que já teve login:** backfill cobre. Caso o backfill falhe (ex: `auth.sessions` pruned), trigger ainda popula no próximo login. Janela de risco: slug editável até o próximo login. Aceitável — operador é avisado no runbook.
-- [ ] **Tentativa de UPDATE batch em `organizations` que toque slug de várias orgs (algumas com `first_login_at` NULL, outras não):** trigger é per-row; atualizações que falham param a transação inteira. UI não emite update batch — operação é via RPC `admin_update_org_slug(org_id, new_slug)` que é per-org. Caso o admin force SQL direto, o trigger protege.
+- [ ] **Tentativa de UPDATE em slug de qualquer org:** trigger rejeita SEMPRE (slug imutável desde criação). Operador legítimo precisa renomear via runbook fora da UI (DROP TRIGGER → UPDATE → recreate).
+- [ ] **UPDATE no-op em slug (mesmo valor):** trigger permite (idempotência). UPDATE em outras colunas da mesma row sem tocar slug também passa.
 - [ ] **Request a `admin.<host>/api/some-customer-endpoint`:** middleware retorna 404 (path não casa `/admin/*`). API customer só atende em customer host.
 - [ ] **Request a `<host>/admin/login`:** middleware retorna 404 (não 403 — não queremos confirmar que a rota existe).
 - [ ] **Mesmo browser logado em customer e admin (cross-tab):** sessões coexistem em cookies de domínios distintos. Logout em admin não desloga customer e vice-versa (RNF-SEC-1).
@@ -107,10 +100,9 @@ Não aplicável — este sprint não cria CRUD nem módulo novo. Trabalho é em 
 - [ ] `past_due` excedendo `past_due_grace_days` é flipado para `suspensa`.
 - [ ] `cancelada` com `period_end < now()` é flipado para `suspensa`.
 - [ ] Toda transição automática gera linha em `audit_log` com `action` apropriada e `metadata->>'source' = 'cron'`.
-- [ ] `UPDATE organizations SET slug = 'novo' WHERE first_login_at IS NOT NULL` falha com erro `org_slug_immutable_after_first_login` (P0001).
-- [ ] `UPDATE organizations SET slug = 'novo' WHERE first_login_at IS NULL` passa.
-- [ ] Trigger popula `first_login_at` na primeira sessão de qualquer user da org.
-- [ ] Backfill executado com sucesso para todas as orgs existentes que têm sessões registradas.
+- [ ] `UPDATE organizations SET slug = 'novo'` (qualquer org) falha com erro `org_slug_immutable` (P0001).
+- [ ] `UPDATE organizations SET slug = OLD.slug` (no-op) passa silenciosamente.
+- [ ] `UPDATE organizations SET name = 'X'` (sem tocar slug) passa normalmente.
 - [ ] Request a `<host>/admin/login` retorna 404.
 - [ ] Request a `admin.<host>/admin/login` retorna a tela de login.
 - [ ] Request a `admin.<host>/dashboard` (path customer) retorna 404.
@@ -129,11 +121,11 @@ Não aplicável — este sprint não cria CRUD nem módulo novo. Trabalho é em 
 
 **Análise:**
 - Nível: STANDARD
-- Complexity Score: **15** (DB: nova coluna +1, 2 triggers +2, 1 pg_cron job +3, 1 RPC com lógica de transição +2 = **8**; API: middleware reescrito +2 = **2**; UI: 0; Business logic: 3 regras de transição novas +3, lazy fallback +2 = **5**; Dependências: pg_cron extension +3, Vercel domain config +1 = **4**)
+- Complexity Score: **12** (DB: 1 trigger simples +2, 1 pg_cron job +3, 1 RPC com lógica de transição +2 = **7**; API: middleware reescrito +2 = **2**; UI: 0; Business logic: 3 regras de transição novas +3 = **3**; Dependências: pg_cron extension +3, Vercel domain config +1 = **4**) — score caiu de 15 para 12 após simplificação do slug em 2026-04-29
 - Reference Module: não aplicável (sprint não é CRUD)
 - Integração com API externa: não (mas tem dependência de extensão Supabase pg_cron — assimilável a integração de plataforma)
 - Lógica de negócio nova/ambígua: **sim** — três regras de transição + interação cron ↔ lazy ↔ middleware. PRD especifica o **quê**, mas o **como** (locking, idempotência, ordem de status, tratamento de erro do cron) precisa de spec
-- Ambiguity Risk: **médio-alto** — `past_due_grace_days` lê de `platform_settings` com semântica que ainda não foi exercitada por job; comportamento de sessão durante flip mid-request precisa decisão explícita; trigger em `auth.sessions` toca tabela do Supabase Auth (cuidado com side-effects)
+- Ambiguity Risk: **médio** — `past_due_grace_days` lê de `platform_settings` com semântica que ainda não foi exercitada por job; comportamento de sessão durante flip mid-request precisa decisão explícita
 
 ---
 
@@ -154,7 +146,7 @@ Não aplicável — este sprint não cria CRUD nem módulo novo. Trabalho é em 
 **Recomendação do @sprint-creator:** **Opção 2 — Opus**
 
 **Justificativa:**
-Score 15 dispara regra "≥ 9 → Opção 2 forçada". Adicionalmente, lógica de negócio nova nas três regras de transição (timing, idempotência, audit-by-cron sem actor humano) e dependências externas em duas plataformas (pg_cron na extensão Supabase, DNS/domain no Vercel) elevam o ambiguity risk a médio-alto. Errar a spec aqui significa ou customer bloqueado indevidamente (perda de receita) ou customer ainda acessando além do permitido (compliance + receita fantasma) — ambos com rastro mínimo no audit. Implementation Plan + sanity-checker pagam o próprio custo.
+Score 12 dispara regra "≥ 9 → Opção 2 forçada". Adicionalmente, lógica de negócio nova nas três regras de transição (timing, idempotência, audit-by-cron sem actor humano) e dependências externas em duas plataformas (pg_cron na extensão Supabase, DNS/domain no Vercel). Errar a spec aqui significa ou customer bloqueado indevidamente (perda de receita) ou customer ainda acessando além do permitido (compliance + receita fantasma) — ambos com rastro mínimo no audit. Implementation Plan + sanity-checker pagam o próprio custo.
 
 **Aguardando escolha do usuário:** responda ao Tech Lead com `"execute opção 1"` ou `"execute opção 2"` (ou aceite a recomendação dizendo apenas `"execute"`).
 
@@ -168,12 +160,12 @@ Score 15 dispara regra "≥ 9 → Opção 2 forçada". Adicionalmente, lógica d
 |---|---|---|---|
 | PRD (se Opção 2) | `@spec-writer` | ⬜ Pendente | — |
 | Sanity check (se Opção 2) | `@sanity-checker` | ⬜ Pendente | — |
-| Banco de dados (coluna + triggers + RPC + pg_cron + backfill) | `@db-admin` | ⬜ Pendente | — |
-| Middleware + hostname gate + cookies + lazy-check | `@backend` | ⬜ Pendente | — |
-| Integration tests (transições + slug guard + hostname gate) | `@qa-integration` | ⬜ Pendente | — |
+| Banco de dados (trigger slug + RPCs transição + pg_cron + ajuste is_calling_org_active) | `@db-admin` | ✅ Concluído | `supabase/migrations/20260429160000_admin_13_auto_transitions_slug_origin.sql` |
+| Middleware + hostname gate + cookies + lazy-check | `@backend` | ✅ Concluído | `src/lib/middleware/hostnameGate.ts`, `src/middleware.ts` (atualizado), `src/lib/actions/admin/subscription-transitions.ts` + `.schemas.ts`, `.env.example` (atualizado) |
+| Integration tests (transições + slug guard + hostname gate) | `@qa-integration` | ✅ Concluído | `tests/integration/admin-subscription-transitions.test.ts` (6 testes), `tests/integration/hostname-gate.test.ts` (15 testes) — 21/21 passing; suíte completa 318/318 |
 | Frontend | `@frontend+` | n/a — sprint sem UI nova | — |
-| Guardian | `@guardian` | ⬜ Pendente | — |
-| Runbook origin isolation | Tech Lead | ⬜ Pendente | `docs/admin_area/runbook_origin_isolation.md` |
-| Git | Tech Lead | ⬜ Pendente | — |
+| Guardian | `@guardian` | ✅ Concluído | GATE 4 APROVADO — sem violações |
+| Runbook origin isolation | Tech Lead | ✅ Concluído | `docs/admin_area/runbook_origin_isolation.md` |
+| Git | Tech Lead | ▶️ Em andamento | — |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review

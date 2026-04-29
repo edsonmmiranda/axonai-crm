@@ -1,6 +1,11 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+import {
+  evaluateHostnameGate,
+  readHostnameGateConfigFromEnv,
+} from '@/lib/middleware/hostnameGate';
+
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
 function getEnv(name: string): string {
@@ -30,8 +35,65 @@ const ADMIN_PUBLIC_PATHS = [
   '/admin/accept-invite',
 ];
 
+const HOSTNAME_GATE_CONFIG = readHostnameGateConfigFromEnv();
+let hostnameGateDevWarningEmitted = false;
+
+/**
+ * Adiciona domain explícito + SameSite=Strict aos cookies setados pelo Supabase
+ * (Sprint admin_13 — RNF-SEC-1). Garante que sessão admin emitida em admin.<host>
+ * não vaze para o customer host e vice-versa. Em dev local (sem host configurado
+ * ou host inclui localhost), preserva options originais (browsers descartam
+ * cookies com domain=localhost).
+ */
+function isolatedCookieOptions(
+  options: CookieOptions | undefined,
+  host: string | null,
+): CookieOptions {
+  const next: CookieOptions = { ...(options ?? {}) };
+
+  if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
+    next.domain = host;
+    next.sameSite = 'strict';
+  }
+
+  return next;
+}
+
 export async function middleware(request: NextRequest) {
+  const { pathname: gatePath } = request.nextUrl;
+  const requestHost = request.headers.get('host');
+
+  const gateDecision = evaluateHostnameGate(requestHost, gatePath, HOSTNAME_GATE_CONFIG);
+
+  if (
+    gateDecision.allowed &&
+    gateDecision.reason === 'dev_permissive' &&
+    !hostnameGateDevWarningEmitted &&
+    !HOSTNAME_GATE_CONFIG.adminHost &&
+    !HOSTNAME_GATE_CONFIG.customerHost
+  ) {
+    hostnameGateDevWarningEmitted = true;
+    console.warn(
+      '[hostnameGate] running in dev-permissive mode — set NEXT_PUBLIC_ADMIN_HOST and NEXT_PUBLIC_CUSTOMER_HOST in production.'
+    );
+  }
+
+  if (!gateDecision.allowed) {
+    if (gateDecision.status === 503) {
+      console.error(
+        '[hostnameGate] production misconfigured — NEXT_PUBLIC_ADMIN_HOST/NEXT_PUBLIC_CUSTOMER_HOST missing.'
+      );
+      return new NextResponse('Origin gate misconfigured', { status: 503 });
+    }
+    return new NextResponse(null, { status: 404 });
+  }
+
   let response = NextResponse.next({ request });
+
+  const cookieHostName = (() => {
+    if (!requestHost) return null;
+    return requestHost.trim().toLowerCase().split(':')[0] ?? null;
+  })();
 
   const supabase = createServerClient(
     getEnv('NEXT_PUBLIC_SUPABASE_URL'),
@@ -47,7 +109,11 @@ export async function middleware(request: NextRequest) {
           });
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
+            response.cookies.set(
+              name,
+              value,
+              isolatedCookieOptions(options, cookieHostName),
+            );
           });
         },
       },
@@ -59,7 +125,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
+  const pathname = gatePath;
 
   // ── Customer app protection ──────────────────────────────────────────────
   const isCustomerProtected = CUSTOMER_PROTECTED_PREFIXES.some(
