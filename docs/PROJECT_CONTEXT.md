@@ -11,7 +11,8 @@
 | Entidade | UUID | Observação |
 |---|---|---|
 | Org interna Axon AI | `c6d506ca-08f0-4714-b330-6eb1a11f679b` | `slug='axon'`, `is_internal=true` |
-| Profile Edson Miranda | `c0bb904c-0939-4b66-838e-eabf23df4377` | email: edsonmmiranda@gmail.com — ainda em org `pessoal`, não em `axon` (ver §4) |
+| Profile Edson Miranda | `c0bb904c-0939-4b66-838e-eabf23df4377` | email: edsonmmiranda@gmail.com — em org `axon` (`organization_id=c6d506ca...`), role=`owner` |
+| Platform admin Edson | `f0a52115-cbd5-45c5-84ed-ce4567f4c08e` | seed manual em 2026-04-24 (Sprint admin_02), role=`owner`, is_active=true |
 
 ---
 
@@ -55,9 +56,9 @@ Fonte: `docs/admin_area/sprint_plan.md` §1. Alterar qualquer uma delas revisita
 
 ## 4. Pendências operacionais abertas
 
-| # | Pendência | Bloqueador | Sprint |
-|---|---|---|---|
-| OP-1 | Seed do primeiro platform admin owner (Edson) | Profile de Edson está em org `pessoal` (`c0bb904c`), não em `axon`. Mover via runbook antes de executar `seed_initial_platform_admin_owner`. Ver `docs/admin_area/runbook_seed_owner.md`. | Pós sprint_admin_02 |
+_Nenhuma pendência aberta._
+
+> **OP-1 (seed do primeiro platform admin owner Edson) — RESOLVIDO em 2026-04-24** durante Sprint admin_02. Profile do Edson foi movido para org `axon` e entrada em `platform_admins` (id `f0a52115...`) criada como `owner` ativo. Confirmado via introspecção viva em 2026-04-29. Runbook `docs/admin_area/runbook_seed_owner.md` permanece como referência para bootstrap em outros ambientes.
 
 ---
 
