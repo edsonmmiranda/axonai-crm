@@ -198,10 +198,10 @@ Este sprint expõe esse comportamento como uma **feature flag global** chamada `
 
 | Etapa | Agente | Status | Artefatos |
 |---|---|---|---|
-| Validação de DB / RLS | `@db-admin` | ⬜ Pendente | — |
-| Backend (registry + helper + middleware) | `@backend` | ⬜ Pendente | — |
-| Integration tests | `@qa-integration` | ⬜ Pendente | n/a — sprint sem Server Actions novas (a confirmar pelo Tech Lead via `git diff --name-only HEAD`) |
-| Frontend (modal de confirmação) | `@frontend+` | ⬜ Pendente | — |
-| Guardian | `@guardian` | ⬜ Pendente | — |
+| Validação de DB / RLS | `@db-admin` | ✅ Concluído | n/a — sem migration. Validado via MCP: RLS enabled, policy `authenticated_can_read_feature_flags` (qual=true) permite SELECT no middleware, RPC `admin_set_feature_flag` existente cobre mutation owner-only com audit IP/UA |
+| Backend (registry + helper + middleware) | `@backend` | ✅ Concluído | `src/lib/featureFlags/registry.ts` (entrada `require_admin_mfa`), `src/lib/featureFlags/getRequireAdminMfa.ts` (novo, helper com cache TTL 30s + fail-safe), `src/middleware.ts` (gate antes do bloco aal2; bloco `mfa_reset_required` preservado fora do gate). GATE 2: build OK, lint sem novos warnings. |
+| Integration tests | `@qa-integration` | ✅ Concluído | n/a — confirmado via `git diff --name-only HEAD`: nenhum arquivo em `src/lib/actions/**/actions.ts` foi tocado. GATE 4.5 não se aplica. |
+| Frontend (modal de confirmação) | `@frontend+` | ✅ Concluído | `src/components/admin/settings/FeatureFlagsList.tsx` (modificado: state `confirmingDisable`, `applyToggle` factor-out, intercept de `require_admin_mfa` em on→off, Dialog de confirmação com `AlertTriangle` + Button danger). Decisão: usado `Dialog` existente em vez de `AlertDialog` (não há AlertDialog no projeto; Dialog cobre o caso). GATE 2: build OK, lint sem novos warnings. GATE 5 estático: 0 violações. |
+| Guardian | `@guardian` | ✅ Concluído | GATE 4 APROVADO. Todas as checagens §1a/§1b/§2/§3a/§3b/§5 passam. Sem migration → §4 N/A. Falsos positivos no grep de segurança identificados (`password_reset` é nome de RPC em comentário; `organization_id` é leitura de JWT pré-existente). |
 
 **Legenda:** ⬜ Pendente · ▶️ Em andamento · ✅ Concluído · ⏸️ Aguarda review
