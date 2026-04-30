@@ -284,8 +284,19 @@ export async function getOrganizationDetailAction(
     const o = org as Record<string, unknown>;
 
     const [subResult, countResult, leadsActivity, profilesActivity, auditResult] = await Promise.all([
-      // subscription via RPC existente
-      supabase.rpc('get_current_subscription', { p_org_id: id }),
+      // Leitura direta (a RPC `get_current_subscription` rejeita platform admin
+      // lendo org diferente da própria; a policy `platform_admins_select_all_*`
+      // em subscriptions/plans cobre o caso e ainda inclui status terminais
+      // que a RPC oculta).
+      supabase
+        .from('subscriptions')
+        .select(`id, status, plan_id, period_start, period_end, metadata,
+                 plans:plan_id ( name, max_users, max_leads, max_products,
+                   max_pipelines, max_active_integrations, max_storage_mb, allow_ai_features )`)
+        .eq('organization_id', id)
+        .order('period_start', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
       // user count
       supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('organization_id', id).eq('is_active', true),
       // last lead update (best-effort)
@@ -300,23 +311,28 @@ export async function getOrganizationDetailAction(
         .limit(10),
     ]);
 
-    const subRow = (subResult.data?.[0] ?? null) as Record<string, unknown> | null;
+    if (subResult.error) {
+      console.error('[admin:orgs:detail] subscription read', subResult.error);
+    }
+
+    const subRow = subResult.data as Record<string, unknown> | null;
+    const planRow = (subRow?.plans ?? null) as Record<string, unknown> | null;
     const subscription = subRow
       ? {
-          id:                   subRow.subscription_id as string,
+          id:                   subRow.id as string,
           status:               subRow.status as string,
           planId:               subRow.plan_id as string,
-          planName:             subRow.plan_name as string,
+          planName:             (planRow?.name as string) ?? '—',
           periodStart:          subRow.period_start as string,
           periodEnd:            (subRow.period_end as string | null) ?? null,
           metadata:             (subRow.metadata as Record<string, unknown>) ?? {},
-          maxUsers:             (subRow.max_users as number | null) ?? null,
-          maxLeads:             (subRow.max_leads as number | null) ?? null,
-          maxProducts:          (subRow.max_products as number | null) ?? null,
-          maxPipelines:         (subRow.max_pipelines as number | null) ?? null,
-          maxActiveIntegrations:(subRow.max_active_integrations as number | null) ?? null,
-          maxStorageMb:         (subRow.max_storage_mb as number | null) ?? null,
-          allowAiFeatures:      (subRow.allow_ai_features as boolean) ?? false,
+          maxUsers:             (planRow?.max_users as number | null) ?? null,
+          maxLeads:             (planRow?.max_leads as number | null) ?? null,
+          maxProducts:          (planRow?.max_products as number | null) ?? null,
+          maxPipelines:         (planRow?.max_pipelines as number | null) ?? null,
+          maxActiveIntegrations:(planRow?.max_active_integrations as number | null) ?? null,
+          maxStorageMb:         (planRow?.max_storage_mb as number | null) ?? null,
+          allowAiFeatures:      (planRow?.allow_ai_features as boolean) ?? false,
         }
       : null;
 

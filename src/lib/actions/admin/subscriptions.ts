@@ -110,38 +110,50 @@ export async function getOrgSubscriptionAction(
     await requirePlatformAdmin();
     const supabase = await createClient();
 
-    const { data, error } = await supabase.rpc('get_current_subscription', {
-      p_org_id: orgId,
-    });
+    // Leitura direta (a RPC `get_current_subscription` rejeita platform admin
+    // lendo org diferente da própria; a policy `platform_admins_select_all_*`
+    // em subscriptions/plans cobre o caso e ainda inclui status terminais
+    // que a RPC oculta).
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select(`id, status, plan_id, period_start, period_end, metadata,
+               plans:plan_id ( name, max_users, max_leads, max_products,
+                 max_pipelines, max_active_integrations, max_storage_mb, allow_ai_features )`)
+      .eq('organization_id', orgId)
+      .order('period_start', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error) {
       console.error('[admin:subs:get]', error);
       return { success: false, error: 'Não foi possível carregar a subscription.' };
     }
 
-    const row = (Array.isArray(data) ? data[0] : data) as Record<string, unknown> | null;
+    const row = data as Record<string, unknown> | null;
     if (!row) {
-      return { success: false, error: 'Nenhuma subscription ativa encontrada.' };
+      return { success: false, error: 'Nenhuma subscription encontrada para esta organização.' };
     }
+
+    const planRow = (row.plans ?? null) as Record<string, unknown> | null;
 
     return {
       success: true,
       data: {
-        subscriptionId:  row.subscription_id as string,
+        subscriptionId:  row.id as string,
         status:          row.status as string,
         planId:          row.plan_id as string,
-        planName:        (row.plan_name as string) ?? '—',
+        planName:        (planRow?.name as string) ?? '—',
         periodStart:     row.period_start as string,
         periodEnd:       (row.period_end as string | null) ?? null,
         metadata:        (row.metadata as Record<string, unknown>) ?? {},
         limits: {
-          maxUsers:              (row.max_users as number | null) ?? null,
-          maxLeads:              (row.max_leads as number | null) ?? null,
-          maxProducts:           (row.max_products as number | null) ?? null,
-          maxPipelines:          (row.max_pipelines as number | null) ?? null,
-          maxActiveIntegrations: (row.max_active_integrations as number | null) ?? null,
-          maxStorageMb:          (row.max_storage_mb as number | null) ?? null,
-          allowAiFeatures:       (row.allow_ai_features as boolean) ?? false,
+          maxUsers:              (planRow?.max_users as number | null) ?? null,
+          maxLeads:              (planRow?.max_leads as number | null) ?? null,
+          maxProducts:           (planRow?.max_products as number | null) ?? null,
+          maxPipelines:          (planRow?.max_pipelines as number | null) ?? null,
+          maxActiveIntegrations: (planRow?.max_active_integrations as number | null) ?? null,
+          maxStorageMb:          (planRow?.max_storage_mb as number | null) ?? null,
+          allowAiFeatures:       (planRow?.allow_ai_features as boolean) ?? false,
         },
       },
     };
