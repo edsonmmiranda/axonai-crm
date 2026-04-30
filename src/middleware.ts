@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { getRequireAdminMfaCached } from '@/lib/featureFlags/getRequireAdminMfa';
 import {
   evaluateHostnameGate,
   readHostnameGateConfigFromEnv,
@@ -177,13 +178,23 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-    if (aal?.currentLevel !== 'aal2') {
-      const url = request.nextUrl.clone();
-      url.pathname =
-        aal?.nextLevel === 'aal2' ? '/admin/mfa-challenge' : '/admin/mfa-enroll';
-      url.search = '';
-      return NextResponse.redirect(url);
+    // ── Global MFA requirement gate (Sprint admin_14) ──────────────────────
+    // Owner-controlled feature flag `require_admin_mfa` (default: true) gates
+    // the aal2 redirect. When disabled, admins with currentLevel !== 'aal2'
+    // proceed without the MFA challenge/enroll redirect. The Sprint 11
+    // re-enroll gate below runs unconditionally — disabling this flag does
+    // NOT bypass mfa_reset_required.
+    const mfaRequired = await getRequireAdminMfaCached(supabase);
+
+    if (mfaRequired) {
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aal?.currentLevel !== 'aal2') {
+        const url = request.nextUrl.clone();
+        url.pathname =
+          aal?.nextLevel === 'aal2' ? '/admin/mfa-challenge' : '/admin/mfa-enroll';
+        url.search = '';
+        return NextResponse.redirect(url);
+      }
     }
 
     // ── MFA re-enroll required (Sprint 11) ─────────────────────────────────

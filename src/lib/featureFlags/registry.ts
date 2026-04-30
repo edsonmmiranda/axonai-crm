@@ -22,6 +22,14 @@ export const FEATURE_FLAG_REGISTRY = [
     isPublic: true,
     defaultEnabled: false,
   },
+  {
+    key: 'require_admin_mfa',
+    label: 'Exigir MFA para administradores',
+    description:
+      'Quando ligado, todo admin deve completar MFA (aal2) para acessar /admin/*. Desligar reduz a barreira de segurança — admins sem fator entram com aal1.',
+    isPublic: false,
+    defaultEnabled: true,
+  },
 ] as const satisfies FeatureFlagSpec[];
 
 export type RegisteredFlagKey = (typeof FEATURE_FLAG_REGISTRY)[number]['key'];
